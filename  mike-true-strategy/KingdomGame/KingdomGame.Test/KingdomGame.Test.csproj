@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PowerCollections">
-      <HintPath>..\..\..\libraries\PowerCollections.dll</HintPath>
+      <HintPath>..\..\..\..\libraries\PowerCollections.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
