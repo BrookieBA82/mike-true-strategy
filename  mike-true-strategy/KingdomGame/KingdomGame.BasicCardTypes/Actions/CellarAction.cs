@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Wintellect.PowerCollections;
+using KingdomGame;
+
+namespace KingdomGame.BasicCardTypes {
+
+    public class CellarDiscardingAction : BaseCardTargetAction {
+
+        public CellarDiscardingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, int.MaxValue) {
+
+        }
+
+        protected override void ApplyInternal(IList<Card> cards, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+            foreach (Card card in cards) {
+                game.CurrentPlayer.DiscardCard(card);
+            }
+        }
+
+        protected override bool IsTargetValidInternal(
+          IList<Card> targetCards, 
+          Card targetingCard, 
+          Game game,
+          IList<Pair<IAction, IList<int>>> previousActions
+        ) {
+            foreach (Card card in targetCards) {
+                if (!game.CurrentPlayer.Hand.Contains(card)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public class CellarDrawingAction : BasePlayerTargetAction {
+
+        public CellarDrawingAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+
+        }
+
+        protected override void ApplyInternal(IList<Player> players, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+            if (players.Count > 0) {
+                players[0].Draw(previousActions[0].Second.Count);
+                players[0].RemainingActions++;
+            }
+        }
+    }
+}

@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <assemblies>
+    <assembly key="types">
+      <path>KingdomGame.BasicCardTypes.dll</path>
+    </assembly>
+  </assemblies>
+  <types>
+    <type key="Copper">
+      <class>TREASURE</class>
+      <cost>0</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>1</monetaryValue>
+      <endOfGameWeight>0</endOfGameWeight>
+      <defaultQuantity>60</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Silver">
+      <class>TREASURE</class>
+      <cost>3</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>2</monetaryValue>
+      <endOfGameWeight>0</endOfGameWeight>
+      <defaultQuantity>40</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Gold">
+      <class>TREASURE</class>
+      <cost>6</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>3</monetaryValue>
+      <endOfGameWeight>0</endOfGameWeight>
+      <defaultQuantity>30</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Estate">
+      <class>VICTORY</class>
+      <cost>2</cost>
+      <victoryValue>1</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>24</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Duchy">
+      <class>VICTORY</class>
+      <cost>5</cost>
+      <victoryValue>3</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>12</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Province">
+      <class>VICTORY</class>
+      <cost>8</cost>
+      <victoryValue>6</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>1</endOfGameWeight>
+      <defaultQuantity>12</defaultQuantity>
+      <properties>
+      </properties>
+      <actions>
+      </actions>
+    </type>
+    <type key="Cellar">
+      <class>ACTION</class>
+      <cost>2</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+1) Action; Discard any number of cards, (+1) Card per card discarded.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.CellarDiscardingAction</className>
+          <displayName>Cellar Discard Phase</displayName>
+          <actionDescription>discarding for Cellar</actionDescription>
+        </action>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.CellarDrawingAction</className>
+          <displayName>Cellar Drawing Phase</displayName>
+          <actionDescription>drawing for Cellar</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Moat">
+      <class>ACTION</class>
+      <cost>2</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+2) Cards; When another player plays an Attack card, you may reveal this from your hand. If you do, you are unaffected by that Attack.</cardText>
+      <properties>
+        <property>Attack_Defense</property>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MoatAction</className>
+          <displayName>Moat Drawing Phase</displayName>
+          <actionDescription>drawing for Moat</actionDescription>          
+        </action>
+      </actions>
+    </type>
+    <type key="Village">
+      <class>ACTION</class>
+      <cost>3</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+1) Card; (+2) Actions.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.VillageAction</className>
+          <displayName>Village Drawing Phase</displayName>
+          <actionDescription>drawing for Village</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Workshop">
+      <class>ACTION</class>
+      <cost>3</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>Gain a card costing up to (4).</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.WorkshopAction</className>
+          <displayName>Workshop Gain Phase</displayName>
+          <actionDescription>gaining from Workshop</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Woodcutter">
+      <class>ACTION</class>
+      <cost>3</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+1) Buy; (+2) Money.</cardText>      
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.WoodcutterAction</className>
+          <displayName>Woodcutter Gain Phase</displayName>
+          <actionDescription>gaining from Woodcutter</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Militia">
+      <class>ACTION</class>
+      <cost>4</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+2); Each other player discards down to 3 cards in his hand.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MilitiaDiscardTargetSelectionAction</className>
+          <displayName>Militia Discard Target Phase</displayName>
+          <actionDescription>discarding player selection for Militia</actionDescription>
+        </action>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MilitiaMoneyGainAction</className>
+          <displayName>Militia Gain Phase</displayName>
+          <actionDescription>gaining money from Militia</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Remodel">
+      <class>ACTION</class>
+      <cost>4</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>Trash a card from your hand; Gain a card costing up to (2) more than the trashed card.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.RemodelTrashingAction</className>
+          <displayName>Remodel Trashing Phase</displayName>
+          <actionDescription>trashing for Remodel</actionDescription>
+        </action>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.RemodelGainingAction</className>
+          <displayName>Remodel Gain Phase</displayName>
+          <actionDescription>gaining from Remodel</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Smithy">
+      <class>ACTION</class>
+      <cost>4</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+3) Cards.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.SmithyAction</className>
+          <displayName>Smithy Gain Phase</displayName>
+          <actionDescription>gaining from Smithy</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Mine">
+      <class>ACTION</class>
+      <cost>5</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>Trash a Treasure card from your hand; Gain a Treasure card costing up to (3) more; Put it into your hand.</cardText>      
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MineTrashingAction</className>
+          <displayName>Mine Trashing Phase</displayName>
+          <actionDescription>trashing for Mine</actionDescription>
+        </action>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MineGainingAction</className>
+          <displayName>Mine Gain Phase</displayName>
+          <actionDescription>gaining from Mine</actionDescription>
+        </action>
+      </actions>
+    </type>
+    <type key="Market">
+      <class>ACTION</class>
+      <cost>5</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>(+1) Card; (+1) Action; (+1) Buy; (+1) Money.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.MarketAction</className>
+          <displayName>Market Gain Phase</displayName>
+          <actionDescription>gaining from Market</actionDescription>
+        </action>
+      </actions>
+    </type>
+  </types>
+</config>

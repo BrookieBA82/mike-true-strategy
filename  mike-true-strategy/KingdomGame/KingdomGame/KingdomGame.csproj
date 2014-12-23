@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A714BBA5-580B-4279-9A48-8A5E98577567}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KingdomGame</RootNamespace>
+    <AssemblyName>KingdomGame</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PowerCollections">
+      <HintPath>..\..\..\libraries\PowerCollections.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Action\BaseAction.cs" />
+    <Compile Include="Action\BaseCardTargetAction.cs" />
+    <Compile Include="Action\BaseCardTypeTargetAction.cs" />
+    <Compile Include="Action\BasePlayerTargetAction.cs" />
+    <Compile Include="Action\IAction.cs" />
+    <Compile Include="Card\Card.cs" />
+    <Compile Include="Card\CardType.cs" />
+    <Compile Include="Card\CardProperty.cs" />
+    <Compile Include="Card\ICardOwner.cs" />
+    <Compile Include="Common\Logging\GameHistory.cs" />
+    <Compile Include="Common\Logging\Logger.cs" />
+    <Compile Include="Common\Math\Combinations.cs" />
+    <Compile Include="Common\Random\RandomNumberManager.cs" />
+    <Compile Include="Deck.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="ITargetable.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategy\Buying\IBuyingStrategy.cs" />
+    <Compile Include="Strategy\Buying\RandomBuyingStrategy.cs" />
+    <Compile Include="Strategy\Buying\ScriptedBuyingStrategy.cs" />
+    <Compile Include="Strategy\CardSelection\ICardSelectionStrategy.cs" />
+    <Compile Include="Strategy\CardSelection\RandomCardSelectionStrategy.cs" />
+    <Compile Include="Strategy\CardSelection\ScriptedCardSelectionStrategy.cs" />
+    <Compile Include="Strategy\Discarding\IDiscardingStrategy.cs" />
+    <Compile Include="Strategy\Discarding\RandomDiscardingStrategy.cs" />
+    <Compile Include="Strategy\Discarding\ScriptedDiscardingStrategy.cs" />
+    <Compile Include="Strategy\TargetSelection\ITargetSelectionStrategy.cs" />
+    <Compile Include="Strategy\Discarding\PromptedDiscardingStrategy.cs" />
+    <Compile Include="Strategy\TargetSelection\RandomTargetSelectionStrategy.cs" />
+    <Compile Include="Strategy\TargetSelection\ScriptedTargetSelectionStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
