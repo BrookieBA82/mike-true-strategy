@@ -7,6 +7,7 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
+    // Refactor - (MT): Make actions themselves ITargetable (with IDs).
     // Refactor - (MT): Add a target selecting player action to determine whose strategy should get used.
     public interface IAction {
 

@@ -7,6 +7,8 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
+    // Refactor - (MT): Make actions themselves ITargetable (with IDs).
+    // Refactor - (MT): Consider a base class for making a general choice (between actions).
     public abstract class BaseAction<TTarget> : IAction where TTarget : class, ITargetable {
 
         protected Type _targetType;
