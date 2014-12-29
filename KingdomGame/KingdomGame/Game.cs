@@ -18,18 +18,8 @@ namespace KingdomGame {
             END = 5
         }
 
-        // Refactor - (MT): Push this object down to the player level.
-        public class Strategy : ICloneable {
+        public class State : ICloneable {
 
-            public ICardSelectionStrategy CardSelectionStrategy { get; set; }
-
-            public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
-
-            public IBuyingStrategy BuyingStrategy { get; set; }
-
-            public IDictionary<int, IDiscardingStrategy> DiscardingStrategiesByPlayerId { get; private set; }
-
-            // Refactor - (MT): Push this game state into its own subclass.
             public Phase Phase { get; set; }
 
             public Stack<IAction> ActionStack { get; set; }
@@ -37,54 +27,39 @@ namespace KingdomGame {
             public int? SelectedCardId { get; set; }
 
             public IList<Pair<IAction, IList<int>>> PreviousActions { get; set; }
-            // End Refactor Block
 
-            public Strategy(IList<int> playerIds) {
-                // Todo - (MT): Strategy point #4 - select best discard option (not just random)
-                DiscardingStrategiesByPlayerId = new Dictionary<int, IDiscardingStrategy>();
-                foreach(int playerId in playerIds) {
-                    DiscardingStrategiesByPlayerId[playerId] = new RandomDiscardingStrategy();
-                }
-
+            public State() {
                 ActionStack = new Stack<IAction>();
             }
 
             public object Clone() {
-                Strategy strategy = new Strategy(new List<int>(DiscardingStrategiesByPlayerId.Keys));
+                State state = new State();
 
-                strategy.CardSelectionStrategy = CardSelectionStrategy.Clone() as ICardSelectionStrategy;
-                strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
-                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
-                foreach (int playerId in DiscardingStrategiesByPlayerId.Keys) {
-                    strategy.DiscardingStrategiesByPlayerId[playerId] = 
-                      DiscardingStrategiesByPlayerId[playerId].Clone() as IDiscardingStrategy;
-                }
+                state.Phase = Phase;
+                state.ActionStack = new Stack<IAction>(ActionStack);
+                state.SelectedCardId = SelectedCardId;
+                state.PreviousActions = new List<Pair<IAction, IList<int>>>(PreviousActions);
 
-                strategy.Phase = Phase;
-                strategy.ActionStack = new Stack<IAction>(ActionStack);
-                strategy.SelectedCardId = SelectedCardId;
-                strategy.PreviousActions = new List<Pair<IAction, IList<int>>>(PreviousActions);
-
-                return strategy;
+                return state;
             }
 
             public override bool Equals(object obj) {
-                Strategy strategy = obj as Strategy;
-                if (strategy == null) {
+                State state = obj as State;
+                if (state == null) {
                     return false;
                 }
 
-                if (PreviousActions.Count != strategy.PreviousActions.Count) {
+                if (PreviousActions.Count != state.PreviousActions.Count) {
                     return false;
                 }
 
                 for (int actionIndex = 0; actionIndex < PreviousActions.Count; actionIndex++) {
-                    if (!PreviousActions[actionIndex].Equals(strategy.PreviousActions[actionIndex].First)) {
+                    if (!PreviousActions[actionIndex].Equals(state.PreviousActions[actionIndex].First)) {
                         return false;
                     }
 
                     List<int> thisTargets = new List<int>(PreviousActions[actionIndex].Second);
-                    List<int> strategyTargets = new List<int>(strategy.PreviousActions[actionIndex].Second);
+                    List<int> strategyTargets = new List<int>(state.PreviousActions[actionIndex].Second);
 
                     if (thisTargets.Count != strategyTargets.Count) {
                         return false;
@@ -100,15 +75,81 @@ namespace KingdomGame {
                     }
                 }
 
-                if (ActionStack.Count != strategy.ActionStack.Count) {
+                if (ActionStack.Count != state.ActionStack.Count) {
                     return false;
                 }
 
                 for (int actionIndex = 0; actionIndex < ActionStack.Count; actionIndex++) {
                     if (!ActionStack.ElementAt<IAction>(actionIndex).Equals(
-                      strategy.ActionStack.ElementAt<IAction>(actionIndex))) {
+                      state.ActionStack.ElementAt<IAction>(actionIndex))) {
                           return false;
                     }
+                }
+
+                return Phase == state.Phase && SelectedCardId == state.SelectedCardId;
+            }
+
+            public override int GetHashCode() {
+                int code = Phase.GetHashCode() ^ SelectedCardId.GetHashCode();
+
+                code ^= PreviousActions.Count.GetHashCode();
+
+                foreach(Pair<IAction, IList<int>> pair in PreviousActions) {
+                    code ^= pair.First.GetType().GetHashCode();
+                    code ^= pair.Second.Count.GetHashCode();
+
+                    foreach (int targetId in pair.Second) {
+                        code ^= targetId.GetHashCode();
+                    }
+                }
+
+                code ^= ActionStack.Count.GetHashCode();
+
+                foreach(IAction action in ActionStack) {
+                    code ^= action.GetHashCode();
+                }
+
+                return code;
+            }        
+        }
+
+        // Refactor - (MT): Push this object down to the player level.
+        public class Strategy : ICloneable {
+
+            public ICardSelectionStrategy CardSelectionStrategy { get; set; }
+
+            public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
+
+            public IBuyingStrategy BuyingStrategy { get; set; }
+
+            public IDictionary<int, IDiscardingStrategy> DiscardingStrategiesByPlayerId { get; private set; }
+
+            public Strategy(IList<int> playerIds) {
+                // Todo - (MT): Strategy point #4 - select best discard option (not just random)
+                DiscardingStrategiesByPlayerId = new Dictionary<int, IDiscardingStrategy>();
+                foreach(int playerId in playerIds) {
+                    DiscardingStrategiesByPlayerId[playerId] = new RandomDiscardingStrategy();
+                }
+            }
+
+            public object Clone() {
+                Strategy strategy = new Strategy(new List<int>(DiscardingStrategiesByPlayerId.Keys));
+
+                strategy.CardSelectionStrategy = CardSelectionStrategy.Clone() as ICardSelectionStrategy;
+                strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
+                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
+                foreach (int playerId in DiscardingStrategiesByPlayerId.Keys) {
+                    strategy.DiscardingStrategiesByPlayerId[playerId] = 
+                      DiscardingStrategiesByPlayerId[playerId].Clone() as IDiscardingStrategy;
+                }
+
+                return strategy;
+            }
+
+            public override bool Equals(object obj) {
+                Strategy strategy = obj as Strategy;
+                if (strategy == null) {
+                    return false;
                 }
 
                 if (DiscardingStrategiesByPlayerId.Count != strategy.DiscardingStrategiesByPlayerId.Count) {
@@ -128,39 +169,18 @@ namespace KingdomGame {
 
                 return CardSelectionStrategy.Equals(strategy.CardSelectionStrategy) 
                   && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
-                  && BuyingStrategy.Equals(strategy.BuyingStrategy)
-                  && Phase == strategy.Phase
-                  && SelectedCardId == strategy.SelectedCardId;
+                  && BuyingStrategy.Equals(strategy.BuyingStrategy);
             }
 
             public override int GetHashCode() {
                 int code = CardSelectionStrategy.GetHashCode() 
                   ^ TargetSelectionStrategy.GetHashCode() 
-                  ^ BuyingStrategy.GetHashCode()
-                  ^ Phase.GetHashCode()
-                  ^ SelectedCardId.GetHashCode();
+                  ^ BuyingStrategy.GetHashCode();
 
-                code ^= PreviousActions.Count;
-
-                foreach(Pair<IAction, IList<int>> pair in PreviousActions) {
-                    code ^= pair.First.GetType().GetHashCode();
-                    code ^= pair.Second.Count;
-
-                    foreach (int targetId in pair.Second) {
-                        code ^= targetId.GetHashCode();
-                    }
-                }
-
-                code ^= ActionStack.Count;
-
-                foreach(IAction action in ActionStack) {
-                    code ^= action.GetHashCode();
-                }
-
-                code ^= DiscardingStrategiesByPlayerId.Keys.Count;
+                code ^= DiscardingStrategiesByPlayerId.Keys.Count.GetHashCode();
 
                 foreach (int playerId in DiscardingStrategiesByPlayerId.Keys) {
-                    code ^= playerId;
+                    code ^= playerId.GetHashCode();
                     code ^= DiscardingStrategiesByPlayerId[playerId].GetHashCode();
                 }
 
@@ -185,6 +205,7 @@ namespace KingdomGame {
         private int _currentPlayerIndex;
         private int _turnNumber;
 
+        private State _state;
         private Strategy _strategy;
 
         public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, Game.GetDefaultCardCountsByType()) {
@@ -224,6 +245,7 @@ namespace KingdomGame {
 
             _currentPlayerIndex = toClone._currentPlayerIndex;
             _strategy = toClone._strategy.Clone() as Strategy;
+            _state = toClone._state.Clone() as State;
 
             SetUpCardIndex();
         }
@@ -246,6 +268,8 @@ namespace KingdomGame {
 
         public Strategy CurrentStrategy { get { return _strategy; } }
 
+        public State CurrentState { get { return _state; } }
+
         public IList<Player> Players {
             get { return new List<Player>(_orderedPlayerList); }
         }
@@ -254,6 +278,7 @@ namespace KingdomGame {
             get { return _orderedPlayerList[_currentPlayerIndex]; }
         }
 
+        // Refactor - (MT): Push this into basic game state.
         public int TurnNumber {
             get { return this._turnNumber; }
         }
@@ -375,25 +400,25 @@ namespace KingdomGame {
         }
 
         public void PlayTurn() {
-            while (CurrentStrategy.Phase != Phase.ADVANCE && CurrentStrategy.Phase != Phase.END) {
+            while (CurrentState.Phase != Phase.ADVANCE && CurrentState.Phase != Phase.END) {
                 PlayPhase();
             }
 
             // Once the advance phase is reached, play one more phase to end the current turn:
-            if (CurrentStrategy.Phase != Phase.END) {
+            if (CurrentState.Phase != Phase.END) {
                 PlayPhase();
             }
         }
 
         public void PlayPhase() {
-            Phase startPhase = CurrentStrategy.Phase;
-            while (startPhase == CurrentStrategy.Phase && CurrentStrategy.Phase != Phase.END) {
+            Phase startPhase = CurrentState.Phase;
+            while (startPhase == CurrentState.Phase && CurrentState.Phase != Phase.END) {
                 PlayStep();
             }
         }
 
         public void PlayStep() {
-            switch (CurrentStrategy.Phase) {
+            switch (CurrentState.Phase) {
 
                 case Phase.ACTION:
 
@@ -403,13 +428,13 @@ namespace KingdomGame {
                             (this, new Deck(CurrentPlayer.Hand));
 
                         if (cardToPlay != null) {
-                            CurrentStrategy.SelectedCardId = (int?) cardToPlay.Id;
+                            CurrentState.SelectedCardId = (int?) cardToPlay.Id;
                             Logger.Instance.RecordCardSelection(this, CurrentPlayer, cardToPlay);
 
-                            CurrentStrategy.Phase = Phase.TARGET;
-                            CurrentStrategy.ActionStack = new Stack<IAction>();
+                            CurrentState.Phase = Phase.TARGET;
+                            CurrentState.ActionStack = new Stack<IAction>();
                             for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
-                                CurrentStrategy.ActionStack.Push(cardToPlay.Type.Actions[actionIndex]);
+                                CurrentState.ActionStack.Push(cardToPlay.Type.Actions[actionIndex]);
                             }
                                 
                             CurrentPlayer.PlayCard(cardToPlay);
@@ -422,21 +447,21 @@ namespace KingdomGame {
                     }
 
                     if (advanceToBuy) {
-                        CurrentStrategy.SelectedCardId = null;
-                        CurrentStrategy.Phase = Phase.BUY;
-                        CurrentStrategy.ActionStack = new Stack<IAction>();
+                        CurrentState.SelectedCardId = null;
+                        CurrentState.Phase = Phase.BUY;
+                        CurrentState.ActionStack = new Stack<IAction>();
                     }
 
-                    CurrentStrategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+                    CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
                     break;
 
                 case Phase.TARGET:
 
-                    if (CurrentStrategy.SelectedCardId != null) {
+                    if (CurrentState.SelectedCardId != null) {
 
-                        Card cardToPlay = _cardsById[CurrentStrategy.SelectedCardId.Value];
-                        IAction actionToPlay = CurrentStrategy.ActionStack.Pop();
+                        Card cardToPlay = _cardsById[CurrentState.SelectedCardId.Value];
+                        IAction actionToPlay = CurrentState.ActionStack.Pop();
 
                         if (actionToPlay != null) {
 
@@ -445,21 +470,21 @@ namespace KingdomGame {
                                 this, 
                                 cardToPlay, 
                                 actionToPlay,
-                                CurrentStrategy.PreviousActions
+                                CurrentState.PreviousActions
                             );
 
                             IList<Card> targetCards = _strategy.TargetSelectionStrategy.SelectTargets<Card>(
                                 this,
                                 cardToPlay,
                                 actionToPlay,
-                                CurrentStrategy.PreviousActions
+                                CurrentState.PreviousActions
                             );
 
                             IList<CardType> targetTypes = _strategy.TargetSelectionStrategy.SelectTargets<CardType>(
                                 this,
                                 cardToPlay,
                                 actionToPlay,
-                                CurrentStrategy.PreviousActions
+                                CurrentState.PreviousActions
                             );
 
                             List<int> targetIds = new List<int>();
@@ -472,7 +497,7 @@ namespace KingdomGame {
                                   targetPlayers
                                 );
 
-                                actionToPlay.Apply<Player>(targetPlayers, this, CurrentStrategy.PreviousActions);
+                                actionToPlay.Apply<Player>(targetPlayers, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<Player>(targetPlayers)
                                   .ConvertAll<int>(delegate (Player player) { return player.Id;}));
                             } else if (targetCards.Count > 0) {
@@ -484,7 +509,7 @@ namespace KingdomGame {
                                   targetCards
                                 );
 
-                                actionToPlay.Apply<Card>(targetCards, this, CurrentStrategy.PreviousActions);
+                                actionToPlay.Apply<Card>(targetCards, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<Card>(targetCards)
                                   .ConvertAll<int>(delegate (Card card) { return card.Id;}));
                             } else if (targetTypes.Count > 0) {
@@ -496,33 +521,33 @@ namespace KingdomGame {
                                   targetTypes
                                 );
 
-                                actionToPlay.Apply<CardType>(targetTypes, this, CurrentStrategy.PreviousActions);
+                                actionToPlay.Apply<CardType>(targetTypes, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<CardType>(targetTypes)
                                   .ConvertAll<int>(delegate (CardType type) { return type.Id;}));
                             }
                             // End Refactor Block
 
-                            CurrentStrategy.PreviousActions.Add(new Pair<IAction, IList<int>>(actionToPlay, targetIds));
+                            CurrentState.PreviousActions.Add(new Pair<IAction, IList<int>>(actionToPlay, targetIds));
                         }
 
-                        if (CurrentStrategy.ActionStack.Count == 0) {
+                        if (CurrentState.ActionStack.Count == 0) {
                             if (CurrentPlayer.RemainingActions > 0) {
-                                CurrentStrategy.Phase = Phase.ACTION;
+                                CurrentState.Phase = Phase.ACTION;
                             } else {
-                                CurrentStrategy.Phase = Phase.BUY;
+                                CurrentState.Phase = Phase.BUY;
                             }
 
-                            CurrentStrategy.SelectedCardId = null;
-                            CurrentStrategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+                            CurrentState.SelectedCardId = null;
+                            CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                         }
                     }
                     else {
                         // No actions left to play should short-circuit attempts at finding another.
                         CurrentPlayer.RemainingActions = 0;
-                        CurrentStrategy.Phase = Phase.BUY;
-                        CurrentStrategy.ActionStack = new Stack<IAction>();
-                        CurrentStrategy.SelectedCardId = null;
-                        CurrentStrategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+                        CurrentState.Phase = Phase.BUY;
+                        CurrentState.ActionStack = new Stack<IAction>();
+                        CurrentState.SelectedCardId = null;
+                        CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
                     break;
@@ -552,17 +577,17 @@ namespace KingdomGame {
 
                     if (IsGameOver()) {
                         isTurnOver = true;
-                        CurrentStrategy.Phase = Phase.END;
+                        CurrentState.Phase = Phase.END;
                         Logger.Instance.RecordEndOfTurn(this);
                     }
                     else if (isTurnOver) {
-                        CurrentStrategy.Phase = Phase.ADVANCE;
+                        CurrentState.Phase = Phase.ADVANCE;
                     }
 
                     if (isTurnOver) {
-                        CurrentStrategy.ActionStack = new Stack<IAction>();
-                        CurrentStrategy.SelectedCardId = null;
-                        CurrentStrategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+                        CurrentState.ActionStack = new Stack<IAction>();
+                        CurrentState.SelectedCardId = null;
+                        CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
                     break;
@@ -572,10 +597,10 @@ namespace KingdomGame {
                     Logger.Instance.RecordEndOfTurn(this);
 
                     AdvanceTurn();
-                    CurrentStrategy.Phase = Phase.ACTION;
-                    CurrentStrategy.ActionStack = new Stack<IAction>();
-                    CurrentStrategy.SelectedCardId = null;
-                    CurrentStrategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+                    CurrentState.Phase = Phase.ACTION;
+                    CurrentState.ActionStack = new Stack<IAction>();
+                    CurrentState.SelectedCardId = null;
+                    CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
                     break;
 
@@ -686,6 +711,7 @@ namespace KingdomGame {
             }
         }
 
+        // Refactor - (MT): This is a bad method name and might indicate a bad method.
         private void SetUpBasicGameDetails() {
             _id = Game.NextId++;
             _currentPlayerIndex = 0;
@@ -693,16 +719,17 @@ namespace KingdomGame {
             _trash = new Deck();
 
             _strategy = new Strategy(new List<int>(_playersById.Keys));
-            
+            _state = new State();
+
             // Todo - (MT): Strategy point #1 - select best card (instead of random)
             _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
             // Todo - (MT): Strategy point #2 - select best (or at least random) target
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)
             _strategy.BuyingStrategy = new RandomBuyingStrategy();
-            _strategy.Phase = Phase.ACTION;
-            _strategy.SelectedCardId = null;
-            _strategy.PreviousActions = new List<Pair<IAction, IList<int>>>();
+            _state.Phase = Phase.ACTION;
+            _state.SelectedCardId = null;
+            _state.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
             _cardsById = new Dictionary<int, Card>();
         }
@@ -841,6 +868,10 @@ namespace KingdomGame {
                 return false;
             }
 
+            if (!game._state.Equals(this._state)) {
+                return false;
+            }
+
             return true;
         }
 
@@ -861,6 +892,7 @@ namespace KingdomGame {
             }
 
             code = code ^ this._strategy.GetHashCode();
+            code = code ^ this._state.GetHashCode();
 
             return code;
         }

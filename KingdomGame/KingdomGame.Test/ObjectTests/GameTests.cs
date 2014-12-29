@@ -128,10 +128,10 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.Phase = Game.Phase.TARGET;
-            game.CurrentStrategy.ActionStack.Push(village.Type.Actions[0]);
+            game.CurrentState.Phase = Game.Phase.TARGET;
+            game.CurrentState.ActionStack.Push(village.Type.Actions[0]);
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
-            game.CurrentStrategy.SelectedCardId = village.Id;
+            game.CurrentState.SelectedCardId = village.Id;
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
@@ -317,8 +317,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.Phase = Game.Phase.TARGET;
-            game.CurrentStrategy.SelectedCardId = firstVillage.Id;
+            game.CurrentState.Phase = Game.Phase.TARGET;
+            game.CurrentState.SelectedCardId = firstVillage.Id;
 
             Game clone = game.Clone() as Game;
 
@@ -330,7 +330,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.SelectedCardId = secondVillage.Id;
+            game.CurrentState.SelectedCardId = secondVillage.Id;
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after selected card is changed.");
         }
@@ -365,6 +365,10 @@ namespace KingdomGame.Test
             Assert.AreNotEqual(game, clone, "Game should not match its clone after cards to discard are changed.");
         }
 
+        #endregion
+
+        #region State Clone Independence Tests
+
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestActionStackCloneIndependence() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
@@ -398,9 +402,9 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Assert.AreNotEqual(
-              game.CurrentStrategy, 
-              clone.CurrentStrategy, 
-              "Game strategy should not match that of its clone after action stack is changed."
+              game.CurrentState, 
+              clone.CurrentState, 
+              "Game state should not match that of its clone after action stack is changed."
             );
         }
 
@@ -437,14 +441,10 @@ namespace KingdomGame.Test
             game.PlayStep();
             clone.PlayStep();
 
-            // Clear out the strategy difference so it doesn't trigger a failed comparison on its own:
-            game.CurrentStrategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
-            clone.CurrentStrategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
-
             Assert.AreNotEqual(
-              game.CurrentStrategy, 
-              clone.CurrentStrategy, 
-              "Game strategy should not match that of its clone after previous action histories diverge."
+              game.CurrentState, 
+              clone.CurrentState, 
+              "Game state should not match that of its clone after previous action histories diverge."
             );
         }
 

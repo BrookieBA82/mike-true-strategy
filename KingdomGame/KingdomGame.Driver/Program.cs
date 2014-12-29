@@ -119,22 +119,22 @@ namespace KingdomGame.Driver {
             
             do {
 
-                switch (game.CurrentStrategy.Phase) {
+                switch (game.CurrentState.Phase) {
                     case Game.Phase.ACTION:
                         ExecuteHumanPlayerAction(game);
                         break;
 
                     case Game.Phase.TARGET:
 
-                        if (game.CurrentStrategy.SelectedCardId != null) {
-                            Card cardToPlay = game.GetCardById(game.CurrentStrategy.SelectedCardId.Value);
+                        if (game.CurrentState.SelectedCardId != null) {
+                            Card cardToPlay = game.GetCardById(game.CurrentState.SelectedCardId.Value);
 
-                            while(game.CurrentStrategy.ActionStack.Count > 0) {
-                                IAction actionToPlay = game.CurrentStrategy.ActionStack.Peek();
+                            while(game.CurrentState.ActionStack.Count > 0) {
+                                IAction actionToPlay = game.CurrentState.ActionStack.Peek();
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
                                   cardToPlay, 
                                   game, 
-                                  game.CurrentStrategy.PreviousActions
+                                  game.CurrentState.PreviousActions
                                 );
 
                                 if (
@@ -184,7 +184,7 @@ namespace KingdomGame.Driver {
                         break;
                 }
 
-            } while (game.TurnNumber == startingTurn && game.CurrentStrategy.Phase != Game.Phase.END);
+            } while (game.TurnNumber == startingTurn && game.CurrentState.Phase != Game.Phase.END);
 
             GameHistory.Turn lastTurn = Logger.Instance.GetLastTurn(game);
             Console.WriteLine(string.Format("\tEnd of turn {0} score:", lastTurn.Number));
@@ -301,7 +301,7 @@ namespace KingdomGame.Driver {
                           selectedTargets, 
                           cardToPlay, 
                           game, 
-                          game.CurrentStrategy.PreviousActions
+                          game.CurrentState.PreviousActions
                         );
 
                         if(!validTargetSpecified) {
@@ -333,7 +333,7 @@ namespace KingdomGame.Driver {
         }
 
         private static void ExecuteHumanPlayerBuy(Game game) {
-            while (game.CurrentStrategy.Phase == Game.Phase.BUY) {
+            while (game.CurrentState.Phase == Game.Phase.BUY) {
                 int optionCounter = 2;
                 IDictionary<string, string> optionPromptsByIndex = 
                   new Dictionary<string, string>() { { "1", "<no buy>" } };
