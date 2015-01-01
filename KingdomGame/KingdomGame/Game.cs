@@ -24,13 +24,18 @@ namespace KingdomGame {
             private Phase _phase;
             private int? _selectedCardId;
 
+            private Stack<IAction> _actionStack;
+
             internal Game Game { set { _game = value; } }
 
             public Phase Phase {
                 get { return _phase; }
                 set {
-                    // Refactor - (MT): Clear out phase-specific values here upon change.
                     _phase = value; 
+
+                    if (_phase != value) {
+                        _actionStack = new Stack<IAction>();
+                    }
                 } 
             }
 
@@ -55,19 +60,21 @@ namespace KingdomGame {
             public IList<Pair<IAction, IList<int>>> PreviousActions { get; set; }
 
             // Refactor - (MT): Abstract this representation away from the public interface.
-            public Stack<IAction> ActionStack { get; set; }
+            public Stack<IAction> ActionStack { 
+                get { return _actionStack; } 
+            }
 
             public State(Game game) {
                 _game = game;
                 _phase = Phase.ACTION;
-                ActionStack = new Stack<IAction>();
+                _actionStack = new Stack<IAction>();
             }
 
             public object Clone() {
                 State state = new State(_game);
 
                 state._phase = _phase;
-                state.ActionStack = new Stack<IAction>(ActionStack);
+                state._actionStack = new Stack<IAction>(_actionStack);
                 state._selectedCardId = _selectedCardId;
                 state.PreviousActions = new List<Pair<IAction, IList<int>>>(PreviousActions);
 
@@ -106,13 +113,13 @@ namespace KingdomGame {
                     }
                 }
 
-                if (ActionStack.Count != state.ActionStack.Count) {
+                if (_actionStack.Count != state._actionStack.Count) {
                     return false;
                 }
 
-                for (int actionIndex = 0; actionIndex < ActionStack.Count; actionIndex++) {
+                for (int actionIndex = 0; actionIndex < _actionStack.Count; actionIndex++) {
                     if (!ActionStack.ElementAt<IAction>(actionIndex).Equals(
-                      state.ActionStack.ElementAt<IAction>(actionIndex))) {
+                      state._actionStack.ElementAt<IAction>(actionIndex))) {
                           return false;
                     }
                 }
@@ -134,9 +141,9 @@ namespace KingdomGame {
                     }
                 }
 
-                code ^= ActionStack.Count.GetHashCode();
+                code ^= _actionStack.Count.GetHashCode();
 
-                foreach(IAction action in ActionStack) {
+                foreach(IAction action in _actionStack) {
                     code ^= action.GetHashCode();
                 }
 
@@ -465,7 +472,6 @@ namespace KingdomGame {
                             Logger.Instance.RecordCardSelection(this, CurrentPlayer, cardToPlay);
 
                             CurrentState.Phase = Phase.TARGET;
-                            CurrentState.ActionStack = new Stack<IAction>();
                             for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
                                 CurrentState.ActionStack.Push(cardToPlay.Type.Actions[actionIndex]);
                             }
@@ -482,7 +488,6 @@ namespace KingdomGame {
                     if (advanceToBuy) {
                         CurrentState.SelectedCard = null;
                         CurrentState.Phase = Phase.BUY;
-                        CurrentState.ActionStack = new Stack<IAction>();
                     }
 
                     CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
@@ -577,7 +582,6 @@ namespace KingdomGame {
                         // No actions left to play should short-circuit attempts at finding another.
                         CurrentPlayer.RemainingActions = 0;
                         CurrentState.Phase = Phase.BUY;
-                        CurrentState.ActionStack = new Stack<IAction>();
                         CurrentState.SelectedCard = null;
                         CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
@@ -617,7 +621,6 @@ namespace KingdomGame {
                     }
 
                     if (isTurnOver) {
-                        CurrentState.ActionStack = new Stack<IAction>();
                         CurrentState.SelectedCard = null;
                         CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
@@ -630,7 +633,6 @@ namespace KingdomGame {
 
                     AdvanceTurn();
                     CurrentState.Phase = Phase.ACTION;
-                    CurrentState.ActionStack = new Stack<IAction>();
                     CurrentState.SelectedCard = null;
                     CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
