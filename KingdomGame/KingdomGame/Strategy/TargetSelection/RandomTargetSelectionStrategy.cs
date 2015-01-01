@@ -12,12 +12,11 @@ namespace KingdomGame {
         public IList<TTarget> SelectTargets<TTarget>(
           Game game, 
           Card card, 
-          IAction action, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          IAction action
         ) where TTarget : class, ITargetable {
             List<TTarget> validTargets = new List<TTarget>();
             foreach(TTarget target in action.GetAllPossibleTargets<TTarget>(game)) {
-                if (action.IsTargetValid<TTarget>(new List<TTarget>() { target }, card, game, previousActions)) {
+                if (action.IsTargetValid<TTarget>(new List<TTarget>() { target }, card, game)) {
                     validTargets.Add(target);
                 }
             }

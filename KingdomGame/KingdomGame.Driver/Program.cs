@@ -132,8 +132,7 @@ namespace KingdomGame.Driver {
                                 IAction actionToPlay = game.State.NextPendingAction;
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
                                   game.State.SelectedCard, 
-                                  game, 
-                                  game.State.PreviousActions
+                                  game
                                 );
 
                                 if (
@@ -299,8 +298,7 @@ namespace KingdomGame.Driver {
                         validTargetSpecified = action.IsTargetValid<ITargetable>(
                           selectedTargets, 
                           cardToPlay, 
-                          game, 
-                          game.State.PreviousActions
+                          game
                         );
 
                         if(!validTargetSpecified) {

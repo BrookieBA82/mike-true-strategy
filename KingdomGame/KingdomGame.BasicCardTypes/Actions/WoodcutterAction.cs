@@ -14,7 +14,7 @@ namespace KingdomGame.BasicCardTypes {
 
         }
 
-        protected override void ApplyInternal(IList<Player> players, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+        protected override void ApplyInternal(IList<Player> players, Game game) {
             if (players.Count > 0) {
                 players[0].RemainingBuys += 1;
                 players[0].RemainingMoney += 2;

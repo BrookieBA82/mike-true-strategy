@@ -14,20 +14,17 @@ namespace KingdomGame {
         bool IsTargetValid<TTarget>(
           IList<TTarget> targets, 
           Card targetingCard, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) where TTarget : class, ITargetable;
 
         void Apply<TTarget>(
           IList<TTarget> targets, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) where TTarget : class, ITargetable;
 
         IList<ITargetable> GetAllValidTargets(
           Card targetingCard, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         );
 
         IList<TTarget> GetAllPossibleTargets<TTarget>(Game game) where TTarget : class, ITargetable;

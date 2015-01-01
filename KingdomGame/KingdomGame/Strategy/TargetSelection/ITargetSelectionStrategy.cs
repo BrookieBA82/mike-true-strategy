@@ -12,8 +12,7 @@ namespace KingdomGame {
         IList<TTarget> SelectTargets<TTarget>(
           Game game, 
           Card card, 
-          IAction action, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          IAction action
         ) where TTarget : class, ITargetable;
 
     }

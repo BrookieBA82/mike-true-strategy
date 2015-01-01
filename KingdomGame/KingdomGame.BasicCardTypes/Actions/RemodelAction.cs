@@ -14,7 +14,7 @@ namespace KingdomGame.BasicCardTypes {
 
         }
 
-        protected override void ApplyInternal(IList<Card> cards, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+        protected override void ApplyInternal(IList<Card> cards, Game game) {
             if (cards.Count > 0) {
                 game.TrashCard(cards[0]);
             }
@@ -23,8 +23,7 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<Card> targetCards, 
           Card targetingCard, 
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (targetCards.Count > 0) {
                 return game.CurrentPlayer.Hand.Contains(targetCards[0]);
@@ -42,8 +41,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(
           IList<CardType> types, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (types.Count > 0) {
                 game.DealCard(types[0], game.CurrentPlayer, CardDestination.DISCARD);
@@ -53,13 +51,12 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<CardType> targets, 
           Card targetingCard, 
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (targets.Count > 0) {
                 bool trashFound = false;
                 int trashedCardCost = 0;
-                foreach (Pair<IAction, IList<int>> action in previousActions) {
+                foreach (Pair<IAction, IList<int>> action in game.State.PreviousActions) {
                     if (action.First is RemodelTrashingAction && action.Second.Count > 0) {
                         trashedCardCost = game.GetCardById(action.Second[0]).Type.Cost;
                         trashFound = true;

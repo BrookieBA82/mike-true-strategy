@@ -37,8 +37,7 @@ namespace KingdomGame {
         protected override bool IsTargetValidBase(
           Player target,
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if(((_playerTargetType & PlayerTargetType.SELF) == PlayerTargetType.NONE) 
               && target.Id == targetingCard.OwnerId) {

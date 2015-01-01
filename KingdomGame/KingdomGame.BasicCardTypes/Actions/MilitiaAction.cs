@@ -20,8 +20,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(
           IList<Player> players, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             foreach (Player player in players) {
                 IAction forcedDiscardAction = new MilitiaForcedDiscardAction(player.Id);
@@ -37,8 +36,7 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<Player> players, 
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             foreach (Player player in players) {
                 foreach (Card card in player.Hand) {
@@ -61,8 +59,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(
           IList<Player> players, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             Player player = game.GetPlayerById(_executingPlayerId.Value);
             IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[player.Id].
@@ -79,8 +76,7 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<Player> players, 
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             return true;
         }
@@ -94,8 +90,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(
           IList<Player> players,
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (players.Count > 0) {
                 players[0].RemainingMoney += 2;

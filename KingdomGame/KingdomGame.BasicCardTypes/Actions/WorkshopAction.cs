@@ -16,8 +16,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(
           IList<CardType> types,
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (types.Count > 0) {
                 game.DealCard(types[0], game.CurrentPlayer, CardDestination.DISCARD);
@@ -27,8 +26,7 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<CardType> targets, 
           Card targetingCard, 
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             if (targets.Count > 0) {
                 return targets[0].Cost <= 4;

@@ -50,8 +50,7 @@ namespace KingdomGame {
         public bool IsTargetValid<TType>(
           IList<TType> targetSet, 
           Card targetingCard, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) where TType : class, ITargetable {
             if(typeof(TType) == _targetType  || typeof(TType) == typeof(ITargetable)) {
                 IList<TTarget> typedTargetSet = new List<TTarget>();
@@ -84,8 +83,7 @@ namespace KingdomGame {
                     if (IsTargetValidBase(
                       target,
                       targetingCard, 
-                      game, 
-                      previousActions
+                      game
                     )) {
                         eligibleTargets.Add(target);
                     }
@@ -101,13 +99,12 @@ namespace KingdomGame {
                   eligibleTargets, 
                   allTypedTargets, 
                   targetingCard, 
-                  game, 
-                  previousActions
+                  game
                 )) {
                     return false;
                 }
 
-                return IsTargetValidInternal(typedTargetSet, targetingCard, game, previousActions);
+                return IsTargetValidInternal(typedTargetSet, targetingCard, game);
             }
 
             return false;
@@ -115,15 +112,14 @@ namespace KingdomGame {
 
         public void Apply<TType>(
           IList<TType> targetSet,
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) where TType : class, ITargetable {
             if(typeof(TType) == _targetType) {
                 IList<TTarget> typedTargetSet = (targetSet != null && targetSet.Count > 0) 
                   ? targetSet as IList<TTarget> 
                   : new List<TTarget>();
 
-                ApplyInternal(typedTargetSet, game, previousActions);
+                ApplyInternal(typedTargetSet, game);
             }
             else {
                 throw new InvalidOperationException(string.Format(
@@ -136,12 +132,11 @@ namespace KingdomGame {
 
         public IList<ITargetable> GetAllValidTargets(
           Card targetingCard, 
-          Game game, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
             foreach (ITargetable target in GetAllPossibleTargets<ITargetable>(game)) {
-                if (IsTargetValid<ITargetable>(new List<ITargetable>() { target }, targetingCard, game, previousActions)) {
+                if (IsTargetValid<ITargetable>(new List<ITargetable>() { target }, targetingCard, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -207,9 +202,7 @@ namespace KingdomGame {
 
         protected abstract void ApplyInternal(
           IList<TTarget> target, 
-          Game game, 
-          IList<Pair<IAction, 
-          IList<int>>> previousActions
+          Game game
         );
 
         protected abstract IList<TTarget> GetAllPossibleTargetsBase(Game game);
@@ -217,8 +210,7 @@ namespace KingdomGame {
         protected virtual bool IsTargetValidBase(
           TTarget target,
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             return true;
         }
@@ -226,8 +218,7 @@ namespace KingdomGame {
         protected virtual bool IsTargetValidInternal(
           IList<TTarget> targets, 
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             return true;
         }
@@ -237,15 +228,13 @@ namespace KingdomGame {
           IList<TTarget> eligibleTargets,
           IList<TTarget> allTargets,
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             foreach (TTarget target in allTargets) {
                 bool isValidTarget = IsTargetValidInternal(
                   new List<TTarget>() { target }, 
                   targetingCard, 
-                  game, 
-                  previousActions
+                  game
                 );
 
                 if (eligibleTargets.Contains(target) && (isValidTarget != targetSetToCheck.Contains(target))) {

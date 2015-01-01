@@ -14,7 +14,7 @@ namespace KingdomGame.BasicCardTypes {
 
         }
 
-        protected override void ApplyInternal(IList<Card> cards, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+        protected override void ApplyInternal(IList<Card> cards, Game game) {
             foreach (Card card in cards) {
                 game.CurrentPlayer.DiscardCard(card);
             }
@@ -23,8 +23,7 @@ namespace KingdomGame.BasicCardTypes {
         protected override bool IsTargetValidInternal(
           IList<Card> targetCards, 
           Card targetingCard, 
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             foreach (Card card in targetCards) {
                 if (!game.CurrentPlayer.Hand.Contains(card)) {
@@ -42,9 +41,9 @@ namespace KingdomGame.BasicCardTypes {
 
         }
 
-        protected override void ApplyInternal(IList<Player> players, Game game, IList<Pair<IAction, IList<int>>> previousActions) {
+        protected override void ApplyInternal(IList<Player> players, Game game) {
             if (players.Count > 0) {
-                players[0].Draw(previousActions[0].Second.Count);
+                players[0].Draw(game.State.PreviousActions[0].Second.Count);
                 players[0].RemainingActions++;
             }
         }

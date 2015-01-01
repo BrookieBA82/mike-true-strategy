@@ -30,8 +30,7 @@ namespace KingdomGame {
         protected override bool IsTargetValidBase(
           CardType target,
           Card targetingCard,
-          Game game,
-          IList<Pair<IAction, IList<int>>> previousActions
+          Game game
         ) {
             return !(_requireTypesAvailableForAcquisition 
               && (game.GetCardsByType(target) == null || game.GetCardsByType(target).Count == 0));

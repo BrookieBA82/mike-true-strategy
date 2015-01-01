@@ -47,15 +47,14 @@ namespace KingdomGame {
         public IList<TTarget> SelectTargets<TTarget>(
           Game game, 
           Card card, 
-          IAction action, 
-          IList<Pair<IAction, IList<int>>> previousActions
+          IAction action
         ) where TTarget : class, ITargetable {
             if (typeof(TTarget).Equals(_targetType)) {
                 IList<TTarget> targets = new List<TTarget>();
                 foreach (ITargetable target in _targets) {
                     targets.Add(target as TTarget);
                 }
-                return action.IsTargetValid<TTarget>(targets, card, game, previousActions)
+                return action.IsTargetValid<TTarget>(targets, card, game)
                   ? targets
                   : new List<TTarget>();
             }
