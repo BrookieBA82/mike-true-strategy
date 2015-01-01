@@ -9,10 +9,9 @@ namespace KingdomGame {
 
     public class Game : ICloneable, ICardOwner {
 
-        // Refactor - (MT): Push this into the new Game State object.
         public enum Phase {
-            ACTION = 1,
-            TARGET = 2,
+            PLAY = 1,
+            ACTION = 2,
             BUY = 3,
             ADVANCE = 4,
             END = 5
@@ -43,7 +42,7 @@ namespace KingdomGame {
                 get { return (_selectedCardId.HasValue) ? _game.GetCardById(_selectedCardId.Value) : null; }
                 set {
                     if (value != null) {
-                        if (Phase != Phase.ACTION) {
+                        if (Phase != Phase.PLAY) {
                             throw new InvalidOperationException(
                               "Cannot set a selected card outside of the action phase.");
                         }
@@ -66,7 +65,7 @@ namespace KingdomGame {
 
             public State(Game game) {
                 _game = game;
-                _phase = Phase.ACTION;
+                _phase = Phase.PLAY;
                 _actionStack = new Stack<IAction>();
             }
 
@@ -460,7 +459,7 @@ namespace KingdomGame {
         public void PlayStep() {
             switch (CurrentState.Phase) {
 
-                case Phase.ACTION:
+                case Phase.PLAY:
 
                     bool advanceToBuy = true;
                     if (CurrentPlayer.RemainingActions > 0) {
@@ -469,9 +468,9 @@ namespace KingdomGame {
 
                         if (cardToPlay != null) {
                             CurrentState.SelectedCard = cardToPlay;
-                            Logger.Instance.RecordCardSelection(this, CurrentPlayer, cardToPlay);
+                            Logger.Instance.RecordPlay(this, CurrentPlayer, cardToPlay);
 
-                            CurrentState.Phase = Phase.TARGET;
+                            CurrentState.Phase = Phase.ACTION;
                             for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
                                 CurrentState.ActionStack.Push(cardToPlay.Type.Actions[actionIndex]);
                             }
@@ -494,7 +493,7 @@ namespace KingdomGame {
 
                     break;
 
-                case Phase.TARGET:
+                case Phase.ACTION:
 
                     if (CurrentState.SelectedCard != null) {
 
@@ -526,7 +525,7 @@ namespace KingdomGame {
 
                             List<int> targetIds = new List<int>();
                             if (targetPlayers.Count > 0) {
-                                Logger.Instance.RecordTargetSelection(
+                                Logger.Instance.RecordAction(
                                   this, 
                                   CurrentPlayer, 
                                   CurrentState.SelectedCard, 
@@ -538,7 +537,7 @@ namespace KingdomGame {
                                 targetIds.AddRange(new List<Player>(targetPlayers)
                                   .ConvertAll<int>(delegate (Player player) { return player.Id;}));
                             } else if (targetCards.Count > 0) {
-                                Logger.Instance.RecordTargetSelection(
+                                Logger.Instance.RecordAction(
                                   this, 
                                   CurrentPlayer, 
                                   CurrentState.SelectedCard, 
@@ -550,7 +549,7 @@ namespace KingdomGame {
                                 targetIds.AddRange(new List<Card>(targetCards)
                                   .ConvertAll<int>(delegate (Card card) { return card.Id;}));
                             } else if (targetTypes.Count > 0) {
-                                Logger.Instance.RecordTargetSelection(
+                                Logger.Instance.RecordAction(
                                   this, 
                                   CurrentPlayer, 
                                   CurrentState.SelectedCard, 
@@ -569,7 +568,7 @@ namespace KingdomGame {
 
                         if (CurrentState.ActionStack.Count == 0) {
                             if (CurrentPlayer.RemainingActions > 0) {
-                                CurrentState.Phase = Phase.ACTION;
+                                CurrentState.Phase = Phase.PLAY;
                             } else {
                                 CurrentState.Phase = Phase.BUY;
                             }
@@ -632,7 +631,7 @@ namespace KingdomGame {
                     Logger.Instance.RecordEndOfTurn(this);
 
                     AdvanceTurn();
-                    CurrentState.Phase = Phase.ACTION;
+                    CurrentState.Phase = Phase.PLAY;
                     CurrentState.SelectedCard = null;
                     CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
@@ -761,7 +760,7 @@ namespace KingdomGame {
             _strategy.BuyingStrategy = new RandomBuyingStrategy();
 
             _state = new State(this);
-            _state.Phase = Phase.ACTION;
+            _state.Phase = Phase.PLAY;
             _state.SelectedCard = null;
             _state.PreviousActions = new List<Pair<IAction, IList<int>>>();
 

@@ -120,11 +120,11 @@ namespace KingdomGame.Driver {
             do {
 
                 switch (game.CurrentState.Phase) {
-                    case Game.Phase.ACTION:
-                        ExecuteHumanPlayerAction(game);
+                    case Game.Phase.PLAY:
+                        ExecuteHumanPlayerPlay(game);
                         break;
 
-                    case Game.Phase.TARGET:
+                    case Game.Phase.ACTION:
 
                         if (game.CurrentState.SelectedCard != null) {
 
@@ -141,12 +141,12 @@ namespace KingdomGame.Driver {
                                   && !IsPlayerHuman(game.GetPlayerById(actionToPlay.ExecutingPlayerId.Value))
                                 ) {
                                     game.PlayStep();
-                                    GameHistory.Target target = Logger.Instance.GetLastTarget(game);
-                                    PrintTarget(target);
+                                    GameHistory.Action target = Logger.Instance.GetLastAction(game);
+                                    PrintAction(target);
                                     Console.WriteLine();
                                 }
                                 else if (validTargets.Count > 0) {
-                                    ExecuteHumanPlayerTarget(
+                                    ExecuteHumanPlayerAction(
                                       game, 
                                       game.CurrentState.SelectedCard,
                                       actionToPlay, 
@@ -191,7 +191,7 @@ namespace KingdomGame.Driver {
             Console.WriteLine("\n");
         }
 
-        private static void ExecuteHumanPlayerAction(Game game) {
+        private static void ExecuteHumanPlayerPlay(Game game) {
             int optionCounter = 2;
             IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>() {{"1", "<no action>"}};
             IDictionary<string, Card> optionsByIndex = new Dictionary<string, Card>() { { "1", null } };
@@ -226,7 +226,7 @@ namespace KingdomGame.Driver {
             game.CurrentStrategy.CardSelectionStrategy = originalStrategy;
         }
 
-        private static void ExecuteHumanPlayerTarget(
+        private static void ExecuteHumanPlayerAction(
           Game game, 
           Card cardToPlay,
           IAction action, 
@@ -535,14 +535,14 @@ namespace KingdomGame.Driver {
             Console.WriteLine(string.Format("\tPlay #{0}: {1} ({2})", playNumber, play.Card.TypeName, play.Card.Id));
 
             int targetNumber = 1;
-            foreach (GameHistory.Target target in play.Targets) {
-                PrintTarget(target, targetNumber);
+            foreach (GameHistory.Action target in play.Actions) {
+                PrintAction(target, targetNumber);
                 targetNumber++;
             }
         }
 
-        private static void PrintTarget(GameHistory.Target target) {
-            Console.WriteLine(string.Format("\tAction summary for {0}:", target.Action.DisplayName));
+        private static void PrintAction(GameHistory.Action target) {
+            Console.WriteLine(string.Format("\tAction summary for {0}:", target.Command.DisplayName));
             if (target.PlayerTargets.Count > 0) {
                 foreach (GameHistory.PlayerInfo player in target.PlayerTargets) {
                     Console.WriteLine(string.Format("\t\t{0} ({1})", player.Name, player.Id));
@@ -555,8 +555,8 @@ namespace KingdomGame.Driver {
             }
         }
 
-        private static void PrintTarget(GameHistory.Target target, int targetNumber) {
-            Console.WriteLine(string.Format("\t\tAction #{0}: {1}", targetNumber, target.Action.DisplayName));
+        private static void PrintAction(GameHistory.Action target, int targetNumber) {
+            Console.WriteLine(string.Format("\t\tAction #{0}: {1}", targetNumber, target.Command.DisplayName));
             if (target.PlayerTargets.Count > 0) {
                 foreach (GameHistory.PlayerInfo player in target.PlayerTargets) {
                     Console.WriteLine(string.Format("\t\t\t{0} ({1})", player.Name, player.Id));

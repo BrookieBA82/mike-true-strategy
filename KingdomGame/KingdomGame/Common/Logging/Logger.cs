@@ -34,7 +34,7 @@ namespace KingdomGame {
             }
         }
 
-        public void RecordCardSelection(Game game, Player player, Card card) {
+        public void RecordPlay(Game game, Player player, Card card) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
@@ -47,7 +47,7 @@ namespace KingdomGame {
         }
 
         // Refactor - (MT): Turn these three functions into a single generic one.
-        public void RecordTargetSelection(Game game, Player player, Card card, IAction action, IList<Player> playerTargets) {
+        public void RecordAction(Game game, Player player, Card card, IAction action, IList<Player> playerTargets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
@@ -57,12 +57,12 @@ namespace KingdomGame {
                 GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Targets.Add(new GameHistory.Target(player, card, action, playerTargets, null, null));
+                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, playerTargets, null, null));
                 }
             }
         }
 
-        public void RecordTargetSelection(Game game, Player player, Card card, IAction action, IList<Card> cardTargets) {
+        public void RecordAction(Game game, Player player, Card card, IAction action, IList<Card> cardTargets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
@@ -72,12 +72,12 @@ namespace KingdomGame {
                 GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Targets.Add(new GameHistory.Target(player, card, action, null, cardTargets, null));
+                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, cardTargets, null));
                 }
             }
         }
 
-        public void RecordTargetSelection(
+        public void RecordAction(
           Game game, 
           Player player, 
           Card card, 
@@ -93,7 +93,7 @@ namespace KingdomGame {
                 GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Targets.Add(new GameHistory.Target(player, card, action, null, null, typeTargets));
+                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, null, typeTargets));
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace KingdomGame {
             }
         }
 
-        public void UpdateLastTarget(Game game, IList<Player> playerTargets, IList<Card> cardTargets) {
+        public void UpdateLastAction(Game game, IList<Player> playerTargets, IList<Card> cardTargets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (history.TurnsByNumber.Count > 0) {
@@ -136,9 +136,9 @@ namespace KingdomGame {
                     GameHistory.Turn lastTurn = history.TurnsByNumber[maxTurn];
                     if (lastTurn.Plays.Count > 0) {
                         GameHistory.Play lastPlay = lastTurn.Plays[lastTurn.Plays.Count - 1];
-                        if (lastPlay.Targets.Count > 0) {
-                             GameHistory.Target target = lastPlay.Targets[lastPlay.Targets.Count - 1];
-                            target.SetTargets(
+                        if (lastPlay.Actions.Count > 0) {
+                            GameHistory.Action action = lastPlay.Actions[lastPlay.Actions.Count - 1];
+                            action.SetTargets(
                               (playerTargets != null) ? new List<Player>(playerTargets) : new List<Player>(),
                               (cardTargets!= null) ? new List<Card>(cardTargets) : new List<Card>()
                             );
@@ -189,11 +189,11 @@ namespace KingdomGame {
             return null;
         }
 
-        public GameHistory.Target GetLastTarget(Game game) {
+        public GameHistory.Action GetLastAction(Game game) {
             GameHistory.Play lastPlay = this.GetLastPlay(game);
             if (lastPlay != null) {
-                if (lastPlay.Targets.Count > 0) {
-                    return new GameHistory.Target(lastPlay.Targets[lastPlay.Targets.Count - 1]);
+                if (lastPlay.Actions.Count > 0) {
+                    return new GameHistory.Action(lastPlay.Actions[lastPlay.Actions.Count - 1]);
                 }
             }
 

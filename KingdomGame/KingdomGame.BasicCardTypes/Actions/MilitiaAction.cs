@@ -73,7 +73,7 @@ namespace KingdomGame.BasicCardTypes {
             }
 
             // Modify the history so the effective target for this action are the discarded cards:
-            Logger.Instance.UpdateLastTarget(game, null, cardsToDiscard);
+            Logger.Instance.UpdateLastAction(game, null, cardsToDiscard);
         }
 
         protected override bool IsTargetValidInternal(

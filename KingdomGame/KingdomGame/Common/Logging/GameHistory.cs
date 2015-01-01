@@ -111,15 +111,15 @@ namespace KingdomGame {
             public CardInfo Card { get; set; }
 
             [XmlArray("targets")]
-            public List<Target> Targets { get; private set; }
+            public List<Action> Actions { get; private set; }
 
             public Play() {
 
             }
 
             public Play(Play toClone) : this(toClone.Player, toClone.Card) {
-                foreach (Target target in toClone.Targets) {
-                    Targets.Add(new Target(target));
+                foreach (Action target in toClone.Actions) {
+                    Actions.Add(new Action(target));
                 }
             }
 
@@ -130,12 +130,12 @@ namespace KingdomGame {
             public Play(Player player, CardInfo card) {
                 Player = player.Clone() as Player;
                 Card = new CardInfo(card);
-                Targets = new List<Target>();
+                Actions = new List<Action>();
             }
         }
 
         [XmlType("action")]
-        public class Target {
+        public class Action {
             
             private IList<Player> _playerTargets;
             private IList<Card> _cardTargets;
@@ -148,11 +148,11 @@ namespace KingdomGame {
             public Card Card { get; private set; }
 
             [XmlIgnore()]
-            public IAction Action { get; private set; }
+            public IAction Command { get; private set; }
 
             [XmlAttribute("name")]
             public string Name  { 
-                get { return Action.DisplayName; }
+                get { return Command.DisplayName; }
                 set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
             }
 
@@ -198,14 +198,14 @@ namespace KingdomGame {
                 set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
             }
 
-            public Target() {
+            public Action() {
 
             }
 
-            public Target(Target toClone) : this(
+            public Action(Action toClone) : this(
               toClone.Player,
               toClone.Card,
-              toClone.Action,
+              toClone.Command,
               new List<Player>(toClone._playerTargets).ConvertAll<Player>(delegate(Player player) { return player.Clone() as Player; }),
               new List<Card>(toClone._cardTargets),
               new List<CardType>(toClone._typeTargets)
@@ -213,7 +213,7 @@ namespace KingdomGame {
 
             }
 
-            public Target(
+            public Action(
               Player player, 
               Card card, 
               IAction action, 
@@ -223,7 +223,7 @@ namespace KingdomGame {
             ){
                 Player = player.Clone() as Player;
                 Card = card;
-                Action = action;
+                Command = action;
                 _playerTargets = playerTargets ?? new List<Player>();
                 _cardTargets = cardTargets ?? new List<Card>();
                 _typeTargets = typeTargets ?? new List<CardType>();
