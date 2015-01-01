@@ -60,22 +60,6 @@ namespace KingdomGame {
 
             public int TurnNumber { get { return _turnNumber; } }
 
-            // Refactor - (MT): Turn this into a list of methods which record actions and do searches.
-            public IList<Pair<IAction, IList<int>>> PreviousActions {
-                get {
-                    Stack<Pair<IAction, IList<int>>> copiedStack 
-                      = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
-                    IList<Pair<IAction, IList<int>>> previousActions = new List<Pair<IAction, IList<int>>>();
-
-                    while (copiedStack.Count > 0) {
-                        Pair<IAction, IList<int>> previousAction = copiedStack.Pop();
-                        previousActions.Add(previousAction);
-                    }
-
-                    return previousActions; 
-                }
-            }
-
             public GameState(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
@@ -136,6 +120,24 @@ namespace KingdomGame {
 
                 IAction pendingAction = _pendingActionStack.Pop();
                 _executedActionStack.Push(new Pair<IAction, IList<int>>(pendingAction, targetIds));
+            }
+
+            public Pair<IAction, IList<int>>? GetLastExecutedAction(Type actionType) {
+                if (actionType == null) {
+                    throw new ArgumentNullException("Cannot get the last executed action without a non-null type.");
+                }
+
+                Stack<Pair<IAction, IList<int>>> copiedStack 
+                  = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
+
+                while (copiedStack.Count > 0) {
+                    Pair<IAction, IList<int>> candidateAction = copiedStack.Pop();
+                    if(candidateAction.First.GetType().Equals(actionType)) {
+                        return candidateAction;
+                    }
+                }
+
+                return null;
             }
 
             public override bool Equals(object obj) {
