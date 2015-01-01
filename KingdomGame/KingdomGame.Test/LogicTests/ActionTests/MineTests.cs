@@ -37,7 +37,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -49,7 +49,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -68,26 +68,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsTrue(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should contain the gained card (a silver) after a mine is played."
             );
             Assert.AreEqual(
@@ -102,7 +102,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained one money as a result of playing a mine."
             );
         }
@@ -122,7 +122,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -134,7 +134,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -153,26 +153,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsTrue(
-              game.CurrentPlayer.Hand.Contains(copperCard),
+              game.State.CurrentPlayer.Hand.Contains(copperCard),
               "The hand should contain the gained card (a copper) after a mine is played."
             );
             Assert.AreEqual(
@@ -187,7 +187,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money as a result of playing a mine to get the same card."
             );
         }
@@ -207,7 +207,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -229,26 +229,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should not contain the gained card (a silver) after a mine is played."
             );
             Assert.AreEqual(
@@ -258,7 +258,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine had no valid target."
             );
         }
@@ -279,7 +279,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -292,7 +292,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash a non-valid card the first action:
             Card estateCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -309,26 +309,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should not contain the gained card (a silver) after a mine is played."
             );
             Assert.AreEqual(
@@ -338,7 +338,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine had no valid target."
             );
         }
@@ -359,7 +359,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -372,7 +372,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash multiple the first action:
             IList<Card> copperCards = new List<Card>();
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCards.Add(card);
                 }
@@ -389,26 +389,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should not contain the gained card (a silver) after a mine is played after multiple discards."
             );
             Assert.AreEqual(
@@ -418,7 +418,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine was played with multiple discards."
             );
         }
@@ -439,7 +439,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -452,7 +452,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash duplicate cards the first action:
             IList<Card> copperCards = new List<Card>();
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCards.Add(card);
                     copperCards.Add(card);
@@ -471,26 +471,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should not contain the gained card (a silver) after a mine is played after duplicate discards."
             );
             Assert.AreEqual(
@@ -500,7 +500,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine was played with duplicate discards."
             );
         }
@@ -526,7 +526,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -539,7 +539,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash a card from the deck as the first action:
             Card copperCard = null;
-            foreach (Card card in game.CurrentPlayer.Deck) {
+            foreach (Card card in game.State.CurrentPlayer.Deck) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -556,26 +556,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a mine is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(silverCard),
+              game.State.CurrentPlayer.Hand.Contains(silverCard),
               "The hand should not contain the gained card (a silver) after a mine is played."
             );
             Assert.AreEqual(
@@ -585,7 +585,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine had no valid target."
             );
         }
@@ -606,7 +606,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -618,7 +618,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -637,26 +637,26 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a mine is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(goldCard),
+              game.State.CurrentPlayer.Hand.Contains(goldCard),
               "The hand should not contain the gained card (a gold) after a mine is played."
             );
             Assert.AreEqual(
@@ -671,7 +671,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine had no valid acquisition target."
             );
         }
@@ -692,7 +692,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -704,7 +704,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -724,30 +724,30 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a mine is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(firstCard),
+              game.State.CurrentPlayer.Hand.Contains(firstCard),
               "The hand should not contain the gained card (a silver) after a mine is played on multiple targets."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(secondCard),
+              game.State.CurrentPlayer.Hand.Contains(secondCard),
               "The hand should not contain the gained card (a silver) after a mine is played on multiple targets."
             );
             Assert.AreEqual(
@@ -762,7 +762,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have not gained any money if the mine had no valid acquisition target."
             );
         }
@@ -784,7 +784,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -796,7 +796,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -814,22 +814,22 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a mine is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.AreEqual(
@@ -844,7 +844,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have lost money if the mine had no valid acquisition target."
             );
         }
@@ -865,7 +865,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card mineCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMine)) {
                     mineCard = card;
                     break;
@@ -877,7 +877,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card copperCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -895,22 +895,22 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a mine is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a mine is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a mine is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMine, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a mine after it's been played."
             );
             Assert.AreEqual(
@@ -925,7 +925,7 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have lost money if the mine had no valid acquisition target."
             );
         }

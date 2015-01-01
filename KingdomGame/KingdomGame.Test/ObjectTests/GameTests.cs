@@ -121,7 +121,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card village = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     village = card;
                     break;
@@ -131,7 +131,7 @@ namespace KingdomGame.Test
             game.State.SelectedCard = village;
             game.State.Phase = Game.Phase.ACTION;
             game.State.AddPendingAction(village.Type.Actions[0]);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
@@ -156,8 +156,8 @@ namespace KingdomGame.Test
             game.AdvanceTurn();
 
             Assert.AreNotEqual(
-              game.CurrentPlayer, 
-              clone.CurrentPlayer, 
+              game.State.CurrentPlayer, 
+              clone.State.CurrentPlayer, 
               "Game should not match its clone on current player after advancing the turn."
             );
         }
@@ -208,8 +208,8 @@ namespace KingdomGame.Test
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after advancing the turn.");
             Assert.AreNotEqual(
-              game.CurrentPlayer, 
-              clone.CurrentPlayer, 
+              game.State.CurrentPlayer, 
+              clone.State.CurrentPlayer, 
               "Game's current player should not match that of its clone after advancing the turn."
             );
         }
@@ -261,7 +261,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateSimpleGame(2);
             game.CurrentStrategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(game.CurrentPlayer.Hand[0]);
+            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(game.State.CurrentPlayer.Hand[0]);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its card selection strategy.");
  
@@ -274,7 +274,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateSimpleGame(2);
             game.CurrentStrategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its target selection strategy.");
 
@@ -286,7 +286,7 @@ namespace KingdomGame.Test
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestStrategyPhaseChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.CurrentPlayer.StartTurn();
+            game.State.CurrentPlayer.StartTurn();
             Game clone = game.Clone() as Game;
 
             Assert.AreEqual(game, clone, "Game should match its clone after each have started a turn.");
@@ -310,7 +310,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card firstVillage = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     firstVillage = card;
                     break;
@@ -321,7 +321,7 @@ namespace KingdomGame.Test
             Game clone = game.Clone() as Game;
 
             Card secondVillage = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (!card.Equals(firstVillage) && card.Type.Equals(TestSetup.CardTypeVillage)) {
                     secondVillage = card;
                     break;
@@ -348,7 +348,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card villageCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     villageCard = card;
                     break;
@@ -357,7 +357,7 @@ namespace KingdomGame.Test
 
             Game clone = game.Clone() as Game;
 
-            game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.CurrentPlayer.Id] = 
+            game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id] = 
               new ScriptedDiscardingStrategy(new List<Card>() {villageCard});
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after cards to discard are changed.");
@@ -382,7 +382,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -421,7 +421,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card villageCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     villageCard = card;
                     break;
@@ -432,7 +432,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             clone.CurrentStrategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
 

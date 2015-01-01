@@ -42,27 +42,27 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "Two actions should remain after a village is played."
             );
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a village is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -82,27 +82,27 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "Two actions should remain after a village is played."
             );
             Assert.AreEqual(
               4, 
-              game.CurrentPlayer.Hand.Count, 
+              game.State.CurrentPlayer.Hand.Count, 
               "A hand without a village should remain after a village is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -126,30 +126,30 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
-            game.CurrentPlayer.RemainingActions = 2;
+            game.State.CurrentPlayer.RemainingActions = 2;
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               3, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "Three actions should remain after a village is played if two were available beforehand."
             );
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a village is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -180,22 +180,22 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a village is played on no target."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand without a village should remain after a village is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -229,12 +229,12 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a village is played on an invalid target."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a village is played on an invalid target."
             );
             Assert.AreEqual(
@@ -244,12 +244,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played on an invalid target."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -283,12 +283,12 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a village is played on a multiple target set."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a village is played on a multiple target set."
             );
             Assert.AreEqual(
@@ -298,12 +298,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played a multiple target set."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }
@@ -331,28 +331,28 @@ namespace KingdomGame.Test
 
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null,
-              new List<Player>() { game.CurrentPlayer, game.CurrentPlayer}
+              new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a village is played on a duplicate target set."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a village is played on a duplicate target set."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a village is played a duplicate target set."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a village after one is played."
             );
         }

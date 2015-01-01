@@ -35,7 +35,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -53,32 +53,32 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             Assert.AreEqual(
@@ -109,7 +109,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -127,32 +127,32 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             Assert.AreEqual(
@@ -184,7 +184,7 @@ namespace KingdomGame.Test
             game.DealCard(TestSetup.CardTypeMoat, game.Players[1], CardDestination.HAND);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -202,36 +202,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -282,7 +282,7 @@ namespace KingdomGame.Test
             game.TrashCard(partialHandPlayer.Hand[0]);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -300,36 +300,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -392,7 +392,7 @@ namespace KingdomGame.Test
             game.TrashCard(partialHandPlayer.Hand[0]);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -410,36 +410,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -497,7 +497,7 @@ namespace KingdomGame.Test
             game.DealCard(TestSetup.CardTypeMoat, game.Players[1], CardDestination.HAND);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -509,47 +509,47 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Forcing the discard action (specifying the current player, which should fail):
-            IList<Player> playersToDiscard = new List<Player>() { game.CurrentPlayer, game.Players[2], game.Players[3] };
+            IList<Player> playersToDiscard = new List<Player>() { game.State.CurrentPlayer, game.Players[2], game.Players[3] };
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The player should not have discarded any cards as the result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -583,7 +583,7 @@ namespace KingdomGame.Test
             game.DealCard(TestSetup.CardTypeMoat, game.Players[1], CardDestination.HAND);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -601,36 +601,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -664,7 +664,7 @@ namespace KingdomGame.Test
             game.DealCard(TestSetup.CardTypeMoat, game.Players[1], CardDestination.HAND);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -682,36 +682,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -745,7 +745,7 @@ namespace KingdomGame.Test
             game.DealCard(TestSetup.CardTypeMoat, game.Players[1], CardDestination.HAND);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -763,36 +763,36 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two money as a result of playing a militia."
             );
             foreach (Player player in game.Players) {
-                if (player.Equals(game.CurrentPlayer)) {
+                if (player.Equals(game.State.CurrentPlayer)) {
                     continue;
                 }
 
@@ -824,7 +824,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -853,32 +853,32 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               5, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained two additional money as a result of playing a militia."
             );
             Assert.AreEqual(
@@ -912,7 +912,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -935,27 +935,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained no money if the militia's gain action is performed on an invalid target."
             );
             Assert.AreEqual(
@@ -989,7 +989,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -1013,27 +1013,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained no money if the militia's gain action is performed on an invalid target set."
             );
             Assert.AreEqual(
@@ -1067,7 +1067,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -1086,32 +1086,32 @@ namespace KingdomGame.Test
 
             // Performing the monetary gain action on duplicate players:
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer, game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a militia is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a militia is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a militia is played."
             );
             Assert.AreEqual(
               militiaCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a militia after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingMoney, 
+              game.State.CurrentPlayer.RemainingMoney, 
               "The player should have gained no money if the militia's gain action is performed on an invalid target set."
             );
             Assert.AreEqual(

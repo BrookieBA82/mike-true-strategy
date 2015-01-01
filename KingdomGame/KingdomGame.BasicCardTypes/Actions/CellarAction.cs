@@ -16,7 +16,7 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(IList<Card> cards, Game game) {
             foreach (Card card in cards) {
-                game.CurrentPlayer.DiscardCard(card);
+                game.State.CurrentPlayer.DiscardCard(card);
             }
         }
 
@@ -26,7 +26,7 @@ namespace KingdomGame.BasicCardTypes {
           Game game
         ) {
             foreach (Card card in targetCards) {
-                if (!game.CurrentPlayer.Hand.Contains(card)) {
+                if (!game.State.CurrentPlayer.Hand.Contains(card)) {
                     return false;
                 }
             }

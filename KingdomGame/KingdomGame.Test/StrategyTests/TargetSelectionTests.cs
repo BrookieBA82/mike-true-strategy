@@ -37,7 +37,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card village = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     village = card;
                     break;
@@ -72,7 +72,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card village = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     village = card;
                     break;
@@ -88,7 +88,7 @@ namespace KingdomGame.Test
             );
 
             Assert.AreEqual(1, targets.Count, "Villages can only target the current player.");
-            Assert.AreEqual(game.CurrentPlayer, targets[0], "Villages can only target the current player.");
+            Assert.AreEqual(game.State.CurrentPlayer, targets[0], "Villages can only target the current player.");
         }
 
         [TestCategory("TargetSelectionTest"), TestMethod]
@@ -106,7 +106,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card village = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     village = card;
                     break;
@@ -139,7 +139,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(3, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -173,7 +173,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(3, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card militiaCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeMilitia)) {
                     militiaCard = card;
                     break;
@@ -206,7 +206,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card village = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     village = card;
                     break;
@@ -217,7 +217,7 @@ namespace KingdomGame.Test
             game.State.Phase = Game.Phase.ACTION;
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<Card>(), 
-              new List<Player>() {game.CurrentPlayer, game.CurrentPlayer}
+              new List<Player>() {game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
             IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
               game, 
@@ -243,7 +243,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card workshop = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeWorkshop)) {
                     workshop = card;
                     break;
@@ -278,7 +278,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card cellar = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellar = card;
                     break;
@@ -286,7 +286,7 @@ namespace KingdomGame.Test
             }
 
             Card estate = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estate = card;
                     break;
@@ -322,7 +322,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card cellar = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellar = card;
                     break;
@@ -330,7 +330,7 @@ namespace KingdomGame.Test
             }
 
             Card estate = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estate = card;
                     break;
@@ -366,7 +366,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card workshop = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeWorkshop)) {
                     workshop = card;
                     break;
@@ -403,7 +403,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card workshop = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeWorkshop)) {
                     workshop = card;
                     break;
@@ -440,7 +440,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card workshop = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeWorkshop)) {
                     workshop = card;
                     break;
@@ -483,7 +483,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -491,7 +491,7 @@ namespace KingdomGame.Test
             }
 
             IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCards.Add(card);
                 }
@@ -535,7 +535,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -543,7 +543,7 @@ namespace KingdomGame.Test
             }
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -590,7 +590,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -598,7 +598,7 @@ namespace KingdomGame.Test
             }
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;

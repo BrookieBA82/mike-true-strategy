@@ -44,13 +44,13 @@ namespace KingdomGame.Test
             Card smithyCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeSmithy);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               7,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand with two extra cards should remain after a smithy is played."
             );
         }
@@ -77,13 +77,13 @@ namespace KingdomGame.Test
             Card smithyCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeSmithy);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               6,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand with an extra card should remain after a smithy is played with only two cards left to draw."
             );
         }
@@ -116,7 +116,7 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand without a smithy should remain after a smithy is played with no target."
             );
         }
@@ -152,7 +152,7 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a smithy is played on an invalid target."
             );
             Assert.AreEqual(
@@ -193,7 +193,7 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a smithy is played on a multiple target set."
             );
             Assert.AreEqual(
@@ -227,14 +227,14 @@ namespace KingdomGame.Test
 
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null,
-              new List<Player>() { game.CurrentPlayer, game.CurrentPlayer}
+              new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
             game.PlayStep();
             
             TestUtilities.ConfirmCardPlayed(game, smithyCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a smithy is played on a duplicate target set."
             );
         }

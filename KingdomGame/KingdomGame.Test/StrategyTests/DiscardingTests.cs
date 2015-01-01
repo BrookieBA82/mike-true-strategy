@@ -32,9 +32,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card onlyCardInHand = game.CurrentPlayer.Hand[0];
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 1);
+            Card onlyCardInHand = game.State.CurrentPlayer.Hand[0];
+            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
+              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
 
             Assert.AreEqual(
               1, 
@@ -57,8 +57,8 @@ namespace KingdomGame.Test
             Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 1);
+            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
+              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
 
             Assert.AreEqual(
               0, 
@@ -76,9 +76,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card onlyCardInHand = game.CurrentPlayer.Hand[0];
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 2);
+            Card onlyCardInHand = game.State.CurrentPlayer.Hand[0];
+            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
+              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
 
             Assert.AreEqual(
               0, 
@@ -100,7 +100,7 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             IDiscardingStrategy strategy = new ScriptedDiscardingStrategy(new List<Card>());
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 0);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 0);
 
             Assert.AreEqual(
               0, 
@@ -120,9 +120,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card secondCardInHand = game.CurrentPlayer.Hand[1];
+            Card secondCardInHand = game.State.CurrentPlayer.Hand[1];
             IDiscardingStrategy strategy = new ScriptedDiscardingStrategy(new List<Card>() {secondCardInHand});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 1);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
 
             Assert.AreEqual(
               1, 
@@ -150,11 +150,11 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeSilver.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card secondCardInHand = game.CurrentPlayer.Hand[1];
-            Card fourthCardInHand = game.CurrentPlayer.Hand[3];
+            Card secondCardInHand = game.State.CurrentPlayer.Hand[1];
+            Card fourthCardInHand = game.State.CurrentPlayer.Hand[3];
             IDiscardingStrategy strategy = 
               new ScriptedDiscardingStrategy(new List<Card>() {secondCardInHand, fourthCardInHand});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 2);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
 
             Assert.AreEqual(
               2, 
@@ -186,10 +186,10 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeSilver.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card secondCardInHand = game.CurrentPlayer.Hand[1];
+            Card secondCardInHand = game.State.CurrentPlayer.Hand[1];
             IDiscardingStrategy strategy = 
               new ScriptedDiscardingStrategy(new List<Card>() {secondCardInHand, secondCardInHand});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 2);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
 
             Assert.AreEqual(
               0, 
@@ -215,7 +215,7 @@ namespace KingdomGame.Test
             Card secondPlayerCard = game.Players[1].Hand[3];
             IDiscardingStrategy strategy = 
               new ScriptedDiscardingStrategy(new List<Card>() {firstPlayerCard, secondPlayerCard});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 2);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
 
             Assert.AreEqual(
               0, 
@@ -237,10 +237,10 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeSilver.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card secondCardInHand = game.CurrentPlayer.Hand[1];
+            Card secondCardInHand = game.State.CurrentPlayer.Hand[1];
             IDiscardingStrategy strategy = 
               new ScriptedDiscardingStrategy(new List<Card>() {secondCardInHand});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 2);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
 
             Assert.AreEqual(
               0, 
@@ -262,11 +262,11 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeSilver.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            Card secondCardInHand = game.CurrentPlayer.Hand[1];
-            Card fourthCardInHand = game.CurrentPlayer.Hand[3];
+            Card secondCardInHand = game.State.CurrentPlayer.Hand[1];
+            Card fourthCardInHand = game.State.CurrentPlayer.Hand[3];
             IDiscardingStrategy strategy = 
               new ScriptedDiscardingStrategy(new List<Card>() {secondCardInHand, fourthCardInHand});
-            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.CurrentPlayer, 1);
+            IList<Card> cardsToDiscard = strategy.FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
 
             Assert.AreEqual(
               0, 

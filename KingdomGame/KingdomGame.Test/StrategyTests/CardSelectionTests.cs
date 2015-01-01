@@ -80,7 +80,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card estateCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -112,7 +112,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card villageCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     villageCard = card;
                     break;
@@ -147,7 +147,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card villageCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeVillage)) {
                     villageCard = card;
                     break;

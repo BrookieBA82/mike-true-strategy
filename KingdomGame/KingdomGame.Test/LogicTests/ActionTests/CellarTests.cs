@@ -44,7 +44,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -56,7 +56,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -68,42 +68,42 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing the replacement card (mine):
-            Card mineCard = game.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "One action should remain after a cellar is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsTrue(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The hand should contain the drawn card (a mine) after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.Discard[0].Type, 
+              game.State.CurrentPlayer.Discard[0].Type, 
               "The discard pile should have the discarded card (an estate) after a cellar is played."
             );
         }
@@ -131,7 +131,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -143,7 +143,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCards.Add(card);
                 }
@@ -154,42 +154,42 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
-            IList<Card> mineCards = new List<Card>(game.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "One action should remain after a cellar is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             foreach (Card card in mineCards) {
                 Assert.IsTrue(
-                  game.CurrentPlayer.Hand.Contains(card),
+                  game.State.CurrentPlayer.Hand.Contains(card),
                   "The hand should contain each of the drawn cards (mines) after a cellar is played."
                 );
             }
             Assert.AreEqual(
               3, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have three cards after a cellar is played."
             );
-            foreach (Card card in game.CurrentPlayer.Discard) {
+            foreach (Card card in game.State.CurrentPlayer.Discard) {
                 Assert.AreEqual(
                 TestSetup.CardTypeEstate, 
                   card.Type, 
@@ -221,7 +221,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -233,7 +233,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCards.Add(card);
                 }
@@ -244,55 +244,55 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
-            IList<Card> mineCards = new List<Card>(game.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "One action should remain after a cellar is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing one card after a cellar is played (as an estate will be reshuffled)."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             foreach (Card card in mineCards) {
                 Assert.IsTrue(
-                  game.CurrentPlayer.Hand.Contains(card),
+                  game.State.CurrentPlayer.Hand.Contains(card),
                   "The hand should contain each of the drawn cards (mines) after a cellar is played."
                 );
             }
             Assert.AreEqual(
               2, 
-              game.CurrentPlayer.Deck.Count, 
+              game.State.CurrentPlayer.Deck.Count, 
               "The deck should have two cards after a cellar is played (due to reshuffling)."
             );
 
             Card missingEstate = null;
             foreach (Card card in estateCards) {
                 Assert.IsTrue(
-                  game.CurrentPlayer.Deck.Contains(card) || missingEstate == null, 
+                  game.State.CurrentPlayer.Deck.Contains(card) || missingEstate == null, 
                   "The deck should have all but one of the discarded cards (estates) after a cellar is played and reshuffling occurs."
                 );
 
-                if (!game.CurrentPlayer.Deck.Contains(card)) {
+                if (!game.State.CurrentPlayer.Deck.Contains(card)) {
                     missingEstate = card; 
                 }
             }
             Assert.IsTrue(
-              game.CurrentPlayer.Hand.Contains(missingEstate),
+              game.State.CurrentPlayer.Hand.Contains(missingEstate),
               "The hand should contain the final estate after cellar is played and reshuffling occurs."
             );
         }
@@ -320,7 +320,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -337,39 +337,39 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing no replacement cards:
-            IList<Card> mineCards = new List<Card>(game.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "One action should remain after a cellar is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             foreach (Card card in mineCards) {
                 Assert.IsFalse(
-                  game.CurrentPlayer.Hand.Contains(card),
+                  game.State.CurrentPlayer.Hand.Contains(card),
                   "The hand should not contain any of the deck cards (mines) after a cellar is played."
                 );
             }
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a cellar is played."
             );
         }
@@ -397,7 +397,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -409,7 +409,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCards.Add(card);
                     estateCards.Add(card);
@@ -422,41 +422,41 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
-            Card mineCard = game.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "One action should remain after a cellar is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The hand should not contain the drawn card after an illegal cellar discard target is played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after an illegal cellar discard target is played."
             );
             Assert.IsTrue(
-              game.CurrentPlayer.Hand.Contains(estateCards[0]),
+              game.State.CurrentPlayer.Hand.Contains(estateCards[0]),
               "The hand should still contain the discard target card after an illegal target is played."
             );
         }
@@ -484,7 +484,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -496,7 +496,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -508,18 +508,18 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for the wrong player:
-            Card mineCard = game.CurrentPlayer.Deck[0];
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a cellar is played on the wrong player."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a cellar is played on the wrong player."
             );
             Assert.AreEqual(
@@ -529,16 +529,16 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The current player's hand should not contain the drawn card (a mine) after a cellar is played invalidly."
             );
             Assert.IsFalse(
@@ -547,12 +547,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.Discard[0].Type, 
+              game.State.CurrentPlayer.Discard[0].Type, 
               "The discard pile should have the discarded card (an estate) after a cellar is played."
             );
         }
@@ -580,7 +580,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -592,7 +592,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -604,19 +604,19 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for multiple players:
-            Card mineCard = game.CurrentPlayer.Deck[0];
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
             game.CurrentStrategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a cellar is played on multiple players."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a cellar is played on multiple players."
             );
             Assert.AreEqual(
@@ -626,16 +626,16 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The current player's hand should not contain the drawn card (a mine) after a cellar is played invalidly."
             );
             Assert.IsFalse(
@@ -644,12 +644,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.Discard[0].Type, 
+              game.State.CurrentPlayer.Discard[0].Type, 
               "The discard pile should have the discarded card (an estate) after a cellar is played."
             );
         }
@@ -677,7 +677,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -696,37 +696,37 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             // Drawing the replacement card (mine):
-            Card mineCard = game.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "An action should remain even though a cellar is played with an invalid discard target."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a cellar is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The hand should not contain the drawn card (a mine) after a cellar is played with an invalid discard target."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a cellar is played with an invalid discard target."
             );
         }
@@ -754,7 +754,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card cellarCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeCellar)) {
                     cellarCard = card;
                     break;
@@ -766,55 +766,55 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
                 }
             }
-            game.CurrentPlayer.DiscardCard(estateCard);
+            game.State.CurrentPlayer.DiscardCard(estateCard);
 
             // Attempting to discard an already discarded estate card:
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
-            Card mineCard = game.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
+            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "An action should remain even though a cellar is played with an invalid discard target."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a cellar is played following a previous discard."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a cellar is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeCellar, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a cellar after it's been played."
             );
             Assert.IsFalse(
-              game.CurrentPlayer.Hand.Contains(mineCard),
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
               "The hand should not contain the drawn card (a mine) after a cellar is played with an invalid discard target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card from before when the cellar was played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.Discard[0].Type, 
+              game.State.CurrentPlayer.Discard[0].Type, 
               "The discard pile should have the previously discarded card (an estate) after a cellar is played."
             );
         }

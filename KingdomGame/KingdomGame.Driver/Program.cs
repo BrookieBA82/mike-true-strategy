@@ -33,7 +33,7 @@ namespace KingdomGame.Driver {
             SetupHumanPlayer(game, game.Players[0]);
 
             while (!game.IsGameOver()) {
-                if (!IsPlayerHuman(game.CurrentPlayer)) {
+                if (!IsPlayerHuman(game.State.CurrentPlayer)) {
                     ExecuteComputerPlayerTurn(game);
                 }
                 else {
@@ -43,7 +43,7 @@ namespace KingdomGame.Driver {
 
             // Todo - (MT): Make these path components configurable:
             SaveGameHistory(game, Environment.CurrentDirectory, "GameResults", "_yyyy-dd-MM_HHmmss");
-            TerminateGame(game, game.CurrentPlayer);
+            TerminateGame(game, game.State.CurrentPlayer);
         }
 
         #region Helper Methods
@@ -111,10 +111,10 @@ namespace KingdomGame.Driver {
         private static void ExecuteHumanPlayerTurn(Game game) {
 
             int startingTurn = game.State.TurnNumber;
-            Console.WriteLine(string.Format("Turn number {0} (Current Player is {1}):\n", startingTurn, game.CurrentPlayer.Name));
+            Console.WriteLine(string.Format("Turn number {0} (Current Player is {1}):\n", startingTurn, game.State.CurrentPlayer.Name));
 
             Console.WriteLine("\tStarting hand:");
-            Program.PrintHand(game.CurrentPlayer.Hand);
+            Program.PrintHand(game.State.CurrentPlayer.Hand);
             Console.WriteLine();
             
             do {
@@ -163,7 +163,7 @@ namespace KingdomGame.Driver {
 
                     case Game.Phase.BUY:
                         Console.WriteLine("\tFinal hand:");
-                        Program.PrintHand(game.CurrentPlayer.Hand);
+                        Program.PrintHand(game.State.CurrentPlayer.Hand);
                         Console.WriteLine();
 
                         ExecuteHumanPlayerBuy(game);
@@ -195,7 +195,7 @@ namespace KingdomGame.Driver {
             IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>() {{"1", "<no action>"}};
             IDictionary<string, Card> optionsByIndex = new Dictionary<string, Card>() { { "1", null } };
 
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Class == CardType.CardClass.ACTION) {
                     string optionPrompt = optionCounter.ToString();
                     optionsByIndex[optionPrompt] = card;
@@ -213,7 +213,7 @@ namespace KingdomGame.Driver {
                 string promptMessage = "Please select a card to play from the following menu:";
                 selectedCardToPlay = optionsByIndex[PromptUserForOptionInput(
                   game, 
-                  game.CurrentPlayer, 
+                  game.State.CurrentPlayer, 
                   promptMessage, 
                   optionPromptsByIndex
                 )];
@@ -257,7 +257,7 @@ namespace KingdomGame.Driver {
 
                         int selectedTargetCount = PromptUserForNumericInput(
                           game,
-                          game.CurrentPlayer,
+                          game.State.CurrentPlayer,
                           string.Format(
                             "Please enter the number of targets you wish to select for {0}:", 
                             action.ActionDescription
@@ -282,7 +282,7 @@ namespace KingdomGame.Driver {
 
                             ITargetable selectedTarget = optionsByIndex[PromptUserForOptionInput(
                               game,
-                              game.CurrentPlayer,
+                              game.State.CurrentPlayer,
                               string.Format(
                                 "Please select target #{0} (of {1}):", 
                                 targetNumber, 
@@ -358,13 +358,13 @@ namespace KingdomGame.Driver {
                 else {
                     string promptMessage = string.Format(
                       "Please select a buy option from the following menu ({0} money, {1} buy(s) remain):", 
-                      game.CurrentPlayer.RemainingMoney, 
-                      game.CurrentPlayer.RemainingBuys
+                      game.State.CurrentPlayer.RemainingMoney, 
+                      game.State.CurrentPlayer.RemainingBuys
                     );
 
                     selectedBuyOption = optionsByIndex[PromptUserForOptionInput(
                       game, 
-                      game.CurrentPlayer, 
+                      game.State.CurrentPlayer, 
                       promptMessage, 
                       optionPromptsByIndex
                     )];
@@ -646,7 +646,7 @@ namespace KingdomGame.Driver {
             string promptMessage = "Please select a card type to obtain text for from the following menu:";
             selectedType = optionsByIndex[PromptUserForOptionInput(
               game, 
-              game.CurrentPlayer, 
+              game.State.CurrentPlayer, 
               promptMessage, 
               optionPromptsByIndex
             )];
@@ -668,10 +668,10 @@ namespace KingdomGame.Driver {
 
         private static void PrintTurnDetails(Game game, Player player) {
             Console.WriteLine(string.Format("\tTurn {0} summary:", game.State.TurnNumber));
-            Console.WriteLine(string.Format("\t\tCurrent Player: {0} ({1})", game.CurrentPlayer.Name, game.CurrentPlayer.Id));
-            Console.WriteLine(string.Format("\t\tRemaining Actions: {0}", game.CurrentPlayer.RemainingActions));
-            Console.WriteLine(string.Format("\t\tRemaining Buys: {0}", game.CurrentPlayer.RemainingBuys));
-            Console.WriteLine(string.Format("\t\tRemaining Money: {0}", game.CurrentPlayer.RemainingMoney));
+            Console.WriteLine(string.Format("\t\tCurrent Player: {0} ({1})", game.State.CurrentPlayer.Name, game.State.CurrentPlayer.Id));
+            Console.WriteLine(string.Format("\t\tRemaining Actions: {0}", game.State.CurrentPlayer.RemainingActions));
+            Console.WriteLine(string.Format("\t\tRemaining Buys: {0}", game.State.CurrentPlayer.RemainingBuys));
+            Console.WriteLine(string.Format("\t\tRemaining Money: {0}", game.State.CurrentPlayer.RemainingMoney));
             Console.WriteLine();
         }
 
@@ -699,9 +699,9 @@ namespace KingdomGame.Driver {
         private static IList<CardType> GetValidBuyOptions(Game game) {
             IList<CardType> validBuyOptions = new List<CardType>();
 
-            if (game.CurrentPlayer.RemainingBuys > 0) {
+            if (game.State.CurrentPlayer.RemainingBuys > 0) {
                 foreach (CardType type in CardType.CardTypes) {
-                    if (game.GetCardsByType(type).Count > 0 && type.Cost <= game.CurrentPlayer.RemainingMoney) {
+                    if (game.GetCardsByType(type).Count > 0 && type.Cost <= game.State.CurrentPlayer.RemainingMoney) {
                         validBuyOptions.Add(type);
                     }
                 }

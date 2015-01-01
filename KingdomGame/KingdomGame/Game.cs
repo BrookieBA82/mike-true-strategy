@@ -60,6 +60,8 @@ namespace KingdomGame {
 
             public int TurnNumber { get { return _turnNumber; } }
 
+            public Player CurrentPlayer { get { return _game.Players[_game._currentPlayerIndex]; } }
+
             public GameState(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
@@ -377,10 +379,6 @@ namespace KingdomGame {
             get { return new List<Player>(_orderedPlayerList); }
         }
 
-        public Player CurrentPlayer {
-            get { return _orderedPlayerList[_currentPlayerIndex]; }
-        }
-
         public IList<Card> Cards {
             get { return new List<Card>(_cardsById.Values); }
         }
@@ -404,8 +402,8 @@ namespace KingdomGame {
             }
 
             IList<IList<CardType>> buyingOptions = Game.CalculateAllBuyOptions(
-              CurrentPlayer.RemainingBuys, 
-              CurrentPlayer.RemainingMoney,
+              State.CurrentPlayer.RemainingBuys, 
+              State.CurrentPlayer.RemainingMoney,
               cardsAvailableByTypeId
             );
 
@@ -488,7 +486,7 @@ namespace KingdomGame {
             }
 
             _currentPlayerIndex = (randomizeFirstPlayer) ? RandomNumberManager.Next(_orderedPlayerList.Count) : 0;
-            CurrentPlayer.StartTurn();
+            State.CurrentPlayer.StartTurn();
         }
 
         public void PlayGame() {
@@ -521,26 +519,26 @@ namespace KingdomGame {
                 case Phase.PLAY:
 
                     bool advanceToBuy = true;
-                    if (CurrentPlayer.RemainingActions > 0) {
+                    if (State.CurrentPlayer.RemainingActions > 0) {
                         // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
                         Card cardToPlay =  _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy
-                            (this, new Deck(CurrentPlayer.Hand));
+                            (this, new Deck(State.CurrentPlayer.Hand));
 
                         if (cardToPlay != null) {
                             State.SelectedCard = cardToPlay;
-                            Logger.Instance.RecordPlay(this, CurrentPlayer, cardToPlay);
+                            Logger.Instance.RecordPlay(this, State.CurrentPlayer, cardToPlay);
 
                             State.Phase = Phase.ACTION;
                             for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
                                 State.AddPendingAction(cardToPlay.Type.Actions[actionIndex]);
                             }
                                 
-                            CurrentPlayer.PlayCard(cardToPlay);
-                            CurrentPlayer.RemainingActions--;
+                            State.CurrentPlayer.PlayCard(cardToPlay);
+                            State.CurrentPlayer.RemainingActions--;
                             advanceToBuy = false;
                         } else {
                             // If no card is selected, skip all remaining actions.
-                            CurrentPlayer.RemainingActions = 0;
+                            State.CurrentPlayer.RemainingActions = 0;
                         }
                     }
 
@@ -569,7 +567,7 @@ namespace KingdomGame {
                             if (targets.Count > 0) {
                                 Logger.Instance.RecordAction(
                                   this, 
-                                  CurrentPlayer, 
+                                  State.CurrentPlayer, 
                                   State.SelectedCard, 
                                   actionToPlay, 
                                   targets
@@ -586,7 +584,7 @@ namespace KingdomGame {
                         }
 
                         if (!State.HasNextPendingAction) {
-                            if (CurrentPlayer.RemainingActions > 0) {
+                            if (State.CurrentPlayer.RemainingActions > 0) {
                                 State.Phase = Phase.PLAY;
                             } else {
                                 State.Phase = Phase.BUY;
@@ -597,7 +595,7 @@ namespace KingdomGame {
                     }
                     else {
                         // No actions left to play should short-circuit attempts at finding another.
-                        CurrentPlayer.RemainingActions = 0;
+                        State.CurrentPlayer.RemainingActions = 0;
                         State.Phase = Phase.BUY;
                         State.SelectedCard = null;
                     }
@@ -607,15 +605,15 @@ namespace KingdomGame {
                 case Phase.BUY:
 
                     bool isTurnOver = false;
-                    if (CurrentPlayer.RemainingBuys > 0) {
+                    if (State.CurrentPlayer.RemainingBuys > 0) {
                         IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
                         // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
                         CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
 
                         if (typeToBuy != null && GetCardsByType(typeToBuy).Count > 0) {
-                            Card cardBought = SellCard(CurrentPlayer, typeToBuy);
-                            Logger.Instance.RecordBuy(this, CurrentPlayer, cardBought);
-                            if (CurrentPlayer.RemainingBuys == 0) {
+                            Card cardBought = SellCard(State.CurrentPlayer, typeToBuy);
+                            Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
+                            if (State.CurrentPlayer.RemainingBuys == 0) {
                                 isTurnOver = true;
                             }
                         } else {
@@ -661,10 +659,10 @@ namespace KingdomGame {
         }
 
         public void AdvanceTurn() {
-            CurrentPlayer.EndTurn();
+            State.CurrentPlayer.EndTurn();
             State.AdvanceTurn();
             _currentPlayerIndex = (_currentPlayerIndex + 1) % _orderedPlayerList.Count;
-            CurrentPlayer.StartTurn();
+            State.CurrentPlayer.StartTurn();
         }
 
         public bool IsGameOver() {

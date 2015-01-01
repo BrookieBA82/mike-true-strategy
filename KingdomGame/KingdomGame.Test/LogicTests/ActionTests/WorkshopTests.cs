@@ -43,32 +43,32 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a workshop is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a workshop is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeWorkshop, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a workshop after it's been played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeVillage,
-              game.CurrentPlayer.Discard[0].Type,  
+              game.State.CurrentPlayer.Discard[0].Type,  
               "The discard pile should have the gained card (a village) after a workshop is played."
             );
         }
@@ -95,27 +95,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a workshop is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a workshop is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeWorkshop, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a workshop after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards if the target card of the workshop costs too much."
             );
         }
@@ -142,27 +142,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a workshop is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a workshop is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeWorkshop, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a workshop after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards if the multiple workshop acquisition targets were specified."
             );
         }
@@ -190,27 +190,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a workshop is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a workshop is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeWorkshop, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a workshop after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards if the target type of the workshop has no cards remaining."
             );
         }
@@ -237,27 +237,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a workshop is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a workshop is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a workshop is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeWorkshop, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a workshop after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards if no target card is specified."
             );
         }

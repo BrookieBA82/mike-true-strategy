@@ -44,23 +44,23 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 1);
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a market is played and a copper is drawn."
             );
         }
@@ -84,29 +84,29 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
-            game.CurrentPlayer.RemainingMoney += 3;
+            game.State.CurrentPlayer.RemainingMoney += 3;
 
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 1);
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a market is played."
             );
             Assert.AreEqual(
               6,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have six money after a market is played."
             );
         }
@@ -130,29 +130,29 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
-            game.CurrentPlayer.RemainingActions += 2;
+            game.State.CurrentPlayer.RemainingActions += 2;
 
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 3);
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a market is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have three money after a market is played."
             );
         }
@@ -176,29 +176,29 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
-            game.CurrentPlayer.RemainingBuys += 1;
+            game.State.CurrentPlayer.RemainingBuys += 1;
 
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 1);
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a market is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have three buys after a market is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have three money after a market is played."
             );
         }
@@ -227,23 +227,23 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 1);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a market is played without any cards to draw."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a market is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have three money after a market is played."
             );
         }
@@ -278,17 +278,17 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, marketCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a market is played on an invalid target player."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a market is played."
             );
             Assert.AreEqual(
@@ -328,17 +328,17 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, marketCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a market is played on an multiple players."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a market is played."
             );
             Assert.AreEqual(
@@ -372,23 +372,23 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer, game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, marketCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a market is played on an duplicate players."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a market is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a market is played."
             );
         }

@@ -38,7 +38,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -50,7 +50,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -69,32 +69,32 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeRemodel, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a remodel is played."
             );
             Assert.AreEqual(
               smithyCard,
-              game.CurrentPlayer.Discard[0],
+              game.State.CurrentPlayer.Discard[0],
               "The discard pile should contain the gained card (a smithy) after a remodel is played."
             );
             Assert.AreEqual(
@@ -124,7 +124,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -136,7 +136,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCardToTrash = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCardToTrash = card;
                     break;
@@ -155,32 +155,32 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeRemodel, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have one card after a remodel is played."
             );
             Assert.AreEqual(
               estateCardToGain,
-              game.CurrentPlayer.Discard[0],
+              game.State.CurrentPlayer.Discard[0],
               "The discard pile should contain the gained card (an estate) after a remodel is played."
             );
             Assert.AreEqual(
@@ -209,7 +209,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -232,27 +232,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a remodel is played without trashing a card."
             );
             Assert.AreEqual(
@@ -277,7 +277,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -290,7 +290,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash multiple the first action:
             IList<Card> estateCards = new List<Card>();
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCards.Add(card);
                 }
@@ -307,27 +307,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a remodel is played on multiple targets."
             );
             Assert.AreEqual(
@@ -352,7 +352,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -365,7 +365,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash duplicate cards as the first action:
             Card estateCard = null;
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                 }
@@ -382,27 +382,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a remodel is played on duplicate targets."
             );
             Assert.AreEqual(
@@ -432,7 +432,7 @@ namespace KingdomGame.Test
               (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -445,7 +445,7 @@ namespace KingdomGame.Test
 
             // Attempt to trash a card from the deck as the first action:
             Card copperCard = null;
-            foreach (Card card in game.CurrentPlayer.Deck) {
+            foreach (Card card in game.State.CurrentPlayer.Deck) {
                 if (card.Type.Equals(TestSetup.CardTypeCopper)) {
                     copperCard = card;
                     break;
@@ -462,27 +462,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card remain after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should not have any cards after a remodel is played without a valid target."
             );
             Assert.AreEqual(
@@ -508,7 +508,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -520,7 +520,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -539,27 +539,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a remodel is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no one cards after a remodel is played without a valid acquisition target."
             );
             Assert.AreEqual(
@@ -590,7 +590,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -602,7 +602,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -622,27 +622,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a remodel is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a remodel is played on an invalid acquisition target."
             );
             Assert.AreEqual(
@@ -674,7 +674,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
 
             Card remodelCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeRemodel)) {
                     remodelCard = card;
                     break;
@@ -686,7 +686,7 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Card estateCard = null;
-            foreach(Card card in game.CurrentPlayer.Hand) {
+            foreach(Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(TestSetup.CardTypeEstate)) {
                     estateCard = card;
                     break;
@@ -704,27 +704,27 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a remodel is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing two cards after a remodel is played without a valid acquisition target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a remodel is played."
             );
             Assert.AreEqual(
               remodelCard, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               "The play area should have a remodel after it's been played."
             );
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.Discard.Count, 
+              game.State.CurrentPlayer.Discard.Count, 
               "The discard pile should have no cards after a remodel is played with an invalid acquisition target."
             );
             Assert.AreEqual(

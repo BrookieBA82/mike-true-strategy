@@ -38,9 +38,9 @@ namespace KingdomGame.Test
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>());
             game.PlayPhase();
 
-            Assert.AreEqual(1, game.CurrentPlayer.RemainingBuys, "One buy should remain if none should be made.");
-            Assert.AreEqual(3, game.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none should be made.");
+            Assert.AreEqual(3, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         [TestCategory("BuyingTest"), TestMethod]
@@ -59,12 +59,12 @@ namespace KingdomGame.Test
                 = new ScriptedBuyingStrategy(new List<CardType>() {TestSetup.CardTypeEstate});
             game.PlayPhase();
 
-            Assert.AreEqual(0, game.CurrentPlayer.RemainingBuys, "No buys should remain after one has been made.");
-            Assert.AreEqual(1, game.CurrentPlayer.RemainingMoney, "Balance should remain if a buy was made.");
-            Assert.AreEqual(1, game.CurrentPlayer.PlayArea.Count, "One card should be in play area after a buy.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain after one has been made.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingMoney, "Balance should remain if a buy was made.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.PlayArea.Count, "One card should be in play area after a buy.");
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "Estate should be the single card in the play area pile after a buy."
             );
         }
@@ -83,20 +83,20 @@ namespace KingdomGame.Test
             game.State.Phase = Game.Phase.BUY;
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(
                 new List<CardType>() {TestSetup.CardTypeEstate, TestSetup.CardTypeEstate});
-            game.CurrentPlayer.RemainingBuys = 2;
+            game.State.CurrentPlayer.RemainingBuys = 2;
             game.PlayPhase();
 
-            Assert.AreEqual(0, game.CurrentPlayer.RemainingBuys, "No buys should remain after one has been made.");
-            Assert.AreEqual(0, game.CurrentPlayer.RemainingMoney, "No money should remain if it was all spent on buys.");
-            Assert.AreEqual(2, game.CurrentPlayer.PlayArea.Count, "Two cards should be in play area after two buys.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain after one has been made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingMoney, "No money should remain if it was all spent on buys.");
+            Assert.AreEqual(2, game.State.CurrentPlayer.PlayArea.Count, "Two cards should be in play area after two buys.");
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "Estate should be the first card in the play area after a scripted buy."
             );
             Assert.AreEqual(
               TestSetup.CardTypeEstate, 
-              game.CurrentPlayer.PlayArea[1].Type, 
+              game.State.CurrentPlayer.PlayArea[1].Type, 
               "Estate should be the second card in the play area after a scripted buy."
             );
         }
@@ -118,9 +118,9 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): The only option to buy is an estate, which can't be done with zero gold
-            Assert.AreEqual(1, game.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
-            Assert.AreEqual(0, game.CurrentPlayer.RemainingMoney, "No money should remain if it wasn't there to begin with.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingMoney, "No money should remain if it wasn't there to begin with.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         [TestCategory("BuyingTest"), TestMethod]
@@ -133,12 +133,12 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.State.Phase = Game.Phase.BUY;
-            game.CurrentPlayer.RemainingBuys = 0;
+            game.State.CurrentPlayer.RemainingBuys = 0;
             game.PlayPhase();
 
-            Assert.AreEqual(0, game.CurrentPlayer.RemainingBuys, "No buys should remain if one wasn't available.");
-            Assert.AreEqual(5, game.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain if one wasn't available.");
+            Assert.AreEqual(5, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         [TestCategory("BuyingTest"), TestMethod]
@@ -154,9 +154,9 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): There are no cards left to buy anything
-            Assert.AreEqual(1, game.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
-            Assert.AreEqual(5, game.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
+            Assert.AreEqual(5, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         [TestCategory("BuyingTest"), TestMethod]
@@ -175,9 +175,9 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): There are not enough estates left to buy one, so no buy should occur
-            Assert.AreEqual(1, game.CurrentPlayer.RemainingBuys, "One buy should remain if the option cannot be made.");
-            Assert.AreEqual(4, game.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if the option cannot be made.");
+            Assert.AreEqual(4, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         [TestCategory("BuyingTest"), TestMethod]
@@ -194,13 +194,13 @@ namespace KingdomGame.Test
             game.State.Phase = Game.Phase.BUY;
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(
                 new List<CardType>() {TestSetup.CardTypeEstate, TestSetup.CardTypeEstate});
-            game.CurrentPlayer.RemainingBuys = 2;
+            game.State.CurrentPlayer.RemainingBuys = 2;
             game.PlayPhase();
 
             // Note - (MT): There are not enough cards left to buy two estates, so no buy should occur
-            Assert.AreEqual(2, game.CurrentPlayer.RemainingBuys, "Two buys should remain if the option cannot be made.");
-            Assert.AreEqual(4, game.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
-            Assert.AreEqual(0, game.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
+            Assert.AreEqual(2, game.State.CurrentPlayer.RemainingBuys, "Two buys should remain if the option cannot be made.");
+            Assert.AreEqual(4, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
         #endregion
@@ -429,10 +429,10 @@ namespace KingdomGame.Test
             clone.StartGame();
             clone.State.Phase = Game.Phase.BUY;
             clone.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>(buyingOption));
-            clone.CurrentPlayer.RemainingBuys = maxBuys;
+            clone.State.CurrentPlayer.RemainingBuys = maxBuys;
             clone.PlayPhase();
 
-            return (clone.CurrentPlayer.PlayArea.Count == buyingOption.Count);
+            return (clone.State.CurrentPlayer.PlayArea.Count == buyingOption.Count);
         }
 
         #endregion

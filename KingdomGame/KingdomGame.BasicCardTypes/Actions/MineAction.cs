@@ -27,7 +27,7 @@ namespace KingdomGame.BasicCardTypes {
         ) {
             if (targetCards.Count > 0) {
                 return targetCards[0].Type.Class == CardType.CardClass.TREASURE 
-                    && game.CurrentPlayer.Hand.Contains(targetCards[0]);
+                    && game.State.CurrentPlayer.Hand.Contains(targetCards[0]);
             }
 
             return true;
@@ -45,7 +45,7 @@ namespace KingdomGame.BasicCardTypes {
           Game game
         ) {
             if (types.Count > 0) {
-                game.DealCard(types[0], game.CurrentPlayer, CardDestination.HAND);
+                game.DealCard(types[0], game.State.CurrentPlayer, CardDestination.HAND);
             }
         }
 

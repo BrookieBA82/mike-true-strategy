@@ -19,7 +19,7 @@ namespace KingdomGame.BasicCardTypes {
           Game game
         ) {
             if (types.Count > 0) {
-                game.DealCard(types[0], game.CurrentPlayer, CardDestination.DISCARD);
+                game.DealCard(types[0], game.State.CurrentPlayer, CardDestination.DISCARD);
             }
         }
 

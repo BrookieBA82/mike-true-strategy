@@ -10,7 +10,7 @@ namespace KingdomGame.Test
     public class TestUtilities {
 
         public static Card SetUpCardToPlay(Game game, CardType type) {
-            foreach (Card card in game.CurrentPlayer.Hand) {
+            foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(type)) {
                     game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(card);
                     return card;
@@ -27,7 +27,7 @@ namespace KingdomGame.Test
         public static void ConfirmCardPlayed(Game game, Card card, int expectedActionsRemaining) {
             Assert.AreEqual(
               expectedActionsRemaining, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               string.Format(
                 "There should be {0} action(s) remaining after a {1} is played.", 
                 expectedActionsRemaining, 
@@ -37,13 +37,13 @@ namespace KingdomGame.Test
 
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               string.Format("The play area should have one card after a {0} is played.", card.Type.Name)
             );
 
             Assert.AreEqual(
               card, 
-              game.CurrentPlayer.PlayArea[0], 
+              game.State.CurrentPlayer.PlayArea[0], 
               string.Format("The play area should have a {0} after one is played.", card.Type.Name)
             );
         }

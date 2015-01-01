@@ -42,27 +42,27 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played."
             );
             Assert.AreEqual(
               6,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand with an extra card should remain after a moat is played."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }
@@ -88,27 +88,27 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
             game.CurrentStrategy.TargetSelectionStrategy 
-              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.CurrentPlayer });
+              = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played."
             );
             Assert.AreEqual(
               5,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A full hand should remain after a moat is played with only one card available to draw."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }
@@ -139,22 +139,22 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played on no target."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A hand without a moat should remain after a moat is played with no target."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }
@@ -188,12 +188,12 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played on an invalid target."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a moat is played on an invalid target."
             );
             Assert.AreEqual(
@@ -203,12 +203,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played on an invalid target."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }
@@ -242,12 +242,12 @@ namespace KingdomGame.Test
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played on a multiple target set."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a moat is played on a multiple target set."
             );
             Assert.AreEqual(
@@ -257,12 +257,12 @@ namespace KingdomGame.Test
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played a multiple target set."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }
@@ -290,28 +290,28 @@ namespace KingdomGame.Test
 
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null,
-              new List<Player>() { game.CurrentPlayer, game.CurrentPlayer}
+              new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
             game.PlayStep();
             
             Assert.AreEqual(
               0, 
-              game.CurrentPlayer.RemainingActions, 
+              game.State.CurrentPlayer.RemainingActions, 
               "No actions should remain after a moat is played on a duplicate target set."
             );
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "A card should be missing after a moat is played on a duplicate target set."
             );
             Assert.AreEqual(
               1, 
-              game.CurrentPlayer.PlayArea.Count, 
+              game.State.CurrentPlayer.PlayArea.Count, 
               "The play area should have one card after a moat is played a duplicate target set."
             );
             Assert.AreEqual(
               TestSetup.CardTypeMoat, 
-              game.CurrentPlayer.PlayArea[0].Type, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
               "The play area should have a moat after one is played."
             );
         }

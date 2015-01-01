@@ -38,23 +38,23 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a woodcutter is played."
             );
         }
@@ -72,29 +72,29 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeWoodcutter.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.CurrentPlayer.RemainingMoney += 3;
+            game.State.CurrentPlayer.RemainingMoney += 3;
 
             Card woodcutterCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeWoodcutter);
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have two buys after a woodcutter is played."
             );
             Assert.AreEqual(
               7,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have seven money after a woodcutter is played."
             );
         }
@@ -111,29 +111,29 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeWoodcutter.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.CurrentPlayer.RemainingBuys += 1;
+            game.State.CurrentPlayer.RemainingBuys += 1;
 
             Card woodcutterCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeWoodcutter);
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played."
             );
             Assert.AreEqual(
               3,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have three buys after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a woodcutter is played."
             );
         }
@@ -168,17 +168,17 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a woodcutter is played."
             );
         }
@@ -213,17 +213,17 @@ namespace KingdomGame.Test
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played on an multiple players."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a woodcutter is played."
             );
         }
@@ -252,23 +252,23 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             game.CurrentStrategy.TargetSelectionStrategy = 
-              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.CurrentPlayer, game.CurrentPlayer });
+              new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer });
             game.PlayStep();
 
             TestUtilities.ConfirmCardPlayed(game, woodcutterCard, 0);
             Assert.AreEqual(
               4,
-              game.CurrentPlayer.Hand.Count,
+              game.State.CurrentPlayer.Hand.Count,
               "The hand should be missing a card after a woodcutter is played on an duplicate players."
             );
             Assert.AreEqual(
               1,
-              game.CurrentPlayer.RemainingBuys,
+              game.State.CurrentPlayer.RemainingBuys,
               "The player should have one buy after a woodcutter is played."
             );
             Assert.AreEqual(
               2,
-              game.CurrentPlayer.RemainingMoney,
+              game.State.CurrentPlayer.RemainingMoney,
               "The player should have two money after a woodcutter is played."
             );
         }

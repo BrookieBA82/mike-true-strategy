@@ -213,7 +213,7 @@ namespace KingdomGame {
                 GameHistory history = _historyByGame[game.Id];
                 if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     history.TurnsByNumber[game.State.TurnNumber] 
-                      = new GameHistory.Turn(game.State.TurnNumber, game.CurrentPlayer);
+                      = new GameHistory.Turn(game.State.TurnNumber, game.State.CurrentPlayer);
                 }
             }
         }
