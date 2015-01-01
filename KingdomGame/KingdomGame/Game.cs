@@ -76,11 +76,6 @@ namespace KingdomGame {
                 }
             }
 
-            // Refactor - (MT): Abstract this representation away from the public interface.
-            public Stack<IAction> ActionStack { 
-                get { return _pendingActionStack; } 
-            }
-
             public GameState(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
@@ -105,16 +100,32 @@ namespace KingdomGame {
                 _turnNumber++;
             }
 
-            public IAction GetNextPendingAction() {
-                if ((_phase == Phase.ACTION) && (_pendingActionStack.Count > 0)) {
-                    return _pendingActionStack.Peek();
+            public bool HasNextPendingAction { get { return NextPendingAction != null; } }
+
+            public IAction NextPendingAction {
+                get {
+                    if ((_phase == Phase.ACTION) && (_pendingActionStack.Count > 0)) {
+                        return _pendingActionStack.Peek();
+                    }
+
+                    return null;
+                }
+            }
+
+            public void AddPendingAction(IAction action) {
+                if(_phase != Phase.ACTION) {
+                    throw new InvalidOperationException("Cannot add an action outside of the action phase.");
+                }                
+
+                if(action == null) {
+                    throw new ArgumentNullException("Cannot add a null pending action.");
                 }
 
-                return null;
+                _pendingActionStack.Push(action);
             }
 
             // Refactor - (MT): Make the targets a generically typed parameter.
-            public void ExecutePendingAction(IList<int> targetIds) {
+            public void ExecuteNextPendingAction(IList<int> targetIds) {
                 if(_phase != Phase.ACTION) {
                     throw new InvalidOperationException("Cannot execute an action outside of the action phase.");
                 }                
@@ -165,7 +176,7 @@ namespace KingdomGame {
                 }
 
                 for (int actionIndex = 0; actionIndex < _pendingActionStack.Count; actionIndex++) {
-                    if (!ActionStack.ElementAt<IAction>(actionIndex).Equals(
+                    if (!_pendingActionStack.ElementAt<IAction>(actionIndex).Equals(
                       state._pendingActionStack.ElementAt<IAction>(actionIndex))) {
                           return false;
                     }
@@ -289,6 +300,7 @@ namespace KingdomGame {
         private Deck _trash;
 
         private int _id;
+        // Refactor - (MT): Push this into the Game State as well?
         private int _currentPlayerIndex;
 
         private GameState _state;
@@ -517,7 +529,7 @@ namespace KingdomGame {
 
                             State.Phase = Phase.ACTION;
                             for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
-                                State.ActionStack.Push(cardToPlay.Type.Actions[actionIndex]);
+                                State.AddPendingAction(cardToPlay.Type.Actions[actionIndex]);
                             }
                                 
                             CurrentPlayer.PlayCard(cardToPlay);
@@ -540,7 +552,7 @@ namespace KingdomGame {
 
                     if (State.SelectedCard != null) {
 
-                        IAction actionToPlay = State.GetNextPendingAction();
+                        IAction actionToPlay = State.NextPendingAction;
                         if (actionToPlay != null) {
 
                             // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
@@ -578,7 +590,7 @@ namespace KingdomGame {
 
                                 targetIds.AddRange(new List<Player>(targetPlayers)
                                   .ConvertAll<int>(delegate (Player player) { return player.Id;}));
-                                State.ExecutePendingAction(targetIds);
+                                State.ExecuteNextPendingAction(targetIds);
                                 actionToPlay.Apply<Player>(targetPlayers, this, State.PreviousActions);
                             } else if (targetCards.Count > 0) {
                                 Logger.Instance.RecordAction(
@@ -591,7 +603,7 @@ namespace KingdomGame {
 
                                 targetIds.AddRange(new List<Card>(targetCards)
                                   .ConvertAll<int>(delegate (Card card) { return card.Id;}));
-                                State.ExecutePendingAction(targetIds);
+                                State.ExecuteNextPendingAction(targetIds);
                                 actionToPlay.Apply<Card>(targetCards, this, State.PreviousActions);
                             } else if (targetTypes.Count > 0) {
                                 Logger.Instance.RecordAction(
@@ -604,17 +616,17 @@ namespace KingdomGame {
 
                                 targetIds.AddRange(new List<CardType>(targetTypes)
                                   .ConvertAll<int>(delegate (CardType type) { return type.Id;}));
-                                State.ExecutePendingAction(targetIds);
+                                State.ExecuteNextPendingAction(targetIds);
                                 actionToPlay.Apply<CardType>(targetTypes, this, State.PreviousActions);
                             }
                             else {
                                 // Handles the case where no targets are specified for the action.
-                                State.ExecutePendingAction(targetIds);
+                                State.ExecuteNextPendingAction(targetIds);
                             }
                             // End Refactor Block
                         }
 
-                        if (State.ActionStack.Count == 0) {
+                        if (!State.HasNextPendingAction) {
                             if (CurrentPlayer.RemainingActions > 0) {
                                 State.Phase = Phase.PLAY;
                             } else {

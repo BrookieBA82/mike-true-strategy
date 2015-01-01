@@ -128,8 +128,8 @@ namespace KingdomGame.Driver {
 
                         if (game.State.SelectedCard != null) {
 
-                            while(game.State.ActionStack.Count > 0) {
-                                IAction actionToPlay = game.State.ActionStack.Peek();
+                            while(game.State.HasNextPendingAction) {
+                                IAction actionToPlay = game.State.NextPendingAction;
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
                                   game.State.SelectedCard, 
                                   game, 
