@@ -21,6 +21,7 @@ namespace KingdomGame {
 
             private Game _game;
             private Phase _phase;
+            private int _turnNumber;
             private int? _selectedCardId;
 
             private Stack<IAction> _pendingActionStack;
@@ -57,6 +58,8 @@ namespace KingdomGame {
                 }
             }
 
+            public int TurnNumber { get { return _turnNumber; } }
+
             // Refactor - (MT): Turn this into a list of methods which record actions and do searches.
             public IList<Pair<IAction, IList<int>>> PreviousActions {
                 get {
@@ -81,6 +84,7 @@ namespace KingdomGame {
             public State(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
+                _turnNumber = 1;
                 _pendingActionStack = new Stack<IAction>();
                 _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
             }
@@ -90,10 +94,15 @@ namespace KingdomGame {
 
                 state._phase = _phase;
                 state._selectedCardId = _selectedCardId;
+                state._turnNumber = _turnNumber;
                 state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
                 state._executedActionStack = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
 
                 return state;
+            }
+
+            public void AdvanceTurn() {
+                _turnNumber++;
             }
 
             public IAction GetNextPendingAction() {
@@ -162,11 +171,13 @@ namespace KingdomGame {
                     }
                 }
 
-                return _phase == state._phase && _selectedCardId == state._selectedCardId;
+                return _phase == state._phase 
+                  && _selectedCardId == state._selectedCardId
+                  && _turnNumber == state._turnNumber;
             }
 
             public override int GetHashCode() {
-                int code = _phase.GetHashCode() ^ _selectedCardId.GetHashCode();
+                int code = _phase.GetHashCode() ^ _selectedCardId.GetHashCode() ^ _turnNumber.GetHashCode();
 
                 code ^= _executedActionStack.Count.GetHashCode();
 
@@ -279,7 +290,6 @@ namespace KingdomGame {
 
         private int _id;
         private int _currentPlayerIndex;
-        private int _turnNumber;
 
         private State _state;
         private Strategy _strategy;
@@ -306,7 +316,7 @@ namespace KingdomGame {
             SetUpCardIndex();
         }
 
-        // Refactor - (MT): Handle support for adequately updating backreferences - within clone method?
+        // Refactor - (MT): Make an attribute-based clone factory to properly handle deep/shallow/backrefs
         private Game(Game toClone) {
             // Note - (MT): Games do not have their ID copied over on clones, by design
             List<Player> players = toClone._orderedPlayerList as List<Player>;
@@ -356,9 +366,8 @@ namespace KingdomGame {
             get { return _orderedPlayerList[_currentPlayerIndex]; }
         }
 
-        // Refactor - (MT): Push this into basic game state.
         public int TurnNumber {
-            get { return this._turnNumber; }
+            get { return CurrentState.TurnNumber; }
         }
 
         public IList<Card> Cards {
@@ -686,7 +695,7 @@ namespace KingdomGame {
 
         public void AdvanceTurn() {
             CurrentPlayer.EndTurn();
-            _turnNumber++;
+            CurrentState.AdvanceTurn();
             _currentPlayerIndex = (_currentPlayerIndex + 1) % _orderedPlayerList.Count;
             CurrentPlayer.StartTurn();
         }
@@ -787,7 +796,6 @@ namespace KingdomGame {
         private void SetUpBasicGameDetails() {
             _id = Game.NextId++;
             _currentPlayerIndex = 0;
-            _turnNumber = 1;
             _trash = new Deck();
 
             _strategy = new Strategy(new List<int>(_playersById.Keys));
@@ -911,10 +919,6 @@ namespace KingdomGame {
                 return false;
             }
 
-            if (this._turnNumber != game._turnNumber) {
-                return false;
-            }
-
             for (int playerIndex = 0; playerIndex < this._orderedPlayerList.Count; playerIndex++) {
                 if (!this._orderedPlayerList[playerIndex].Equals(game._orderedPlayerList[playerIndex])) {
                     return false;
@@ -949,7 +953,6 @@ namespace KingdomGame {
         public override int GetHashCode() {
             int code = this._orderedPlayerList.Count.GetHashCode();
             code = code ^ this._currentPlayerIndex;
-            code = code ^ this._turnNumber;
 
             for (int playerIndex = 0; playerIndex < this._orderedPlayerList.Count; playerIndex++) {
                 code = code ^ this._orderedPlayerList[playerIndex].GetHashCode();
