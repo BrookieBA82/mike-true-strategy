@@ -170,8 +170,8 @@ namespace KingdomGame.Test
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after advancing the turn.");
             Assert.AreNotEqual(
-              game.TurnNumber, 
-              clone.TurnNumber, 
+              game.State.TurnNumber, 
+              clone.State.TurnNumber, 
               "Game's turn number should not match that of its clone after advancing the turn."
             );
         }

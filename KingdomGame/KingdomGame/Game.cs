@@ -366,10 +366,6 @@ namespace KingdomGame {
             get { return _orderedPlayerList[_currentPlayerIndex]; }
         }
 
-        public int TurnNumber {
-            get { return _state.TurnNumber; }
-        }
-
         public IList<Card> Cards {
             get { return new List<Card>(_cardsById.Values); }
         }

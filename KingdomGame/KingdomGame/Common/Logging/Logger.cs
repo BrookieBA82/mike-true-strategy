@@ -37,11 +37,11 @@ namespace KingdomGame {
         public void RecordPlay(Game game, Player player, Card card) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     this.RecordStartOfTurn(game);
                 }
 
-                GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
+                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 turn.Plays.Add(new GameHistory.Play(player, card));
             }
         }
@@ -50,11 +50,11 @@ namespace KingdomGame {
         public void RecordAction(Game game, Player player, Card card, IAction action, IList<Player> playerTargets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     this.RecordStartOfTurn(game);
                 }
 
-                GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
+                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
                     lastPlay.Actions.Add(new GameHistory.Action(player, card, action, playerTargets, null, null));
@@ -65,11 +65,11 @@ namespace KingdomGame {
         public void RecordAction(Game game, Player player, Card card, IAction action, IList<Card> cardTargets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     this.RecordStartOfTurn(game);
                 }
 
-                GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
+                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
                     lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, cardTargets, null));
@@ -86,11 +86,11 @@ namespace KingdomGame {
         ){
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     this.RecordStartOfTurn(game);
                 }
 
-                GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
+                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
                     lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, null, typeTargets));
@@ -102,11 +102,11 @@ namespace KingdomGame {
         public void RecordBuy(Game game, Player player, Card card) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
                     this.RecordStartOfTurn(game);
                 }
 
-                GameHistory.Turn turn = history.TurnsByNumber[game.TurnNumber];
+                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Buy == null) {
                     turn.Buy = new GameHistory.Buy(player);
                 }
@@ -118,8 +118,8 @@ namespace KingdomGame {
         public void RecordEndOfTurn(Game game) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
-                    GameHistory.Turn lastTurn = history.TurnsByNumber[game.TurnNumber];
+                if (history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
+                    GameHistory.Turn lastTurn = history.TurnsByNumber[game.State.TurnNumber];
                     lastTurn.Scores.Clear();
                     foreach (Player player in game.Players) {
                         lastTurn.Scores.Add(new GameHistory.ScoreInfo(player));
@@ -212,8 +212,9 @@ namespace KingdomGame {
         private void RecordStartOfTurn(Game game) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.TurnNumber)) {
-                    history.TurnsByNumber[game.TurnNumber] = new GameHistory.Turn(game.TurnNumber, game.CurrentPlayer);
+                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
+                    history.TurnsByNumber[game.State.TurnNumber] 
+                      = new GameHistory.Turn(game.State.TurnNumber, game.CurrentPlayer);
                 }
             }
         }

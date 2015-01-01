@@ -110,7 +110,7 @@ namespace KingdomGame.Driver {
 
         private static void ExecuteHumanPlayerTurn(Game game) {
 
-            int startingTurn = game.TurnNumber;
+            int startingTurn = game.State.TurnNumber;
             Console.WriteLine(string.Format("Turn number {0} (Current Player is {1}):\n", startingTurn, game.CurrentPlayer.Name));
 
             Console.WriteLine("\tStarting hand:");
@@ -183,7 +183,7 @@ namespace KingdomGame.Driver {
                         break;
                 }
 
-            } while (game.TurnNumber == startingTurn && game.State.Phase != Game.Phase.END);
+            } while (game.State.TurnNumber == startingTurn && game.State.Phase != Game.Phase.END);
 
             GameHistory.Turn lastTurn = Logger.Instance.GetLastTurn(game);
             Console.WriteLine(string.Format("\tEnd of turn {0} score:", lastTurn.Number));
@@ -669,7 +669,7 @@ namespace KingdomGame.Driver {
         }
 
         private static void PrintTurnDetails(Game game, Player player) {
-            Console.WriteLine(string.Format("\tTurn {0} summary:", game.TurnNumber));
+            Console.WriteLine(string.Format("\tTurn {0} summary:", game.State.TurnNumber));
             Console.WriteLine(string.Format("\t\tCurrent Player: {0} ({1})", game.CurrentPlayer.Name, game.CurrentPlayer.Id));
             Console.WriteLine(string.Format("\t\tRemaining Actions: {0}", game.CurrentPlayer.RemainingActions));
             Console.WriteLine(string.Format("\t\tRemaining Buys: {0}", game.CurrentPlayer.RemainingBuys));
