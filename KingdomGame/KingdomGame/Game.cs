@@ -559,71 +559,30 @@ namespace KingdomGame {
                         if (actionToPlay != null) {
 
                             // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
-                            // Refactor - (MT): Find a way to make this generic enough to have a single call.
-                            IList<Player> targetPlayers = _strategy.TargetSelectionStrategy.SelectTargets<Player>(
+                            IList<ITargetable> targets = _strategy.TargetSelectionStrategy.SelectTargets(
                                 this, 
                                 State.SelectedCard, 
                                 actionToPlay
                             );
 
-                            IList<Card> targetCards = _strategy.TargetSelectionStrategy.SelectTargets<Card>(
-                                this,
-                                State.SelectedCard,
-                                actionToPlay
-                            );
-
-                            IList<CardType> targetTypes = _strategy.TargetSelectionStrategy.SelectTargets<CardType>(
-                                this,
-                                State.SelectedCard,
-                                actionToPlay
-                            );
-
                             List<int> targetIds = new List<int>();
-                            if (targetPlayers.Count > 0) {
+                            if (targets.Count > 0) {
                                 Logger.Instance.RecordAction(
                                   this, 
                                   CurrentPlayer, 
                                   State.SelectedCard, 
                                   actionToPlay, 
-                                  targetPlayers
+                                  targets
                                 );
 
-                                targetIds.AddRange(new List<Player>(targetPlayers)
-                                  .ConvertAll<int>(delegate (Player player) { return player.Id;}));
+                                targetIds.AddRange(new List<ITargetable>(targets)
+                                  .ConvertAll<int>(delegate (ITargetable target) { return target.Id;}));
                                 State.ExecuteNextPendingAction(targetIds);
-                                actionToPlay.Apply<Player>(targetPlayers, this);
-                            } else if (targetCards.Count > 0) {
-                                Logger.Instance.RecordAction(
-                                  this, 
-                                  CurrentPlayer, 
-                                  State.SelectedCard, 
-                                  actionToPlay, 
-                                  targetCards
-                                );
-
-                                targetIds.AddRange(new List<Card>(targetCards)
-                                  .ConvertAll<int>(delegate (Card card) { return card.Id;}));
-                                State.ExecuteNextPendingAction(targetIds);
-                                actionToPlay.Apply<Card>(targetCards, this);
-                            } else if (targetTypes.Count > 0) {
-                                Logger.Instance.RecordAction(
-                                  this, 
-                                  CurrentPlayer, 
-                                  State.SelectedCard, 
-                                  actionToPlay, 
-                                  targetTypes
-                                );
-
-                                targetIds.AddRange(new List<CardType>(targetTypes)
-                                  .ConvertAll<int>(delegate (CardType type) { return type.Id;}));
-                                State.ExecuteNextPendingAction(targetIds);
-                                actionToPlay.Apply<CardType>(targetTypes, this);
-                            }
-                            else {
+                                actionToPlay.Apply(targets, this);
+                            } else {
                                 // Handles the case where no targets are specified for the action.
                                 State.ExecuteNextPendingAction(targetIds);
                             }
-                            // End Refactor Block
                         }
 
                         if (!State.HasNextPendingAction) {

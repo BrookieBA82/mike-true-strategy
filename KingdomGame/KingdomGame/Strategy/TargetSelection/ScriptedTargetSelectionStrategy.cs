@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Wintellect.PowerCollections;
@@ -44,22 +45,19 @@ namespace KingdomGame {
         }
         // End Todo Block
 
-        public IList<TTarget> SelectTargets<TTarget>(
+        public IList<ITargetable> SelectTargets(
           Game game, 
           Card card, 
           IAction action
-        ) where TTarget : class, ITargetable {
-            if (typeof(TTarget).Equals(_targetType)) {
-                IList<TTarget> targets = new List<TTarget>();
-                foreach (ITargetable target in _targets) {
-                    targets.Add(target as TTarget);
-                }
-                return action.IsTargetValid<TTarget>(targets, card, game)
-                  ? targets
-                  : new List<TTarget>();
-            }
+        ) {
+            Type targetType = action.TargetType;
 
-            return new List<TTarget>();
+            object genericResult = typeof(ScriptedTargetSelectionStrategy)
+              .GetMethod("SelectTargetsTyped", BindingFlags.NonPublic | BindingFlags.Instance)
+              .MakeGenericMethod(targetType)
+              .Invoke(this, new object[] {game, card, action});
+
+            return genericResult as IList<ITargetable>;
         }
 
         public object Clone() {
@@ -98,6 +96,24 @@ namespace KingdomGame {
             }
 
             return code;
+        }
+
+        private IList<ITargetable> SelectTargetsTyped<TTarget>(
+          Game game, 
+          Card card, 
+          IAction action
+        ) where TTarget : class, ITargetable {
+            if (typeof(TTarget).Equals(_targetType)) {
+                IList<TTarget> targets = new List<TTarget>();
+                foreach (ITargetable target in _targets) {
+                    targets.Add(target as TTarget);
+                }
+                return action.IsTargetValid<TTarget>(targets, card, game)
+                  ? new List<ITargetable>(targets)
+                  : new List<ITargetable>();
+            }
+
+            return new List<ITargetable>();
         }
     }
 }

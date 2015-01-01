@@ -110,24 +110,25 @@ namespace KingdomGame {
             return false;
         }
 
-        public void Apply<TType>(
-          IList<TType> targetSet,
+        public void Apply(
+          IList<ITargetable> targetSet,
           Game game
-        ) where TType : class, ITargetable {
-            if(typeof(TType) == _targetType) {
-                IList<TTarget> typedTargetSet = (targetSet != null && targetSet.Count > 0) 
-                  ? targetSet as IList<TTarget> 
-                  : new List<TTarget>();
+        ) {
+            IList<TTarget> typedTargetSet = new List<TTarget>();
+            foreach (ITargetable target in targetSet) {
+                if(target is TTarget) {
+                    typedTargetSet.Add(target as TTarget);
+                }
+                else {
+                    throw new InvalidOperationException(string.Format(
+                    "Cannot apply this action to a target set containing {0} because it can only be applied to {1}.",
+                        target.GetType().ToString(),
+                        _targetType.ToString()
+                    ));
+                }
+            }
 
-                ApplyInternal(typedTargetSet, game);
-            }
-            else {
-                throw new InvalidOperationException(string.Format(
-                  "Cannot apply this action to {0} because it can only be applied to {1}.",
-                  typeof(TType).ToString(),
-                  _targetType.ToString()
-                ));
-            }
+            ApplyInternal(typedTargetSet, game);
         }
 
         public IList<ITargetable> GetAllValidTargets(
@@ -161,6 +162,8 @@ namespace KingdomGame {
         public int MinTargets { get { return _minTargets; } }
 
         public int MaxTargets { get { return _maxTargets; } }
+
+        public Type TargetType { get { return _targetType; } }
 
         public int? ExecutingPlayerId { get { return _executingPlayerId; } }
 

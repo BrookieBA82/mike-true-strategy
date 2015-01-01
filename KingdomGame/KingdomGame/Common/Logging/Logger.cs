@@ -46,8 +46,7 @@ namespace KingdomGame {
             }
         }
 
-        // Refactor - (MT): Turn these three functions into a single generic one.
-        public void RecordAction(Game game, Player player, Card card, IAction action, IList<Player> playerTargets) {
+        public void RecordAction(Game game, Player player, Card card, IAction action, IList<ITargetable> targets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
@@ -57,47 +56,47 @@ namespace KingdomGame {
                 GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, playerTargets, null, null));
+                    // Refactor - (MT): Eliminate the need for this ugliness:
+                    switch (action.TargetType.Name) {
+                        case "Player":
+                            lastPlay.Actions.Add(new GameHistory.Action(
+                              player, 
+                              card, 
+                              action, 
+                              new List<ITargetable>(targets).ConvertAll<Player>(delegate(ITargetable target) { return target as Player;}), 
+                              null,
+                              null
+                            ));
+                            break;
+
+                        case "Card":
+                            lastPlay.Actions.Add(new GameHistory.Action(
+                              player, 
+                              card, 
+                              action, 
+                              null, 
+                              new List<ITargetable>(targets).ConvertAll<Card>(delegate(ITargetable target) { return target as Card; }),
+                              null
+                            ));
+                            break;
+
+                        case "CardType":
+                            lastPlay.Actions.Add(new GameHistory.Action(
+                              player, 
+                              card, 
+                              action, 
+                              null,
+                              null,
+                              new List<ITargetable>(targets).ConvertAll<CardType>(delegate(ITargetable target) { return target as CardType; })
+                            ));
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
             }
         }
-
-        public void RecordAction(Game game, Player player, Card card, IAction action, IList<Card> cardTargets) {
-            if (_historyByGame.ContainsKey(game.Id)) {
-                GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
-                    this.RecordStartOfTurn(game);
-                }
-
-                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
-                if (turn.Plays.Count > 0) {
-                    GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, cardTargets, null));
-                }
-            }
-        }
-
-        public void RecordAction(
-          Game game, 
-          Player player, 
-          Card card, 
-          IAction action, 
-          IList<CardType> typeTargets
-        ){
-            if (_historyByGame.ContainsKey(game.Id)) {
-                GameHistory history = _historyByGame[game.Id];
-                if (!history.TurnsByNumber.ContainsKey(game.State.TurnNumber)) {
-                    this.RecordStartOfTurn(game);
-                }
-
-                GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
-                if (turn.Plays.Count > 0) {
-                    GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, null, null, typeTargets));
-                }
-            }
-        }
-        // End Refactor Block
 
         public void RecordBuy(Game game, Player player, Card card) {
             if (_historyByGame.ContainsKey(game.Id)) {

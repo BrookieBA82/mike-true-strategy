@@ -17,10 +17,10 @@ namespace KingdomGame {
           Game game
         ) where TTarget : class, ITargetable;
 
-        void Apply<TTarget>(
-          IList<TTarget> targets, 
+        void Apply(
+          IList<ITargetable> targets,
           Game game
-        ) where TTarget : class, ITargetable;
+        );
 
         IList<ITargetable> GetAllValidTargets(
           Card targetingCard, 
@@ -32,6 +32,8 @@ namespace KingdomGame {
         int MinTargets { get; }
 
         int MaxTargets { get; }
+
+        Type TargetType { get; }
 
         int? ExecutingPlayerId { get; }
 

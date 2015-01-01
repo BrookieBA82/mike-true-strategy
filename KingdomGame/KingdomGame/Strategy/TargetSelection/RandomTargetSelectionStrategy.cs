@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Wintellect.PowerCollections;
@@ -9,23 +10,19 @@ namespace KingdomGame {
 
     public class RandomTargetSelectionStrategy : ITargetSelectionStrategy {
 
-        public IList<TTarget> SelectTargets<TTarget>(
+        public IList<ITargetable> SelectTargets(
           Game game, 
           Card card, 
           IAction action
-        ) where TTarget : class, ITargetable {
-            List<TTarget> validTargets = new List<TTarget>();
-            foreach(TTarget target in action.GetAllPossibleTargets<TTarget>(game)) {
-                if (action.IsTargetValid<TTarget>(new List<TTarget>() { target }, card, game)) {
-                    validTargets.Add(target);
-                }
-            }
+        ) {
+            Type targetType = action.TargetType;
 
-            if (action.AllValidTargetsRequired) {
-                return validTargets;
-            }
+            object genericResult = typeof(RandomTargetSelectionStrategy)
+              .GetMethod("SelectTargetsTyped", BindingFlags.NonPublic | BindingFlags.Instance)
+              .MakeGenericMethod(targetType)
+              .Invoke(this, new object[] {game, card, action});
 
-            return Combinations.SelectRandomItemsFromList<TTarget>(validTargets, action.MinTargets, action.MaxTargets);
+            return genericResult as IList<ITargetable>;
         }
 
         public object Clone() {
@@ -42,6 +39,25 @@ namespace KingdomGame {
 
         public override int GetHashCode() {
             return this.GetType().GetHashCode();
+        }
+
+        private IList<ITargetable> SelectTargetsTyped<TTarget>(
+          Game game, 
+          Card card, 
+          IAction action
+        ) where TTarget : class, ITargetable {
+            List<ITargetable> validTargets = new List<ITargetable>();
+            foreach(TTarget target in action.GetAllPossibleTargets<TTarget>(game)) {
+                if (action.IsTargetValid<TTarget>(new List<TTarget>() { target }, card, game)) {
+                    validTargets.Add(target);
+                }
+            }
+
+            if (action.AllValidTargetsRequired) {
+                return validTargets;
+            }
+
+            return Combinations.SelectRandomItemsFromList<ITargetable>(validTargets, action.MinTargets, action.MaxTargets);
         }
     }
 }

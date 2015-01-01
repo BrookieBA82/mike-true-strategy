@@ -9,11 +9,11 @@ namespace KingdomGame {
 
     public interface ITargetSelectionStrategy : ICloneable {
 
-        IList<TTarget> SelectTargets<TTarget>(
+        IList<ITargetable> SelectTargets(
           Game game, 
           Card card, 
           IAction action
-        ) where TTarget : class, ITargetable;
+        );
 
     }
 }
