@@ -576,24 +576,19 @@ namespace KingdomGame {
                                 actionToPlay
                             );
 
-                            List<int> targetIds = new List<int>();
-                            if (targets.Count > 0) {
-                                Logger.Instance.RecordAction(
-                                  this, 
-                                  State.CurrentPlayer, 
-                                  State.SelectedCard, 
-                                  actionToPlay, 
-                                  targets
-                                );
+                            Logger.Instance.RecordAction(
+                              this, 
+                              State.CurrentPlayer, 
+                              State.SelectedCard, 
+                              actionToPlay, 
+                              targets
+                            );
 
-                                targetIds.AddRange(new List<ITargetable>(targets)
-                                  .ConvertAll<int>(delegate (ITargetable target) { return target.Id;}));
-                                State.ExecuteNextPendingAction(targetIds);
-                                actionToPlay.Apply(targets, this);
-                            } else {
-                                // Handles the case where no targets are specified for the action.
-                                State.ExecuteNextPendingAction(targetIds);
-                            }
+                            State.ExecuteNextPendingAction(new List<ITargetable>(targets).ConvertAll<int>(
+                              delegate (ITargetable target) { return target.Id;}
+                            ));
+
+                            actionToPlay.Apply(targets, this);
                         }
 
                         if (!State.HasNextPendingAction) {
