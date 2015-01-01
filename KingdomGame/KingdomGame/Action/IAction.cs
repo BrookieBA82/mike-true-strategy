@@ -29,6 +29,8 @@ namespace KingdomGame {
 
         IList<TTarget> GetAllPossibleTargets<TTarget>(Game game) where TTarget : class, ITargetable;
 
+        // Refactor - (MT): Add a method for getting a target object from the game via ID.
+
         int MinTargets { get; }
 
         int MaxTargets { get; }
