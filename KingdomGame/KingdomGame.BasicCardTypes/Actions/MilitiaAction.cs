@@ -30,7 +30,7 @@ namespace KingdomGame.BasicCardTypes {
                   "discarding {0} cards for Militia",
                   Math.Max(player.Hand.Count - 3, 0)
                 );
-                game.CurrentState.ActionStack.Push(forcedDiscardAction);
+                game.State.ActionStack.Push(forcedDiscardAction);
             }
         }
 

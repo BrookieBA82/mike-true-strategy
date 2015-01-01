@@ -128,9 +128,9 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.SelectedCard = village;
-            game.CurrentState.Phase = Game.Phase.ACTION;
-            game.CurrentState.ActionStack.Push(village.Type.Actions[0]);
+            game.State.SelectedCard = village;
+            game.State.Phase = Game.Phase.ACTION;
+            game.State.ActionStack.Push(village.Type.Actions[0]);
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
             game.PlayStep();
 
@@ -317,7 +317,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.SelectedCard = firstVillage;
+            game.State.SelectedCard = firstVillage;
             Game clone = game.Clone() as Game;
 
             Card secondVillage = null;
@@ -328,7 +328,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.SelectedCard = secondVillage;
+            game.State.SelectedCard = secondVillage;
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after selected card is changed.");
         }
@@ -400,8 +400,8 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Assert.AreNotEqual(
-              game.CurrentState, 
-              clone.CurrentState, 
+              game.State, 
+              clone.State, 
               "Game state should not match that of its clone after action stack is changed."
             );
         }
@@ -440,8 +440,8 @@ namespace KingdomGame.Test
             clone.PlayStep();
 
             Assert.AreNotEqual(
-              game.CurrentState, 
-              clone.CurrentState, 
+              game.State, 
+              clone.State, 
               "Game state should not match that of its clone after previous action histories diverge."
             );
         }

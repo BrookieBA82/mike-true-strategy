@@ -119,21 +119,21 @@ namespace KingdomGame.Driver {
             
             do {
 
-                switch (game.CurrentState.Phase) {
+                switch (game.State.Phase) {
                     case Game.Phase.PLAY:
                         ExecuteHumanPlayerPlay(game);
                         break;
 
                     case Game.Phase.ACTION:
 
-                        if (game.CurrentState.SelectedCard != null) {
+                        if (game.State.SelectedCard != null) {
 
-                            while(game.CurrentState.ActionStack.Count > 0) {
-                                IAction actionToPlay = game.CurrentState.ActionStack.Peek();
+                            while(game.State.ActionStack.Count > 0) {
+                                IAction actionToPlay = game.State.ActionStack.Peek();
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
-                                  game.CurrentState.SelectedCard, 
+                                  game.State.SelectedCard, 
                                   game, 
-                                  game.CurrentState.PreviousActions
+                                  game.State.PreviousActions
                                 );
 
                                 if (
@@ -148,7 +148,7 @@ namespace KingdomGame.Driver {
                                 else if (validTargets.Count > 0) {
                                     ExecuteHumanPlayerAction(
                                       game, 
-                                      game.CurrentState.SelectedCard,
+                                      game.State.SelectedCard,
                                       actionToPlay, 
                                       validTargets
                                     );
@@ -183,7 +183,7 @@ namespace KingdomGame.Driver {
                         break;
                 }
 
-            } while (game.TurnNumber == startingTurn && game.CurrentState.Phase != Game.Phase.END);
+            } while (game.TurnNumber == startingTurn && game.State.Phase != Game.Phase.END);
 
             GameHistory.Turn lastTurn = Logger.Instance.GetLastTurn(game);
             Console.WriteLine(string.Format("\tEnd of turn {0} score:", lastTurn.Number));
@@ -300,7 +300,7 @@ namespace KingdomGame.Driver {
                           selectedTargets, 
                           cardToPlay, 
                           game, 
-                          game.CurrentState.PreviousActions
+                          game.State.PreviousActions
                         );
 
                         if(!validTargetSpecified) {
@@ -332,7 +332,7 @@ namespace KingdomGame.Driver {
         }
 
         private static void ExecuteHumanPlayerBuy(Game game) {
-            while (game.CurrentState.Phase == Game.Phase.BUY) {
+            while (game.State.Phase == Game.Phase.BUY) {
                 int optionCounter = 2;
                 IDictionary<string, string> optionPromptsByIndex = 
                   new Dictionary<string, string>() { { "1", "<no buy>" } };

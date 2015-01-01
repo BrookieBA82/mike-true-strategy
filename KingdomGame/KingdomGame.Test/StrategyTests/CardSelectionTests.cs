@@ -32,12 +32,12 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.CurrentState.Phase = Game.Phase.PLAY;
+            game.State.Phase = Game.Phase.PLAY;
             game.PlayStep();
 
             Assert.AreEqual(
               null, 
-              game.CurrentState.SelectedCard, 
+              game.State.SelectedCard, 
               "No card should be selected if no action is eligible for selection."
             );
         }
@@ -55,12 +55,12 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeVillage.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.CurrentState.Phase = Game.Phase.PLAY;
+            game.State.Phase = Game.Phase.PLAY;
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
             game.PlayStep();
 
             Assert.IsNull(
-              game.CurrentState.SelectedCard, 
+              game.State.SelectedCard, 
               "No card should be selected if the scripted choice was to play nothing."
             );
         }
@@ -87,12 +87,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.Phase = Game.Phase.PLAY;
+            game.State.Phase = Game.Phase.PLAY;
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(estateCard);
             game.PlayStep();
 
             Assert.IsNull(
-              game.CurrentState.SelectedCard, 
+              game.State.SelectedCard, 
               "No card should be selected if an invalid scripted choice was selected."
             );
         }
@@ -119,13 +119,13 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.Phase = Game.Phase.PLAY;
+            game.State.Phase = Game.Phase.PLAY;
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(
               villageCard, 
-              game.CurrentState.SelectedCard, 
+              game.State.SelectedCard, 
               "The village card should be selected if it is the scripted choice."
             );
         }
@@ -154,13 +154,13 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.Phase = Game.Phase.PLAY;
+            game.State.Phase = Game.Phase.PLAY;
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(
               villageCard, 
-              game.CurrentState.SelectedCard, 
+              game.State.SelectedCard, 
               "The village card should be selected if it is the scripted choice."
             );
         }
