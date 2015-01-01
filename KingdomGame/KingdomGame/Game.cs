@@ -502,6 +502,7 @@ namespace KingdomGame {
 
                     bool advanceToBuy = true;
                     if (CurrentPlayer.RemainingActions > 0) {
+                        // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
                         Card cardToPlay =  _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy
                             (this, new Deck(CurrentPlayer.Hand));
 
@@ -537,6 +538,7 @@ namespace KingdomGame {
                         IAction actionToPlay = CurrentState.GetNextPendingAction();
                         if (actionToPlay != null) {
 
+                            // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
                             // Refactor - (MT): Find a way to make this generic enough to have a single call.
                             IList<Player> targetPlayers = _strategy.TargetSelectionStrategy.SelectTargets<Player>(
                                 this, 
@@ -631,7 +633,7 @@ namespace KingdomGame {
                     bool isTurnOver = false;
                     if (CurrentPlayer.RemainingBuys > 0) {
                         IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
-
+                        // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
                         CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
 
                         if (typeToBuy != null && GetCardsByType(typeToBuy).Count > 0) {
