@@ -126,13 +126,12 @@ namespace KingdomGame.Driver {
 
                     case Game.Phase.TARGET:
 
-                        if (game.CurrentState.SelectedCardId != null) {
-                            Card cardToPlay = game.GetCardById(game.CurrentState.SelectedCardId.Value);
+                        if (game.CurrentState.SelectedCard != null) {
 
                             while(game.CurrentState.ActionStack.Count > 0) {
                                 IAction actionToPlay = game.CurrentState.ActionStack.Peek();
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
-                                  cardToPlay, 
+                                  game.CurrentState.SelectedCard, 
                                   game, 
                                   game.CurrentState.PreviousActions
                                 );
@@ -149,7 +148,7 @@ namespace KingdomGame.Driver {
                                 else if (validTargets.Count > 0) {
                                     ExecuteHumanPlayerTarget(
                                       game, 
-                                      cardToPlay,
+                                      game.CurrentState.SelectedCard,
                                       actionToPlay, 
                                       validTargets
                                     );

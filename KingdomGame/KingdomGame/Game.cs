@@ -20,24 +20,55 @@ namespace KingdomGame {
 
         public class State : ICloneable {
 
-            public Phase Phase { get; set; }
+            private Game _game;
+            private Phase _phase;
+            private int? _selectedCardId;
 
-            public Stack<IAction> ActionStack { get; set; }
+            internal Game Game { set { _game = value; } }
 
-            public int? SelectedCardId { get; set; }
+            public Phase Phase {
+                get { return _phase; }
+                set {
+                    // Refactor - (MT): Clear out phase-specific values here upon change.
+                    _phase = value; 
+                } 
+            }
 
+            public Card SelectedCard { 
+                get { return (_selectedCardId.HasValue) ? _game.GetCardById(_selectedCardId.Value) : null; }
+                set {
+                    if (value != null) {
+                        if (Phase != Phase.ACTION) {
+                            throw new InvalidOperationException(
+                              "Cannot set a selected card outside of the action phase.");
+                        }
+
+                        _selectedCardId = (int ?) value.Id;
+                    }
+                    else {
+                        _selectedCardId = null;
+                    }
+                }
+            }
+
+            // Refactor - (MT): Turn this into a list of methods which record actions and do searches.
             public IList<Pair<IAction, IList<int>>> PreviousActions { get; set; }
 
-            public State() {
+            // Refactor - (MT): Abstract this representation away from the public interface.
+            public Stack<IAction> ActionStack { get; set; }
+
+            public State(Game game) {
+                _game = game;
+                _phase = Phase.ACTION;
                 ActionStack = new Stack<IAction>();
             }
 
             public object Clone() {
-                State state = new State();
+                State state = new State(_game);
 
-                state.Phase = Phase;
+                state._phase = _phase;
                 state.ActionStack = new Stack<IAction>(ActionStack);
-                state.SelectedCardId = SelectedCardId;
+                state._selectedCardId = _selectedCardId;
                 state.PreviousActions = new List<Pair<IAction, IList<int>>>(PreviousActions);
 
                 return state;
@@ -86,11 +117,11 @@ namespace KingdomGame {
                     }
                 }
 
-                return Phase == state.Phase && SelectedCardId == state.SelectedCardId;
+                return _phase == state._phase && _selectedCardId == state._selectedCardId;
             }
 
             public override int GetHashCode() {
-                int code = Phase.GetHashCode() ^ SelectedCardId.GetHashCode();
+                int code = _phase.GetHashCode() ^ _selectedCardId.GetHashCode();
 
                 code ^= PreviousActions.Count.GetHashCode();
 
@@ -230,6 +261,7 @@ namespace KingdomGame {
             SetUpCardIndex();
         }
 
+        // Refactor - (MT): Handle support for adequately updating backreferences - within clone method?
         private Game(Game toClone) {
             // Note - (MT): Games do not have their ID copied over on clones, by design
             List<Player> players = toClone._orderedPlayerList as List<Player>;
@@ -246,6 +278,7 @@ namespace KingdomGame {
             _currentPlayerIndex = toClone._currentPlayerIndex;
             _strategy = toClone._strategy.Clone() as Strategy;
             _state = toClone._state.Clone() as State;
+            _state.Game = this;
 
             SetUpCardIndex();
         }
@@ -428,7 +461,7 @@ namespace KingdomGame {
                             (this, new Deck(CurrentPlayer.Hand));
 
                         if (cardToPlay != null) {
-                            CurrentState.SelectedCardId = (int?) cardToPlay.Id;
+                            CurrentState.SelectedCard = cardToPlay;
                             Logger.Instance.RecordCardSelection(this, CurrentPlayer, cardToPlay);
 
                             CurrentState.Phase = Phase.TARGET;
@@ -447,7 +480,7 @@ namespace KingdomGame {
                     }
 
                     if (advanceToBuy) {
-                        CurrentState.SelectedCardId = null;
+                        CurrentState.SelectedCard = null;
                         CurrentState.Phase = Phase.BUY;
                         CurrentState.ActionStack = new Stack<IAction>();
                     }
@@ -458,9 +491,8 @@ namespace KingdomGame {
 
                 case Phase.TARGET:
 
-                    if (CurrentState.SelectedCardId != null) {
+                    if (CurrentState.SelectedCard != null) {
 
-                        Card cardToPlay = _cardsById[CurrentState.SelectedCardId.Value];
                         IAction actionToPlay = CurrentState.ActionStack.Pop();
 
                         if (actionToPlay != null) {
@@ -468,21 +500,21 @@ namespace KingdomGame {
                             // Refactor - (MT): Find a way to make this generic enough to have a single call.
                             IList<Player> targetPlayers = _strategy.TargetSelectionStrategy.SelectTargets<Player>(
                                 this, 
-                                cardToPlay, 
+                                CurrentState.SelectedCard, 
                                 actionToPlay,
                                 CurrentState.PreviousActions
                             );
 
                             IList<Card> targetCards = _strategy.TargetSelectionStrategy.SelectTargets<Card>(
                                 this,
-                                cardToPlay,
+                                CurrentState.SelectedCard,
                                 actionToPlay,
                                 CurrentState.PreviousActions
                             );
 
                             IList<CardType> targetTypes = _strategy.TargetSelectionStrategy.SelectTargets<CardType>(
                                 this,
-                                cardToPlay,
+                                CurrentState.SelectedCard,
                                 actionToPlay,
                                 CurrentState.PreviousActions
                             );
@@ -492,7 +524,7 @@ namespace KingdomGame {
                                 Logger.Instance.RecordTargetSelection(
                                   this, 
                                   CurrentPlayer, 
-                                  cardToPlay, 
+                                  CurrentState.SelectedCard, 
                                   actionToPlay, 
                                   targetPlayers
                                 );
@@ -504,7 +536,7 @@ namespace KingdomGame {
                                 Logger.Instance.RecordTargetSelection(
                                   this, 
                                   CurrentPlayer, 
-                                  cardToPlay, 
+                                  CurrentState.SelectedCard, 
                                   actionToPlay, 
                                   targetCards
                                 );
@@ -516,7 +548,7 @@ namespace KingdomGame {
                                 Logger.Instance.RecordTargetSelection(
                                   this, 
                                   CurrentPlayer, 
-                                  cardToPlay, 
+                                  CurrentState.SelectedCard, 
                                   actionToPlay, 
                                   targetTypes
                                 );
@@ -537,7 +569,7 @@ namespace KingdomGame {
                                 CurrentState.Phase = Phase.BUY;
                             }
 
-                            CurrentState.SelectedCardId = null;
+                            CurrentState.SelectedCard = null;
                             CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                         }
                     }
@@ -546,7 +578,7 @@ namespace KingdomGame {
                         CurrentPlayer.RemainingActions = 0;
                         CurrentState.Phase = Phase.BUY;
                         CurrentState.ActionStack = new Stack<IAction>();
-                        CurrentState.SelectedCardId = null;
+                        CurrentState.SelectedCard = null;
                         CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
@@ -586,7 +618,7 @@ namespace KingdomGame {
 
                     if (isTurnOver) {
                         CurrentState.ActionStack = new Stack<IAction>();
-                        CurrentState.SelectedCardId = null;
+                        CurrentState.SelectedCard = null;
                         CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
@@ -599,7 +631,7 @@ namespace KingdomGame {
                     AdvanceTurn();
                     CurrentState.Phase = Phase.ACTION;
                     CurrentState.ActionStack = new Stack<IAction>();
-                    CurrentState.SelectedCardId = null;
+                    CurrentState.SelectedCard = null;
                     CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
                     break;
@@ -719,16 +751,16 @@ namespace KingdomGame {
             _trash = new Deck();
 
             _strategy = new Strategy(new List<int>(_playersById.Keys));
-            _state = new State();
-
             // Todo - (MT): Strategy point #1 - select best card (instead of random)
             _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
             // Todo - (MT): Strategy point #2 - select best (or at least random) target
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)
             _strategy.BuyingStrategy = new RandomBuyingStrategy();
+
+            _state = new State(this);
             _state.Phase = Phase.ACTION;
-            _state.SelectedCardId = null;
+            _state.SelectedCard = null;
             _state.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
             _cardsById = new Dictionary<int, Card>();

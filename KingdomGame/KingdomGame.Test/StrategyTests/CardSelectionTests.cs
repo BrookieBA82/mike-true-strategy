@@ -37,7 +37,7 @@ namespace KingdomGame.Test
 
             Assert.AreEqual(
               null, 
-              game.CurrentState.SelectedCardId, 
+              game.CurrentState.SelectedCard, 
               "No card should be selected if no action is eligible for selection."
             );
         }
@@ -59,8 +59,8 @@ namespace KingdomGame.Test
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
             game.PlayStep();
 
-            Assert.IsFalse(
-              game.CurrentState.SelectedCardId.HasValue, 
+            Assert.IsNull(
+              game.CurrentState.SelectedCard, 
               "No card should be selected if the scripted choice was to play nothing."
             );
         }
@@ -91,8 +91,8 @@ namespace KingdomGame.Test
             game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(estateCard);
             game.PlayStep();
 
-            Assert.IsFalse(
-              game.CurrentState.SelectedCardId.HasValue, 
+            Assert.IsNull(
+              game.CurrentState.SelectedCard, 
               "No card should be selected if an invalid scripted choice was selected."
             );
         }
@@ -124,8 +124,8 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Assert.AreEqual(
-              villageCard.Id, 
-              game.CurrentState.SelectedCardId, 
+              villageCard, 
+              game.CurrentState.SelectedCard, 
               "The village card should be selected if it is the scripted choice."
             );
         }
@@ -159,8 +159,8 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             Assert.AreEqual(
-              villageCard.Id, 
-              game.CurrentState.SelectedCardId, 
+              villageCard, 
+              game.CurrentState.SelectedCard, 
               "The village card should be selected if it is the scripted choice."
             );
         }

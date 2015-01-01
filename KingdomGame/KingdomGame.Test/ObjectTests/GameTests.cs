@@ -128,10 +128,10 @@ namespace KingdomGame.Test
                 }
             }
 
+            game.CurrentState.SelectedCard = village;
             game.CurrentState.Phase = Game.Phase.TARGET;
             game.CurrentState.ActionStack.Push(village.Type.Actions[0]);
             game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.CurrentPlayer);
-            game.CurrentState.SelectedCardId = village.Id;
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
@@ -317,9 +317,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.Phase = Game.Phase.TARGET;
-            game.CurrentState.SelectedCardId = firstVillage.Id;
-
+            game.CurrentState.SelectedCard = firstVillage;
             Game clone = game.Clone() as Game;
 
             Card secondVillage = null;
@@ -330,7 +328,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentState.SelectedCardId = secondVillage.Id;
+            game.CurrentState.SelectedCard = secondVillage;
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after selected card is changed.");
         }
