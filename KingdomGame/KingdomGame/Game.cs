@@ -22,6 +22,7 @@ namespace KingdomGame {
             private Game _game;
             private Phase _phase;
             private int _turnNumber;
+            private int _currentPlayerIndex;
             private int? _selectedCardId;
 
             private Stack<IAction> _pendingActionStack;
@@ -60,7 +61,7 @@ namespace KingdomGame {
 
             public int TurnNumber { get { return _turnNumber; } }
 
-            public Player CurrentPlayer { get { return _game.Players[_game._currentPlayerIndex]; } }
+            public Player CurrentPlayer { get { return _game.Players[_currentPlayerIndex]; } }
 
             public GameState(Game game) {
                 _game = game;
@@ -76,6 +77,7 @@ namespace KingdomGame {
                 state._phase = _phase;
                 state._selectedCardId = _selectedCardId;
                 state._turnNumber = _turnNumber;
+                state._currentPlayerIndex = _currentPlayerIndex;
                 state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
                 state._executedActionStack = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
 
@@ -84,6 +86,7 @@ namespace KingdomGame {
 
             public void AdvanceTurn() {
                 _turnNumber++;
+                _currentPlayerIndex = (_currentPlayerIndex + 1) % _game._orderedPlayerList.Count;
             }
 
             public bool HasNextPendingAction { get { return NextPendingAction != null; } }
@@ -189,11 +192,15 @@ namespace KingdomGame {
 
                 return _phase == state._phase 
                   && _selectedCardId == state._selectedCardId
-                  && _turnNumber == state._turnNumber;
+                  && _turnNumber == state._turnNumber
+                  && _currentPlayerIndex == state._currentPlayerIndex;
             }
 
             public override int GetHashCode() {
-                int code = _phase.GetHashCode() ^ _selectedCardId.GetHashCode() ^ _turnNumber.GetHashCode();
+                int code = _phase.GetHashCode() 
+                  ^ _selectedCardId.GetHashCode() 
+                  ^ _turnNumber.GetHashCode() 
+                  ^ _currentPlayerIndex.GetHashCode();
 
                 code ^= _executedActionStack.Count.GetHashCode();
 
@@ -305,9 +312,6 @@ namespace KingdomGame {
         private Deck _trash;
 
         private int _id;
-        // Refactor - (MT): Push this into the Game State as well?
-        private int _currentPlayerIndex;
-
         private GameState _state;
         private Strategy _strategy;
 
@@ -347,7 +351,6 @@ namespace KingdomGame {
                 _cardsByTypeId[cardTypeId] = toClone._cardsByTypeId[cardTypeId].Clone() as Deck;
             }
 
-            _currentPlayerIndex = toClone._currentPlayerIndex;
             _strategy = toClone._strategy.Clone() as Strategy;
             _state = toClone._state.Clone() as GameState;
             _state.Game = this;
@@ -436,7 +439,7 @@ namespace KingdomGame {
         public void StartGame(
           IDictionary<int, int> playerCardCountsByType,
           IDictionary<int, int> handCardCountsByType,
-          bool randomizeFirstPlayer
+          bool randomizePlayerOrder
         ) {
             foreach (int cardTypeId in playerCardCountsByType.Keys) {
                 if (!_cardsByTypeId.ContainsKey(cardTypeId)) {
@@ -485,7 +488,17 @@ namespace KingdomGame {
                 }
             }
 
-            _currentPlayerIndex = (randomizeFirstPlayer) ? RandomNumberManager.Next(_orderedPlayerList.Count) : 0;
+            if (randomizePlayerOrder) {
+                List<Player> newOrderedPlayerList = new List<Player>();
+                while (_orderedPlayerList.Count > 0) {
+                    int playerIndex = RandomNumberManager.Next(_orderedPlayerList.Count);
+                    newOrderedPlayerList.Add(_orderedPlayerList[playerIndex]);
+                    _orderedPlayerList.RemoveAt(playerIndex);
+                }
+
+                _orderedPlayerList = newOrderedPlayerList;
+            }
+
             State.CurrentPlayer.StartTurn();
         }
 
@@ -661,7 +674,6 @@ namespace KingdomGame {
         public void AdvanceTurn() {
             State.CurrentPlayer.EndTurn();
             State.AdvanceTurn();
-            _currentPlayerIndex = (_currentPlayerIndex + 1) % _orderedPlayerList.Count;
             State.CurrentPlayer.StartTurn();
         }
 
@@ -760,7 +772,6 @@ namespace KingdomGame {
         // Refactor - (MT): This is a bad method name and might indicate a bad method.
         private void SetUpBasicGameDetails() {
             _id = Game.NextId++;
-            _currentPlayerIndex = 0;
             _trash = new Deck();
 
             _strategy = new Strategy(new List<int>(_playersById.Keys));
@@ -880,10 +891,6 @@ namespace KingdomGame {
                 return false;
             }
 
-            if (this._currentPlayerIndex != game._currentPlayerIndex) {
-                return false;
-            }
-
             for (int playerIndex = 0; playerIndex < this._orderedPlayerList.Count; playerIndex++) {
                 if (!this._orderedPlayerList[playerIndex].Equals(game._orderedPlayerList[playerIndex])) {
                     return false;
@@ -917,7 +924,6 @@ namespace KingdomGame {
 
         public override int GetHashCode() {
             int code = this._orderedPlayerList.Count.GetHashCode();
-            code = code ^ this._currentPlayerIndex;
 
             for (int playerIndex = 0; playerIndex < this._orderedPlayerList.Count; playerIndex++) {
                 code = code ^ this._orderedPlayerList[playerIndex].GetHashCode();
