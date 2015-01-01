@@ -122,7 +122,8 @@ namespace KingdomGame {
                 _executedActionStack.Push(new Pair<IAction, IList<int>>(pendingAction, targetIds));
             }
 
-            public Pair<IAction, IList<int>>? GetLastExecutedAction(Type actionType) {
+            // Refactor - (MT): Make the returned targets a generically typed parameter.
+            public IList<int> GetTargetsFromLastExecutedAction(Type actionType) {
                 if (actionType == null) {
                     throw new ArgumentNullException("Cannot get the last executed action without a non-null type.");
                 }
@@ -133,7 +134,7 @@ namespace KingdomGame {
                 while (copiedStack.Count > 0) {
                     Pair<IAction, IList<int>> candidateAction = copiedStack.Pop();
                     if(candidateAction.First.GetType().Equals(actionType)) {
-                        return candidateAction;
+                        return new List<int>(candidateAction.Second);
                     }
                 }
 

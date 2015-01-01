@@ -43,11 +43,10 @@ namespace KingdomGame.BasicCardTypes {
 
         protected override void ApplyInternal(IList<Player> players, Game game) {
             if (players.Count > 0) {
-                Pair<IAction, IList<int>>? discardingAction 
-                  = game.State.GetLastExecutedAction(typeof(CellarDiscardingAction));
+                IList<int> discardingTargetIds = game.State.GetTargetsFromLastExecutedAction(typeof(CellarDiscardingAction));
 
-                if (discardingAction.HasValue) {
-                    players[0].Draw(discardingAction.Value.Second.Count);
+                if (discardingTargetIds != null) {
+                    players[0].Draw(discardingTargetIds.Count);
                     players[0].RemainingActions++;
                 }
             }

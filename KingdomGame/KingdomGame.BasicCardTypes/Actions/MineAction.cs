@@ -59,11 +59,10 @@ namespace KingdomGame.BasicCardTypes {
                     return false;
                 }
 
-                Pair<IAction, IList<int>>? trashingAction 
-                  = game.State.GetLastExecutedAction(typeof(MineTrashingAction));
+                IList<int> trashingTargetIds = game.State.GetTargetsFromLastExecutedAction(typeof(MineTrashingAction));
 
-                if (trashingAction.HasValue && trashingAction.Value.Second.Count > 0) {
-                    int trashedCardCost = game.GetCardById(trashingAction.Value.Second[0]).Type.Cost;
+                if ((trashingTargetIds != null) && (trashingTargetIds.Count > 0)) {
+                    int trashedCardCost = game.GetCardById(trashingTargetIds[0]).Type.Cost;
                     return targetTypes[0].Cost <= trashedCardCost + 3;
                 }
 
