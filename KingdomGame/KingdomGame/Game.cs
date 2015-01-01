@@ -23,7 +23,8 @@ namespace KingdomGame {
             private Phase _phase;
             private int? _selectedCardId;
 
-            private Stack<IAction> _actionStack;
+            private Stack<IAction> _pendingActionStack;
+            private Stack<Pair<IAction, IList<int>>> _executedActionStack;
 
             internal Game Game { set { _game = value; } }
 
@@ -33,7 +34,8 @@ namespace KingdomGame {
                     _phase = value; 
 
                     if (_phase != value) {
-                        _actionStack = new Stack<IAction>();
+                        _pendingActionStack = new Stack<IAction>();
+                        _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
                     }
                 } 
             }
@@ -44,7 +46,7 @@ namespace KingdomGame {
                     if (value != null) {
                         if (Phase != Phase.PLAY) {
                             throw new InvalidOperationException(
-                              "Cannot set a selected card outside of the action phase.");
+                              "Cannot set a selected card outside of the play phase.");
                         }
 
                         _selectedCardId = (int ?) value.Id;
@@ -56,28 +58,64 @@ namespace KingdomGame {
             }
 
             // Refactor - (MT): Turn this into a list of methods which record actions and do searches.
-            public IList<Pair<IAction, IList<int>>> PreviousActions { get; set; }
+            public IList<Pair<IAction, IList<int>>> PreviousActions {
+                get {
+                    Stack<Pair<IAction, IList<int>>> copiedStack 
+                      = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
+                    IList<Pair<IAction, IList<int>>> previousActions = new List<Pair<IAction, IList<int>>>();
+
+                    while (copiedStack.Count > 0) {
+                        Pair<IAction, IList<int>> previousAction = copiedStack.Pop();
+                        previousActions.Add(previousAction);
+                    }
+
+                    return previousActions; 
+                }
+            }
 
             // Refactor - (MT): Abstract this representation away from the public interface.
             public Stack<IAction> ActionStack { 
-                get { return _actionStack; } 
+                get { return _pendingActionStack; } 
             }
 
             public State(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
-                _actionStack = new Stack<IAction>();
+                _pendingActionStack = new Stack<IAction>();
+                _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
             }
 
             public object Clone() {
                 State state = new State(_game);
 
                 state._phase = _phase;
-                state._actionStack = new Stack<IAction>(_actionStack);
                 state._selectedCardId = _selectedCardId;
-                state.PreviousActions = new List<Pair<IAction, IList<int>>>(PreviousActions);
+                state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
+                state._executedActionStack = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
 
                 return state;
+            }
+
+            public IAction GetNextPendingAction() {
+                if ((_phase == Phase.ACTION) && (_pendingActionStack.Count > 0)) {
+                    return _pendingActionStack.Peek();
+                }
+
+                return null;
+            }
+
+            // Refactor - (MT): Make the targets a generically typed parameter.
+            public void ExecutePendingAction(IList<int> targetIds) {
+                if(_phase != Phase.ACTION) {
+                    throw new InvalidOperationException("Cannot execute an action outside of the action phase.");
+                }                
+
+                if(_pendingActionStack.Count == 0) {
+                    throw new InvalidOperationException("Cannot execute a pending action if none exist.");
+                }
+
+                IAction pendingAction = _pendingActionStack.Pop();
+                _executedActionStack.Push(new Pair<IAction, IList<int>>(pendingAction, targetIds));
             }
 
             public override bool Equals(object obj) {
@@ -86,17 +124,18 @@ namespace KingdomGame {
                     return false;
                 }
 
-                if (PreviousActions.Count != state.PreviousActions.Count) {
+                if (_executedActionStack.Count != state._executedActionStack.Count) {
                     return false;
                 }
 
-                for (int actionIndex = 0; actionIndex < PreviousActions.Count; actionIndex++) {
-                    if (!PreviousActions[actionIndex].Equals(state.PreviousActions[actionIndex].First)) {
+                for (int actionIndex = 0; actionIndex < _executedActionStack.Count; actionIndex++) {
+                    if (!_executedActionStack.ElementAt(actionIndex).First.Equals(
+                          state._executedActionStack.ElementAt(actionIndex).First)) {
                         return false;
                     }
 
-                    List<int> thisTargets = new List<int>(PreviousActions[actionIndex].Second);
-                    List<int> strategyTargets = new List<int>(state.PreviousActions[actionIndex].Second);
+                    List<int> thisTargets = new List<int>(state._executedActionStack.ElementAt(actionIndex).Second);
+                    List<int> strategyTargets = new List<int>(state._executedActionStack.ElementAt(actionIndex).Second);
 
                     if (thisTargets.Count != strategyTargets.Count) {
                         return false;
@@ -112,13 +151,13 @@ namespace KingdomGame {
                     }
                 }
 
-                if (_actionStack.Count != state._actionStack.Count) {
+                if (_pendingActionStack.Count != state._pendingActionStack.Count) {
                     return false;
                 }
 
-                for (int actionIndex = 0; actionIndex < _actionStack.Count; actionIndex++) {
+                for (int actionIndex = 0; actionIndex < _pendingActionStack.Count; actionIndex++) {
                     if (!ActionStack.ElementAt<IAction>(actionIndex).Equals(
-                      state._actionStack.ElementAt<IAction>(actionIndex))) {
+                      state._pendingActionStack.ElementAt<IAction>(actionIndex))) {
                           return false;
                     }
                 }
@@ -129,9 +168,9 @@ namespace KingdomGame {
             public override int GetHashCode() {
                 int code = _phase.GetHashCode() ^ _selectedCardId.GetHashCode();
 
-                code ^= PreviousActions.Count.GetHashCode();
+                code ^= _executedActionStack.Count.GetHashCode();
 
-                foreach(Pair<IAction, IList<int>> pair in PreviousActions) {
+                foreach(Pair<IAction, IList<int>> pair in _executedActionStack) {
                     code ^= pair.First.GetType().GetHashCode();
                     code ^= pair.Second.Count.GetHashCode();
 
@@ -140,9 +179,9 @@ namespace KingdomGame {
                     }
                 }
 
-                code ^= _actionStack.Count.GetHashCode();
+                code ^= _pendingActionStack.Count.GetHashCode();
 
-                foreach(IAction action in _actionStack) {
+                foreach(IAction action in _pendingActionStack) {
                     code ^= action.GetHashCode();
                 }
 
@@ -489,16 +528,13 @@ namespace KingdomGame {
                         CurrentState.Phase = Phase.BUY;
                     }
 
-                    CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
-
                     break;
 
                 case Phase.ACTION:
 
                     if (CurrentState.SelectedCard != null) {
 
-                        IAction actionToPlay = CurrentState.ActionStack.Pop();
-
+                        IAction actionToPlay = CurrentState.GetNextPendingAction();
                         if (actionToPlay != null) {
 
                             // Refactor - (MT): Find a way to make this generic enough to have a single call.
@@ -533,9 +569,10 @@ namespace KingdomGame {
                                   targetPlayers
                                 );
 
-                                actionToPlay.Apply<Player>(targetPlayers, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<Player>(targetPlayers)
                                   .ConvertAll<int>(delegate (Player player) { return player.Id;}));
+                                CurrentState.ExecutePendingAction(targetIds);
+                                actionToPlay.Apply<Player>(targetPlayers, this, CurrentState.PreviousActions);
                             } else if (targetCards.Count > 0) {
                                 Logger.Instance.RecordAction(
                                   this, 
@@ -545,9 +582,10 @@ namespace KingdomGame {
                                   targetCards
                                 );
 
-                                actionToPlay.Apply<Card>(targetCards, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<Card>(targetCards)
                                   .ConvertAll<int>(delegate (Card card) { return card.Id;}));
+                                CurrentState.ExecutePendingAction(targetIds);
+                                actionToPlay.Apply<Card>(targetCards, this, CurrentState.PreviousActions);
                             } else if (targetTypes.Count > 0) {
                                 Logger.Instance.RecordAction(
                                   this, 
@@ -557,13 +595,16 @@ namespace KingdomGame {
                                   targetTypes
                                 );
 
-                                actionToPlay.Apply<CardType>(targetTypes, this, CurrentState.PreviousActions);
                                 targetIds.AddRange(new List<CardType>(targetTypes)
                                   .ConvertAll<int>(delegate (CardType type) { return type.Id;}));
+                                CurrentState.ExecutePendingAction(targetIds);
+                                actionToPlay.Apply<CardType>(targetTypes, this, CurrentState.PreviousActions);
+                            }
+                            else {
+                                // Handles the case where no targets are specified for the action.
+                                CurrentState.ExecutePendingAction(targetIds);
                             }
                             // End Refactor Block
-
-                            CurrentState.PreviousActions.Add(new Pair<IAction, IList<int>>(actionToPlay, targetIds));
                         }
 
                         if (CurrentState.ActionStack.Count == 0) {
@@ -574,7 +615,6 @@ namespace KingdomGame {
                             }
 
                             CurrentState.SelectedCard = null;
-                            CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                         }
                     }
                     else {
@@ -582,7 +622,6 @@ namespace KingdomGame {
                         CurrentPlayer.RemainingActions = 0;
                         CurrentState.Phase = Phase.BUY;
                         CurrentState.SelectedCard = null;
-                        CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
                     break;
@@ -621,7 +660,6 @@ namespace KingdomGame {
 
                     if (isTurnOver) {
                         CurrentState.SelectedCard = null;
-                        CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
                     }
 
                     break;
@@ -633,7 +671,6 @@ namespace KingdomGame {
                     AdvanceTurn();
                     CurrentState.Phase = Phase.PLAY;
                     CurrentState.SelectedCard = null;
-                    CurrentState.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
                     break;
 
@@ -762,7 +799,6 @@ namespace KingdomGame {
             _state = new State(this);
             _state.Phase = Phase.PLAY;
             _state.SelectedCard = null;
-            _state.PreviousActions = new List<Pair<IAction, IList<int>>>();
 
             _cardsById = new Dictionary<int, Card>();
         }
