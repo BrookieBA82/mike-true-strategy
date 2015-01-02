@@ -30,15 +30,10 @@ namespace KingdomGame {
             private Stack<IAction> _pendingActionStack;
             private Stack<Pair<IAction, IList<int>>> _executedActionStack;
 
+            // Refactor - (MT): Handle backrefs more elegantly than this.
             internal Game Game { set { _game = value; } }
 
-            public Phase Phase {
-                get { return _phase; }
-                // Refactor - (MT): Make this private.
-                set {
-                    _phase = value;
-                }
-            }
+            public Phase Phase { get { return _phase; } }
 
             public Card SelectedCard { 
                 get { return (_selectedCardId.HasValue) ? _game.GetCardById(_selectedCardId.Value) : null; }
@@ -91,7 +86,7 @@ namespace KingdomGame {
             public void TransitionState() {
                 switch (Phase) {
                     case Phase.PLAY:
-                        Phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
+                        _phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
                         if (SelectedCard != null) {
                             for (int actionIndex = SelectedCard.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
                                 AddPendingAction(SelectedCard.Type.Actions[actionIndex]);
@@ -102,7 +97,7 @@ namespace KingdomGame {
 
                     case Phase.ACTION:
                         if (!HasNextPendingAction) {
-                            Phase = (CurrentPlayer.RemainingActions > 0) ? Phase.PLAY : Phase.BUY;
+                            _phase = (CurrentPlayer.RemainingActions > 0) ? Phase.PLAY : Phase.BUY;
 
                             SelectedCard = null;
                             _pendingActionStack = new Stack<IAction>();
@@ -113,20 +108,20 @@ namespace KingdomGame {
 
                     case Phase.BUY:
                         if (_game.IsGameOver()) {
-                            Phase = Phase.END;
+                            _phase = Phase.END;
                         }
                         else if (CurrentPlayer.RemainingBuys == 0) {
-                            Phase = Phase.ADVANCE;
+                            _phase = Phase.ADVANCE;
                         }
 
                         break;
 
                     case Phase.ADVANCE:
-                        Phase = Phase.PLAY;
+                        _phase = Phase.PLAY;
                         break;
 
                     case Phase.END:
-                        Phase = Phase.DONE;
+                        _phase = Phase.DONE;
                         break;
 
                     case Phase.DONE:
@@ -576,10 +571,9 @@ namespace KingdomGame {
 
                 case Phase.PLAY:
 
-                    Debug.Assert(
-                      State.CurrentPlayer.RemainingActions > 0, 
-                      "Game should never be in PLAY phase without remaining actions."
-                    );
+                    AssertCardSelected(false);
+                    AssertPendingActionAvailable(false);
+                    AssertRemainingActionsAvailable(true);
 
                     // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
                     State.SelectedCard = _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy(
@@ -601,10 +595,8 @@ namespace KingdomGame {
 
                 case Phase.ACTION:
 
-                    Debug.Assert(
-                      State.HasNextPendingAction, 
-                      "Game should never be in ACTION phase without a next pending action."
-                    );
+                    AssertCardSelected(true);
+                    AssertPendingActionAvailable(true);
 
                     // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
                     IAction action = State.NextPendingAction;
@@ -626,53 +618,61 @@ namespace KingdomGame {
 
                 case Phase.BUY:
 
+                    AssertCardSelected(false);
+                    AssertPendingActionAvailable(false);
+                    AssertRemainingActionsAvailable(false);
+                    AssertRemainingBuysAvailable(true);
+
+                    // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
+                    IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
+                    CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
+
                     Debug.Assert(
-                        State.SelectedCard == null,
-                        "Game should never be in BUY phase with a card selected."
+                      (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),
+                      "No buying strategy should ever return an option with insufficient cards remaining."
                     );
 
-                    //Debug.Assert(
-                    //  State.CurrentPlayer.RemainingBuys > 0, 
-                    //  "Game should never be in BUY phase without remaining buys."
-                    //);
-
-                    if (State.CurrentPlayer.RemainingBuys > 0) {
-                        // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
-                        IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
-                        CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
-
-                        Debug.Assert(
-                          (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),
-                          "No buying strategy should ever return an option with insufficient cards remaining."
-                        );
-
-                        if(typeToBuy == null || GetCardsByType(typeToBuy).Count == 0) {
-                            typeToBuy = null;
-                        }
-
-                        Card cardBought = null;
-                        if (typeToBuy != null) {
-                            cardBought = SellCard(State.CurrentPlayer, typeToBuy);
-                        } else {
-                            // If no card type is selected, skip all remaining buys.
-                            State.CurrentPlayer.RemainingBuys = 0;
-                        }
-
-                        Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
+                    if(typeToBuy == null || GetCardsByType(typeToBuy).Count == 0) {
+                        typeToBuy = null;
                     }
+
+                    Card cardBought = null;
+                    if (typeToBuy != null) {
+                        cardBought = SellCard(State.CurrentPlayer, typeToBuy);
+                    } else {
+                        // If no card type is selected, skip all remaining buys.
+                        State.CurrentPlayer.RemainingBuys = 0;
+                    }
+
+                    Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
 
                     break;
 
                 case Phase.ADVANCE:
+
+                    AssertCardSelected(false);
+                    AssertPendingActionAvailable(false);
+                    AssertRemainingActionsAvailable(false);
+                    AssertRemainingBuysAvailable(false);
+
                     int currentTurn = State.TurnNumber;
                     State.CurrentPlayer.EndTurn();
                     State.AdvanceTurn();
                     State.CurrentPlayer.StartTurn();
+
                     Logger.Instance.RecordScoresForTurn(this, currentTurn);
+
                     break;
 
                 case Phase.END:
+
+                    AssertCardSelected(false);
+                    AssertPendingActionAvailable(false);
+                    AssertRemainingActionsAvailable(false);
+                    AssertRemainingBuysAvailable(false);
+
                     Logger.Instance.RecordScoresForTurn(this, State.TurnNumber);
+
                     break;
 
                 case Phase.DONE:
@@ -834,6 +834,41 @@ namespace KingdomGame {
             newOwner.AcquireCard(card, destination);
 
             card.OwnerId = (newOwner != this) ? (newOwner as Player).Id : (int?) null;
+        }
+
+        private void AssertCardSelected(bool shouldCardBeSelected) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with a card selected.",
+              shouldCardBeSelected ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(((State.SelectedCard != null) == shouldCardBeSelected), assertMessage);
+        }
+
+        private void AssertPendingActionAvailable(bool shouldPendingActionBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with a next pending action.",
+              shouldPendingActionBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert((State.HasNextPendingAction == shouldPendingActionBeAvailable), assertMessage);
+        }
+
+        private void AssertRemainingActionsAvailable(bool shouldRemainingActionsBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with one or more action(s) remaining.",
+              shouldRemainingActionsBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(
+              ((State.CurrentPlayer.RemainingActions > 0) == shouldRemainingActionsBeAvailable), 
+              assertMessage
+            );
+        }
+
+        private void AssertRemainingBuysAvailable(bool shouldRemainingBuysBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with one or more buy(s) remaining.",
+              shouldRemainingBuysBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(((State.CurrentPlayer.RemainingBuys > 0) == shouldRemainingBuysBeAvailable), assertMessage);
         }
 
         private static IDictionary<int, int> GetDefaultCardCountsByType() {

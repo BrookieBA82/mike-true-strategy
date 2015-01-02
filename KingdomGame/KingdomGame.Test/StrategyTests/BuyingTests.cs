@@ -34,7 +34,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>());
             game.PlayPhase();
 
@@ -54,7 +54,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 2;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.CurrentStrategy.BuyingStrategy 
                 = new ScriptedBuyingStrategy(new List<CardType>() {TestSetup.CardTypeEstate});
             game.PlayPhase();
@@ -80,7 +80,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(
                 new List<CardType>() {TestSetup.CardTypeEstate, TestSetup.CardTypeEstate});
             game.State.CurrentPlayer.RemainingBuys = 2;
@@ -114,7 +114,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 5;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.PlayPhase();
 
             // Note - (MT): The only option to buy is an estate, which can't be done with zero gold
@@ -124,20 +124,24 @@ namespace KingdomGame.Test
         }
 
         [TestCategory("BuyingTest"), TestMethod]
-        public void TestInsufficientBuysForCardBuy() {
+        public void TestInsufficientBuysForCardBuys() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
+            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 8;
+            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 4;
 
             Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 5;
+            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 4;
+            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
-            game.State.CurrentPlayer.RemainingBuys = 0;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
+            game.CurrentStrategy.BuyingStrategy 
+              = new ScriptedBuyingStrategy(new List<CardType>() {TestSetup.CardTypeEstate, TestSetup.CardTypeEstate});
             game.PlayPhase();
 
-            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain if one wasn't available.");
-            Assert.AreEqual(5, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
+            // Note - (MT): There are not enough estates left to buy one, so no buy should occur
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain once an invalid selection is made.");
+            Assert.AreEqual(4, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
 
@@ -150,7 +154,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 5;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.PlayPhase();
 
             // Note - (MT): There are no cards left to buy anything
@@ -170,7 +174,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>() {TestSetup.CardTypeEstate});
             game.PlayPhase();
 
@@ -191,7 +195,7 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            game.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(game, Game.Phase.BUY);
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(
                 new List<CardType>() {TestSetup.CardTypeEstate, TestSetup.CardTypeEstate});
             game.State.CurrentPlayer.RemainingBuys = 2;
@@ -427,7 +431,7 @@ namespace KingdomGame.Test
         private static bool IsBuyingOptionValid(Game game, IList<CardType> buyingOption, int maxBuys) {
             Game clone = game.Clone() as Game;
             clone.StartGame();
-            clone.State.Phase = Game.Phase.BUY;
+            TestUtilities.ForceGamePhase(clone, Game.Phase.BUY);
             clone.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>(buyingOption));
             clone.State.CurrentPlayer.RemainingBuys = maxBuys;
             clone.PlayPhase();
