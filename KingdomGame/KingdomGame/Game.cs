@@ -32,6 +32,7 @@ namespace KingdomGame {
 
             public Phase Phase {
                 get { return _phase; }
+                // Refactor - (MT): Make this private.
                 set {
                     _phase = value; 
 
@@ -66,6 +67,7 @@ namespace KingdomGame {
             public GameState(Game game) {
                 _game = game;
                 _phase = Phase.PLAY;
+                _selectedCardId = null;
                 _turnNumber = 1;
                 _pendingActionStack = new Stack<IAction>();
                 _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
@@ -87,6 +89,22 @@ namespace KingdomGame {
             public void AdvanceTurn() {
                 _turnNumber++;
                 _currentPlayerIndex = (_currentPlayerIndex + 1) % _game._orderedPlayerList.Count;
+            }
+
+            public void AdvanceStep() {
+                switch (Phase) {
+                    case Phase.PLAY:
+                        break;
+
+                    case Phase.ACTION:
+                        break;
+
+                    case Phase.BUY:
+                        break;
+
+                    case Phase.ADVANCE:
+                        break;
+                }
             }
 
             public bool HasNextPendingAction { get { return NextPendingAction != null; } }
@@ -664,6 +682,8 @@ namespace KingdomGame {
                 default:
                     break;
             }
+
+            State.AdvanceStep();
         }
 
         public void AdvanceTurn() {
@@ -778,9 +798,6 @@ namespace KingdomGame {
             _strategy.BuyingStrategy = new RandomBuyingStrategy();
 
             _state = new GameState(this);
-            _state.Phase = Phase.PLAY;
-            _state.SelectedCard = null;
-
             _cardsById = new Dictionary<int, Card>();
         }
 
