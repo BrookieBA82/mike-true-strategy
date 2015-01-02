@@ -10,6 +10,8 @@ namespace KingdomGame {
 
     public class Game : ICloneable, ICardOwner {
 
+        #region Enums
+
         public enum Phase {
             PLAY = 1,
             ACTION = 2,
@@ -18,6 +20,10 @@ namespace KingdomGame {
             END = 5,
             DONE = 6
         }
+
+        #endregion
+
+        #region Public Classes
 
         public class GameState : ICloneable {
 
@@ -338,22 +344,31 @@ namespace KingdomGame {
             }
         }
 
-        public const int MAX_EMPTY_CARD_SETS = 3;
+        #endregion
+
+        #region Static Members
 
         private static int NextId = 1;
+
+        #endregion
+
+        #region Private Members
+
+        private int _id;
+        private GameState _state;
+        private Strategy _strategy;
 
         private IList<Player> _orderedPlayerList;
         private IDictionary<int, Player> _playersById;
         private IDictionary<string, Player> _playersByName;
 
+        private Deck _trash;
         private IDictionary<int, Card> _cardsById;
         private IDictionary<int, Deck> _cardsByTypeId;
 
-        private Deck _trash;
+        #endregion
 
-        private int _id;
-        private GameState _state;
-        private Strategy _strategy;
+        #region Constructors
 
         public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, Game.GetDefaultCardCountsByType()) {
 
@@ -398,9 +413,52 @@ namespace KingdomGame {
             SetUpCardIndex();
         }
 
-        public object Clone() {
-            return new Game(this);
+        #endregion
+
+        #region Properties
+
+        public int Id { get { return this._id; } }
+
+        public GameState State { get { return _state; } }
+
+        public Strategy CurrentStrategy { get { return _strategy; } }
+
+        public IList<Player> Players { get { return new List<Player>(_orderedPlayerList); } }
+
+        public IList<Card> Cards { get { return new List<Card>(_cardsById.Values); } }
+
+        public IList<Card> Trash { get { return _trash.Cards; } }
+
+        #endregion
+
+        #region Public Methods
+
+        public bool IsGameOver() {
+            IDictionary<int, int> emptyCardSetsByWeight = new Dictionary<int, int>();
+            foreach (int cardTypeId in _cardsByTypeId.Keys) {
+                if (_cardsByTypeId[cardTypeId].Size == 0) {
+                    int weight = CardType.GetCardTypeById(cardTypeId).EndOfGameWeight;
+                    if (weight == 0) {
+                        continue;
+                    }
+
+                    if (!emptyCardSetsByWeight.ContainsKey(weight)) {
+                        emptyCardSetsByWeight[weight] = 0;
+                    }
+
+                    emptyCardSetsByWeight[weight]++;
+                    if (emptyCardSetsByWeight[weight] >= weight) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
+
+        #region Query Methods
+
+        #region Player Query Methods
 
         public Player GetPlayerById(int id) {
             return _playersById.ContainsKey(id) ? _playersById[id] : null;
@@ -410,24 +468,16 @@ namespace KingdomGame {
             return _playersByName.ContainsKey(name) ? _playersByName[name] : null;
         }
 
-        public int Id {
-            get { return this._id; }
-        }
+        #endregion
 
-        public Strategy CurrentStrategy { get { return _strategy; } }
+        #region Card Query Methods
 
-        public GameState State { get { return _state; } }
+        public Card GetCardById(int cardId) {
+            if (!_cardsById.ContainsKey(cardId)) {
+                return null;
+            }
 
-        public IList<Player> Players {
-            get { return new List<Player>(_orderedPlayerList); }
-        }
-
-        public IList<Card> Cards {
-            get { return new List<Card>(_cardsById.Values); }
-        }
-
-        public IList<Card> Trash {
-            get { return _trash.Cards; }
+            return _cardsById[cardId];
         }
 
         public IList<Card> GetCardsByType(CardType type) {
@@ -437,6 +487,10 @@ namespace KingdomGame {
 
             return new List<Card>(_cardsByTypeId[type.Id].Cards);
         }
+
+        #endregion
+
+        #region Buy Option Query Methods
 
         public IList<IList<CardType>> GetAllValidBuyOptions() {
             IDictionary<int, int> cardsAvailableByTypeId = new Dictionary<int, int>();
@@ -453,13 +507,11 @@ namespace KingdomGame {
             return buyingOptions;
         }
 
-        public Card GetCardById(int cardId) {
-            if (!_cardsById.ContainsKey(cardId)) {
-                return null;
-            }
+        #endregion
 
-            return _cardsById[cardId];
-        }
+        #endregion
+
+        #region Initialization Methods
 
         public void StartGame() {
             StartGame(new Dictionary<int, int>(), null, false);
@@ -541,6 +593,10 @@ namespace KingdomGame {
 
             State.CurrentPlayer.StartTurn();
         }
+
+        #endregion
+
+        #region Execution Methods
 
         public void PlayGame() {
             while (State.Phase != Phase.DONE) {
@@ -685,28 +741,9 @@ namespace KingdomGame {
             State.TransitionState();
         }
 
-        public bool IsGameOver() {
-            IDictionary<int, int> emptyCardSetsByWeight = new Dictionary<int, int>();
-            foreach (int cardTypeId in _cardsByTypeId.Keys) {
-                if (_cardsByTypeId[cardTypeId].Size == 0) {
-                    int weight = CardType.GetCardTypeById(cardTypeId).EndOfGameWeight;
-                    if (weight == 0) {
-                        continue;
-                    }
+        #endregion
 
-                    if (!emptyCardSetsByWeight.ContainsKey(weight)) {
-                        emptyCardSetsByWeight[weight] = 0;
-                    }
-
-                    emptyCardSetsByWeight[weight]++;
-                    if (emptyCardSetsByWeight[weight] >= weight) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
+        #region Card Management Methods
 
         public void AcquireCard(Card card, CardDestination destination) {
             Deck deck = null;
@@ -766,159 +803,12 @@ namespace KingdomGame {
             return card;
         }
 
-        private void SetUpPlayerIndexes(IList<Player> orderedPlayerList) {
-            _orderedPlayerList = new List<Player>(orderedPlayerList);
-            _playersById = new Dictionary<int, Player>();
-            _playersByName = new Dictionary<string, Player>(StringComparer.InvariantCultureIgnoreCase);
+        #endregion
 
-            for (int playerIndex = 0; playerIndex < _orderedPlayerList.Count; playerIndex++) {
-                _playersById[_orderedPlayerList[playerIndex].Id] = _orderedPlayerList[playerIndex];
-                _playersByName[_orderedPlayerList[playerIndex].Name] = _orderedPlayerList[playerIndex];
-            }
-        }
+        #region Clone and Equality Methods
 
-        // Refactor - (MT): This is a bad method name and might indicate a bad method.
-        private void SetUpBasicGameDetails() {
-            _id = Game.NextId++;
-            _trash = new Deck();
-
-            _strategy = new Strategy(new List<int>(_playersById.Keys));
-            // Todo - (MT): Strategy point #1 - select best card (instead of random)
-            _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
-            // Todo - (MT): Strategy point #2 - select best (or at least random) target
-            _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
-            // Todo - (MT): Strategy point #3 - select best buy option (not just random)
-            _strategy.BuyingStrategy = new RandomBuyingStrategy();
-
-            _state = new GameState(this);
-            _cardsById = new Dictionary<int, Card>();
-        }
-
-        private void SetUpCardIndex() {
-            _cardsById = new Dictionary<int, Card>();
-
-            foreach (Player player in _orderedPlayerList) {
-                foreach (Card card in player.Hand) {
-                    _cardsById[card.Id] = card;
-                }
-
-                foreach (Card card in player.Discard) {
-                    _cardsById[card.Id] = card;
-                }
-
-                foreach (Card card in player.PlayArea) {
-                    _cardsById[card.Id] = card;
-                }
-
-                foreach (Card card in player.Deck) {
-                    _cardsById[card.Id] = card;
-                }
-            }
-
-            foreach (Deck cardsToBuy in _cardsByTypeId.Values) {
-                foreach (Card card in cardsToBuy.Cards) {
-                    _cardsById[card.Id] = card;
-                }
-            }
-
-            foreach (Card card in Trash) {
-                _cardsById[card.Id] = card;
-            }
-        }
-
-        private void TransferCardOwner(Card card, ICardOwner newOwner, CardDestination destination) {
-            ICardOwner currentOwner = card.OwnerId.HasValue
-              ? this.GetPlayerById(card.OwnerId.Value) as ICardOwner : this;
-
-            currentOwner.ReleaseCard(card);
-            newOwner.AcquireCard(card, destination);
-
-            card.OwnerId = (newOwner != this) ? (newOwner as Player).Id : (int?) null;
-        }
-
-        private void AssertCardSelected(bool shouldCardBeSelected) {
-            string assertMessage = string.Format(
-              "Game should {0} start the {1} phase with a card selected.",
-              shouldCardBeSelected ? "always" : "never",
-              State.Phase.ToString()); 
-            Debug.Assert(((State.SelectedCard != null) == shouldCardBeSelected), assertMessage);
-        }
-
-        private void AssertPendingActionAvailable(bool shouldPendingActionBeAvailable) {
-            string assertMessage = string.Format(
-              "Game should {0} start the {1} phase with a next pending action.",
-              shouldPendingActionBeAvailable ? "always" : "never",
-              State.Phase.ToString()); 
-            Debug.Assert((State.HasNextPendingAction == shouldPendingActionBeAvailable), assertMessage);
-        }
-
-        private void AssertRemainingActionsAvailable(bool shouldRemainingActionsBeAvailable) {
-            string assertMessage = string.Format(
-              "Game should {0} start the {1} phase with one or more action(s) remaining.",
-              shouldRemainingActionsBeAvailable ? "always" : "never",
-              State.Phase.ToString()); 
-            Debug.Assert(
-              ((State.CurrentPlayer.RemainingActions > 0) == shouldRemainingActionsBeAvailable), 
-              assertMessage
-            );
-        }
-
-        private void AssertRemainingBuysAvailable(bool shouldRemainingBuysBeAvailable) {
-            string assertMessage = string.Format(
-              "Game should {0} start the {1} phase with one or more buy(s) remaining.",
-              shouldRemainingBuysBeAvailable ? "always" : "never",
-              State.Phase.ToString()); 
-            Debug.Assert(((State.CurrentPlayer.RemainingBuys > 0) == shouldRemainingBuysBeAvailable), assertMessage);
-        }
-
-        private static IDictionary<int, int> GetDefaultCardCountsByType() {
-            IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
-            foreach(CardType type in CardType.CardTypes) {
-                defaultGameCardCountsByType[type.Id] = CardType.GetDefaultQuantityByTypeId(type.Id);
-            }
-
-            return defaultGameCardCountsByType;
-        }
-
-        private static IList<IList<CardType>> CalculateAllBuyOptions(
-          int buysRemaining, 
-          int moneyRemaining, 
-          IDictionary<int,int> cardsRemainingByTypeId) 
-        {
-            List<IList<CardType>> buyOptions = new List<IList<CardType>>(){new List<CardType>()}; 
-            if(buysRemaining == 0) {
-                return buyOptions;
-            }
-
-            foreach (int typeId in cardsRemainingByTypeId.Keys) {
-                int cardsRemaining = cardsRemainingByTypeId[typeId];
-                if (cardsRemaining == 0) {
-                    continue;
-                }
-
-                CardType type = CardType.GetCardTypeById(typeId);
-                int cardCost = type.Cost;
-                if(cardCost > moneyRemaining) {
-                    continue;
-                }
-
-                IDictionary<int, int> cardsRemainingByTypeIdAfterBuy 
-                  = new Dictionary<int, int>(cardsRemainingByTypeId);
-                cardsRemainingByTypeIdAfterBuy[typeId]--;
-                IList<IList<CardType>> optionsAfterBuy = CalculateAllBuyOptions(
-                  buysRemaining - 1, 
-                  moneyRemaining - cardCost, 
-                  cardsRemainingByTypeIdAfterBuy
-                );
-
-                foreach(IList<CardType> optionAfterBuy in optionsAfterBuy) {
-                    IList<CardType> fullOption = new List<CardType>(optionAfterBuy);
-                    fullOption.Add(type);
-                    buyOptions.Add(fullOption);
-                }
-            }
-
-            return buyOptions;
+        public object Clone() {
+            return new Game(this);
         }
 
         public override bool Equals(object obj) {
@@ -981,5 +871,185 @@ namespace KingdomGame {
 
             return code;
         }
+
+        #endregion
+
+        #endregion
+
+        #region Utility Methods
+
+        #region Setup Methods
+
+        // Refactor - (MT): This is a bad method name and might indicate a bad method.
+        private void SetUpBasicGameDetails() {
+            _id = Game.NextId++;
+            _trash = new Deck();
+
+            _strategy = new Strategy(new List<int>(_playersById.Keys));
+            // Todo - (MT): Strategy point #1 - select best card (instead of random)
+            _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
+            // Todo - (MT): Strategy point #2 - select best (or at least random) target
+            _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
+            // Todo - (MT): Strategy point #3 - select best buy option (not just random)
+            _strategy.BuyingStrategy = new RandomBuyingStrategy();
+
+            _state = new GameState(this);
+            _cardsById = new Dictionary<int, Card>();
+        }
+
+        private void SetUpPlayerIndexes(IList<Player> orderedPlayerList) {
+            _orderedPlayerList = new List<Player>(orderedPlayerList);
+            _playersById = new Dictionary<int, Player>();
+            _playersByName = new Dictionary<string, Player>(StringComparer.InvariantCultureIgnoreCase);
+
+            for (int playerIndex = 0; playerIndex < _orderedPlayerList.Count; playerIndex++) {
+                _playersById[_orderedPlayerList[playerIndex].Id] = _orderedPlayerList[playerIndex];
+                _playersByName[_orderedPlayerList[playerIndex].Name] = _orderedPlayerList[playerIndex];
+            }
+        }
+
+        private void SetUpCardIndex() {
+            _cardsById = new Dictionary<int, Card>();
+
+            foreach (Player player in _orderedPlayerList) {
+                foreach (Card card in player.Hand) {
+                    _cardsById[card.Id] = card;
+                }
+
+                foreach (Card card in player.Discard) {
+                    _cardsById[card.Id] = card;
+                }
+
+                foreach (Card card in player.PlayArea) {
+                    _cardsById[card.Id] = card;
+                }
+
+                foreach (Card card in player.Deck) {
+                    _cardsById[card.Id] = card;
+                }
+            }
+
+            foreach (Deck cardsToBuy in _cardsByTypeId.Values) {
+                foreach (Card card in cardsToBuy.Cards) {
+                    _cardsById[card.Id] = card;
+                }
+            }
+
+            foreach (Card card in Trash) {
+                _cardsById[card.Id] = card;
+            }
+        }
+
+        private static IDictionary<int, int> GetDefaultCardCountsByType() {
+            IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
+            foreach(CardType type in CardType.CardTypes) {
+                defaultGameCardCountsByType[type.Id] = CardType.GetDefaultQuantityByTypeId(type.Id);
+            }
+
+            return defaultGameCardCountsByType;
+        }
+
+        #endregion
+
+        #region Card Management Utility Methods
+
+        private void TransferCardOwner(Card card, ICardOwner newOwner, CardDestination destination) {
+            ICardOwner currentOwner = card.OwnerId.HasValue
+              ? this.GetPlayerById(card.OwnerId.Value) as ICardOwner : this;
+
+            currentOwner.ReleaseCard(card);
+            newOwner.AcquireCard(card, destination);
+
+            card.OwnerId = (newOwner != this) ? (newOwner as Player).Id : (int?) null;
+        }
+
+        #endregion
+
+        #region Assertion Utility Methods
+
+        private void AssertCardSelected(bool shouldCardBeSelected) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with a card selected.",
+              shouldCardBeSelected ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(((State.SelectedCard != null) == shouldCardBeSelected), assertMessage);
+        }
+
+        private void AssertPendingActionAvailable(bool shouldPendingActionBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with a next pending action.",
+              shouldPendingActionBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert((State.HasNextPendingAction == shouldPendingActionBeAvailable), assertMessage);
+        }
+
+        private void AssertRemainingActionsAvailable(bool shouldRemainingActionsBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with one or more action(s) remaining.",
+              shouldRemainingActionsBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(
+              ((State.CurrentPlayer.RemainingActions > 0) == shouldRemainingActionsBeAvailable), 
+              assertMessage
+            );
+        }
+
+        private void AssertRemainingBuysAvailable(bool shouldRemainingBuysBeAvailable) {
+            string assertMessage = string.Format(
+              "Game should {0} start the {1} phase with one or more buy(s) remaining.",
+              shouldRemainingBuysBeAvailable ? "always" : "never",
+              State.Phase.ToString()); 
+            Debug.Assert(((State.CurrentPlayer.RemainingBuys > 0) == shouldRemainingBuysBeAvailable), assertMessage);
+        }
+
+        #endregion
+
+        #region Calculation Utility Methods
+
+        private static IList<IList<CardType>> CalculateAllBuyOptions(
+          int buysRemaining, 
+          int moneyRemaining, 
+          IDictionary<int,int> cardsRemainingByTypeId) 
+        {
+            List<IList<CardType>> buyOptions = new List<IList<CardType>>(){new List<CardType>()}; 
+            if(buysRemaining == 0) {
+                return buyOptions;
+            }
+
+            foreach (int typeId in cardsRemainingByTypeId.Keys) {
+                int cardsRemaining = cardsRemainingByTypeId[typeId];
+                if (cardsRemaining == 0) {
+                    continue;
+                }
+
+                CardType type = CardType.GetCardTypeById(typeId);
+                int cardCost = type.Cost;
+                if(cardCost > moneyRemaining) {
+                    continue;
+                }
+
+                IDictionary<int, int> cardsRemainingByTypeIdAfterBuy 
+                  = new Dictionary<int, int>(cardsRemainingByTypeId);
+                cardsRemainingByTypeIdAfterBuy[typeId]--;
+                IList<IList<CardType>> optionsAfterBuy = CalculateAllBuyOptions(
+                  buysRemaining - 1, 
+                  moneyRemaining - cardCost, 
+                  cardsRemainingByTypeIdAfterBuy
+                );
+
+                foreach(IList<CardType> optionAfterBuy in optionsAfterBuy) {
+                    IList<CardType> fullOption = new List<CardType>(optionAfterBuy);
+                    fullOption.Add(type);
+                    buyOptions.Add(fullOption);
+                }
+            }
+
+            return buyOptions;
+        }
+
+        #endregion
+
+        #endregion
+
     }
 }
