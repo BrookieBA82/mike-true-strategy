@@ -90,22 +90,16 @@ namespace KingdomGame {
             public void AdvanceStep() {
                 switch (Phase) {
                     case Phase.PLAY:
-
+                        Phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
                         if (SelectedCard != null) {
-                            Phase = Phase.ACTION;
-
                             for (int actionIndex = SelectedCard.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
                                 AddPendingAction(SelectedCard.Type.Actions[actionIndex]);
                             }
-                        } 
-                        else {
-                            Phase = Phase.BUY;
                         }
 
                         break;
 
                     case Phase.ACTION:
-
                         if (!HasNextPendingAction) {
                             Phase = (CurrentPlayer.RemainingActions > 0) ? Phase.PLAY : Phase.BUY;
 
@@ -120,6 +114,10 @@ namespace KingdomGame {
                         break;
 
                     case Phase.ADVANCE:
+                        Phase = Phase.PLAY;
+                        break;
+
+                    case Phase.END:
                         break;
                 }
             }
@@ -617,10 +615,10 @@ namespace KingdomGame {
 
                 case Phase.BUY:
 
-                    Debug.Assert(
-                      State.CurrentPlayer.RemainingBuys > 0, 
-                      "Game should never be in BUY phase without remaining buys."
-                    );
+                    //Debug.Assert(
+                    //  State.CurrentPlayer.RemainingBuys > 0, 
+                    //  "Game should never be in BUY phase without remaining buys."
+                    //);
 
                     bool isTurnOver = false;
                     if (State.CurrentPlayer.RemainingBuys > 0) {
@@ -661,11 +659,7 @@ namespace KingdomGame {
                 case Phase.ADVANCE:
 
                     Logger.Instance.RecordEndOfTurn(this);
-
                     AdvanceTurn();
-                    State.Phase = Phase.PLAY;
-                    State.SelectedCard = null;
-
                     break;
 
                 case Phase.END:
