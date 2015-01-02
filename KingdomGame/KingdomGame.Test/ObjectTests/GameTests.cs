@@ -439,6 +439,7 @@ namespace KingdomGame.Test
             game.PlayStep();
             clone.PlayStep();
 
+            // The original game will be in PLAY as the player has an extra action, while the clone will be in BUY.
             Assert.AreNotEqual(
               game.State, 
               clone.State, 

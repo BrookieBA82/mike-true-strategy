@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,13 +35,8 @@ namespace KingdomGame {
                 get { return _phase; }
                 // Refactor - (MT): Make this private.
                 set {
-                    _phase = value; 
-
-                    if (_phase != value) {
-                        _pendingActionStack = new Stack<IAction>();
-                        _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
-                    }
-                } 
+                    _phase = value;
+                }
             }
 
             public Card SelectedCard { 
@@ -94,9 +90,30 @@ namespace KingdomGame {
             public void AdvanceStep() {
                 switch (Phase) {
                     case Phase.PLAY:
+
+                        if (SelectedCard != null) {
+                            Phase = Phase.ACTION;
+
+                            for (int actionIndex = SelectedCard.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
+                                AddPendingAction(SelectedCard.Type.Actions[actionIndex]);
+                            }
+                        } 
+                        else {
+                            Phase = Phase.BUY;
+                        }
+
                         break;
 
                     case Phase.ACTION:
+
+                        if (!HasNextPendingAction) {
+                            Phase = (CurrentPlayer.RemainingActions > 0) ? Phase.PLAY : Phase.BUY;
+
+                            SelectedCard = null;
+                            _pendingActionStack = new Stack<IAction>();
+                            _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
+                        }
+
                         break;
 
                     case Phase.BUY:
@@ -549,86 +566,61 @@ namespace KingdomGame {
 
                 case Phase.PLAY:
 
-                    bool advanceToBuy = true;
-                    if (State.CurrentPlayer.RemainingActions > 0) {
-                        // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
-                        Card cardToPlay =  _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy
-                            (this, new Deck(State.CurrentPlayer.Hand));
+                    Debug.Assert(
+                      State.CurrentPlayer.RemainingActions > 0, 
+                      "Game should never be in PLAY phase without remaining actions."
+                    );
 
-                        if (cardToPlay != null) {
-                            State.SelectedCard = cardToPlay;
-                            Logger.Instance.RecordPlay(this, State.CurrentPlayer, cardToPlay);
+                    // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
+                    State.SelectedCard = _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy(
+                      this, 
+                      new Deck(State.CurrentPlayer.Hand)
+                    );
 
-                            State.Phase = Phase.ACTION;
-                            for (int actionIndex = cardToPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
-                                State.AddPendingAction(cardToPlay.Type.Actions[actionIndex]);
-                            }
-                                
-                            State.CurrentPlayer.PlayCard(cardToPlay);
-                            State.CurrentPlayer.RemainingActions--;
-                            advanceToBuy = false;
-                        } else {
-                            // If no card is selected, skip all remaining actions.
-                            State.CurrentPlayer.RemainingActions = 0;
-                        }
-                    }
-
-                    if (advanceToBuy) {
-                        State.SelectedCard = null;
-                        State.Phase = Phase.BUY;
+                    if (State.SelectedCard != null) {
+                        Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);               
+                        State.CurrentPlayer.PlayCard(State.SelectedCard);
+                        State.CurrentPlayer.RemainingActions--;
+                    } 
+                    else {
+                        // If no card is selected, skip all remaining actions.
+                        State.CurrentPlayer.RemainingActions = 0;
                     }
 
                     break;
 
                 case Phase.ACTION:
 
-                    if (State.SelectedCard != null) {
+                    Debug.Assert(
+                      State.HasNextPendingAction, 
+                      "Game should never be in ACTION phase without a next pending action."
+                    );
 
-                        IAction actionToPlay = State.NextPendingAction;
-                        if (actionToPlay != null) {
+                    // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
+                    IAction actionToPlay = State.NextPendingAction;
+                    IList<ITargetable> targets = _strategy.TargetSelectionStrategy.SelectTargets(
+                        this, 
+                        State.SelectedCard, 
+                        actionToPlay
+                    );
 
-                            // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
-                            IList<ITargetable> targets = _strategy.TargetSelectionStrategy.SelectTargets(
-                                this, 
-                                State.SelectedCard, 
-                                actionToPlay
-                            );
+                    Logger.Instance.RecordAction(
+                      this, State.CurrentPlayer, State.SelectedCard, actionToPlay, targets);
 
-                            Logger.Instance.RecordAction(
-                              this, 
-                              State.CurrentPlayer, 
-                              State.SelectedCard, 
-                              actionToPlay, 
-                              targets
-                            );
+                    State.ExecuteNextPendingAction(new List<ITargetable>(targets).ConvertAll<int>(
+                      delegate (ITargetable target) { return target.Id;}
+                    ));
 
-                            State.ExecuteNextPendingAction(new List<ITargetable>(targets).ConvertAll<int>(
-                              delegate (ITargetable target) { return target.Id;}
-                            ));
-
-                            actionToPlay.Apply(targets, this);
-                        }
-
-                        if (!State.HasNextPendingAction) {
-                            if (State.CurrentPlayer.RemainingActions > 0) {
-                                State.Phase = Phase.PLAY;
-                            } else {
-                                State.Phase = Phase.BUY;
-                            }
-
-                            State.SelectedCard = null;
-                        }
-                    }
-                    else {
-                        // No actions left to play should short-circuit attempts at finding another.
-                        State.CurrentPlayer.RemainingActions = 0;
-                        State.Phase = Phase.BUY;
-                        State.SelectedCard = null;
-                    }
+                    actionToPlay.Apply(targets, this);
 
                     break;
 
                 case Phase.BUY:
+
+                    Debug.Assert(
+                      State.CurrentPlayer.RemainingBuys > 0, 
+                      "Game should never be in BUY phase without remaining buys."
+                    );
 
                     bool isTurnOver = false;
                     if (State.CurrentPlayer.RemainingBuys > 0) {
