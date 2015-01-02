@@ -15,7 +15,8 @@ namespace KingdomGame {
             ACTION = 2,
             BUY = 3,
             ADVANCE = 4,
-            END = 5
+            END = 5,
+            DONE = 6
         }
 
         public class GameState : ICloneable {
@@ -87,7 +88,7 @@ namespace KingdomGame {
                 _currentPlayerIndex = (_currentPlayerIndex + 1) % _game._orderedPlayerList.Count;
             }
 
-            public void AdvanceStep() {
+            public void TransitionState() {
                 switch (Phase) {
                     case Phase.PLAY:
                         Phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
@@ -113,8 +114,6 @@ namespace KingdomGame {
                     case Phase.BUY:
                         if (_game.IsGameOver()) {
                             Phase = Phase.END;
-                            // Refactor - (MT): Find most appropriate place for this.
-                            Logger.Instance.RecordEndOfTurn(_game);
                         }
                         else if (CurrentPlayer.RemainingBuys == 0) {
                             Phase = Phase.ADVANCE;
@@ -127,6 +126,10 @@ namespace KingdomGame {
                         break;
 
                     case Phase.END:
+                        Phase = Phase.DONE;
+                        break;
+
+                    case Phase.DONE:
                         break;
                 }
             }
@@ -545,25 +548,25 @@ namespace KingdomGame {
         }
 
         public void PlayGame() {
-            while (!IsGameOver()) {
+            while (State.Phase != Phase.DONE) {
                 PlayTurn();
             }
         }
 
         public void PlayTurn() {
-            while (State.Phase != Phase.ADVANCE && State.Phase != Phase.END) {
+            while ((State.Phase != Phase.ADVANCE) && (State.Phase != Phase.END) && (State.Phase != Phase.DONE)) {
                 PlayPhase();
             }
 
-            // Once the advance phase is reached, play one more phase to end the current turn:
-            if (State.Phase == Phase.ADVANCE) {
+            // Once advance or end is reached, play once more to end the current turn or game, respectively:
+            if ((State.Phase == Phase.ADVANCE) || (State.Phase != Phase.END)) {
                 PlayPhase();
             }
         }
 
         public void PlayPhase() {
             Phase startPhase = State.Phase;
-            while (startPhase == State.Phase && State.Phase != Phase.END) {
+            while (startPhase == State.Phase && State.Phase != Phase.DONE) {
                 PlayStep();
             }
         }
@@ -586,12 +589,13 @@ namespace KingdomGame {
 
                     if (State.SelectedCard != null) {               
                         State.CurrentPlayer.PlayCard(State.SelectedCard);
-                        Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);
                     } 
                     else {
                         // If no card is selected, skip all remaining actions.
                         State.CurrentPlayer.RemainingActions = 0;
                     }
+
+                    Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);
 
                     break;
 
@@ -646,32 +650,39 @@ namespace KingdomGame {
                             typeToBuy = null;
                         }
 
+                        Card cardBought = null;
                         if (typeToBuy != null) {
-                            Card cardBought = SellCard(State.CurrentPlayer, typeToBuy);
-                            Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
+                            cardBought = SellCard(State.CurrentPlayer, typeToBuy);
                         } else {
                             // If no card type is selected, skip all remaining buys.
                             State.CurrentPlayer.RemainingBuys = 0;
                         }
+
+                        Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
                     }
 
                     break;
 
                 case Phase.ADVANCE:
-                    Logger.Instance.RecordEndOfTurn(this);
+                    int currentTurn = State.TurnNumber;
                     State.CurrentPlayer.EndTurn();
                     State.AdvanceTurn();
                     State.CurrentPlayer.StartTurn();
+                    Logger.Instance.RecordScoresForTurn(this, currentTurn);
                     break;
 
                 case Phase.END:
+                    Logger.Instance.RecordScoresForTurn(this, State.TurnNumber);
+                    break;
+
+                case Phase.DONE:
                     break;
 
                 default:
                     break;
             }
 
-            State.AdvanceStep();
+            State.TransitionState();
         }
 
         public bool IsGameOver() {
