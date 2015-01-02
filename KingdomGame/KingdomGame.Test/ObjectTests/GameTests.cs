@@ -153,12 +153,12 @@ namespace KingdomGame.Test
         public void TestGameCurrentPlayerChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
             Game clone = game.Clone() as Game;
-            game.AdvanceTurn();
+            game.PlayTurn();
 
             Assert.AreNotEqual(
               game.State.CurrentPlayer, 
               clone.State.CurrentPlayer, 
-              "Game should not match its clone on current player after advancing the turn."
+              "Game should not match its clone on current player after playing a turn."
             );
         }
 
@@ -166,13 +166,13 @@ namespace KingdomGame.Test
         public void TestGameTurnNumberCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
             Game clone = game.Clone() as Game;
-            game.AdvanceTurn();
+            game.PlayTurn();
 
-            Assert.AreNotEqual(game, clone, "Game should not match its clone after advancing the turn.");
+            Assert.AreNotEqual(game, clone, "Game should not match its clone afterplaying a  turn.");
             Assert.AreNotEqual(
               game.State.TurnNumber, 
               clone.State.TurnNumber, 
-              "Game's turn number should not match that of its clone after advancing the turn."
+              "Game's turn number should not match that of its clone after playing a  turn."
             );
         }
 
@@ -204,13 +204,13 @@ namespace KingdomGame.Test
         public void TestGameAdvanceTurnCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
             Game clone = game.Clone() as Game;
-            game.AdvanceTurn();
+            game.PlayTurn();
 
-            Assert.AreNotEqual(game, clone, "Game should not match its clone after advancing the turn.");
+            Assert.AreNotEqual(game, clone, "Game should not match its clone after playing a turn.");
             Assert.AreNotEqual(
               game.State.CurrentPlayer, 
               clone.State.CurrentPlayer, 
-              "Game's current player should not match that of its clone after advancing the turn."
+              "Game's current player should not match that of its clone after playing a turn."
             );
         }
 

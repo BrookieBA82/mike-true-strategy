@@ -38,7 +38,7 @@ namespace KingdomGame.Test
             game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>());
             game.PlayPhase();
 
-            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none should be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain if the decision to make none is made.");
             Assert.AreEqual(3, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
@@ -118,7 +118,7 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): The only option to buy is an estate, which can't be done with zero gold
-            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain once an invalid selection is made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.RemainingMoney, "No money should remain if it wasn't there to begin with.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
@@ -154,7 +154,7 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): There are no cards left to buy anything
-            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if none can be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain once an invalid selection is made.");
             Assert.AreEqual(5, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
@@ -175,7 +175,7 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): There are not enough estates left to buy one, so no buy should occur
-            Assert.AreEqual(1, game.State.CurrentPlayer.RemainingBuys, "One buy should remain if the option cannot be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain once an invalid selection is made.");
             Assert.AreEqual(4, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }
@@ -198,7 +198,7 @@ namespace KingdomGame.Test
             game.PlayPhase();
 
             // Note - (MT): There are not enough cards left to buy two estates, so no buy should occur
-            Assert.AreEqual(2, game.State.CurrentPlayer.RemainingBuys, "Two buys should remain if the option cannot be made.");
+            Assert.AreEqual(0, game.State.CurrentPlayer.RemainingBuys, "No buys should remain once an invalid selection is made.");
             Assert.AreEqual(4, game.State.CurrentPlayer.RemainingMoney, "All money should remain if no buy was made.");
             Assert.AreEqual(0, game.State.CurrentPlayer.Discard.Count, "No cards should be in discard pile without a buy.");
         }

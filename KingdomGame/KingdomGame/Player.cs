@@ -205,6 +205,11 @@ namespace KingdomGame {
                 return null;
             }
 
+            if (_remainingActions == 0) {
+                return null;
+            }
+
+            _remainingActions--;
             _hand.Remove(card);
             _playArea.Add(card);
 

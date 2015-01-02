@@ -111,6 +111,15 @@ namespace KingdomGame {
                         break;
 
                     case Phase.BUY:
+                        if (_game.IsGameOver()) {
+                            Phase = Phase.END;
+                            // Refactor - (MT): Find most appropriate place for this.
+                            Logger.Instance.RecordEndOfTurn(_game);
+                        }
+                        else if (CurrentPlayer.RemainingBuys == 0) {
+                            Phase = Phase.ADVANCE;
+                        }
+
                         break;
 
                     case Phase.ADVANCE:
@@ -547,7 +556,7 @@ namespace KingdomGame {
             }
 
             // Once the advance phase is reached, play one more phase to end the current turn:
-            if (State.Phase != Phase.END) {
+            if (State.Phase == Phase.ADVANCE) {
                 PlayPhase();
             }
         }
@@ -575,10 +584,9 @@ namespace KingdomGame {
                       new Deck(State.CurrentPlayer.Hand)
                     );
 
-                    if (State.SelectedCard != null) {
-                        Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);               
+                    if (State.SelectedCard != null) {               
                         State.CurrentPlayer.PlayCard(State.SelectedCard);
-                        State.CurrentPlayer.RemainingActions--;
+                        Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);
                     } 
                     else {
                         // If no card is selected, skip all remaining actions.
@@ -595,71 +603,65 @@ namespace KingdomGame {
                     );
 
                     // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
-                    IAction actionToPlay = State.NextPendingAction;
+                    IAction action = State.NextPendingAction;
                     IList<ITargetable> targets = _strategy.TargetSelectionStrategy.SelectTargets(
                         this, 
                         State.SelectedCard, 
-                        actionToPlay
+                        action
                     );
-
-                    Logger.Instance.RecordAction(
-                      this, State.CurrentPlayer, State.SelectedCard, actionToPlay, targets);
 
                     State.ExecuteNextPendingAction(new List<ITargetable>(targets).ConvertAll<int>(
                       delegate (ITargetable target) { return target.Id;}
                     ));
 
-                    actionToPlay.Apply(targets, this);
+                    action.Apply(targets, this);
+
+                    Logger.Instance.RecordAction(this, State.CurrentPlayer, State.SelectedCard, action, targets);
 
                     break;
 
                 case Phase.BUY:
+
+                    Debug.Assert(
+                        State.SelectedCard == null,
+                        "Game should never be in BUY phase with a card selected."
+                    );
 
                     //Debug.Assert(
                     //  State.CurrentPlayer.RemainingBuys > 0, 
                     //  "Game should never be in BUY phase without remaining buys."
                     //);
 
-                    bool isTurnOver = false;
                     if (State.CurrentPlayer.RemainingBuys > 0) {
-                        IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
                         // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
+                        IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
                         CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
 
-                        if (typeToBuy != null && GetCardsByType(typeToBuy).Count > 0) {
+                        Debug.Assert(
+                          (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),
+                          "No buying strategy should ever return an option with insufficient cards remaining."
+                        );
+
+                        if(typeToBuy == null || GetCardsByType(typeToBuy).Count == 0) {
+                            typeToBuy = null;
+                        }
+
+                        if (typeToBuy != null) {
                             Card cardBought = SellCard(State.CurrentPlayer, typeToBuy);
                             Logger.Instance.RecordBuy(this, State.CurrentPlayer, cardBought);
-                            if (State.CurrentPlayer.RemainingBuys == 0) {
-                                isTurnOver = true;
-                            }
                         } else {
-                            // If no card is selected, assume the turn is over.
-                            isTurnOver = true;
+                            // If no card type is selected, skip all remaining buys.
+                            State.CurrentPlayer.RemainingBuys = 0;
                         }
-                    }
-                    else {
-                        isTurnOver = true;
-                    }
-
-                    if (IsGameOver()) {
-                        isTurnOver = true;
-                        State.Phase = Phase.END;
-                        Logger.Instance.RecordEndOfTurn(this);
-                    }
-                    else if (isTurnOver) {
-                        State.Phase = Phase.ADVANCE;
-                    }
-
-                    if (isTurnOver) {
-                        State.SelectedCard = null;
                     }
 
                     break;
 
                 case Phase.ADVANCE:
-
                     Logger.Instance.RecordEndOfTurn(this);
-                    AdvanceTurn();
+                    State.CurrentPlayer.EndTurn();
+                    State.AdvanceTurn();
+                    State.CurrentPlayer.StartTurn();
                     break;
 
                 case Phase.END:
@@ -670,12 +672,6 @@ namespace KingdomGame {
             }
 
             State.AdvanceStep();
-        }
-
-        public void AdvanceTurn() {
-            State.CurrentPlayer.EndTurn();
-            State.AdvanceTurn();
-            State.CurrentPlayer.StartTurn();
         }
 
         public bool IsGameOver() {
