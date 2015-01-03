@@ -32,7 +32,7 @@ namespace KingdomGame.Driver {
             // Todo - (MT): Force this to be a player specified by a menu option.
             SetupHumanPlayer(game, game.Players[0]);
 
-            while (!game.IsGameOver()) {
+            while (!game.IsFinished) {
                 if (!IsPlayerHuman(game.State.CurrentPlayer)) {
                     ExecuteComputerPlayerTurn(game);
                 }

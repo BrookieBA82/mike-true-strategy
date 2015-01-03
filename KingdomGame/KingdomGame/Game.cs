@@ -13,12 +13,13 @@ namespace KingdomGame {
         #region Enums
 
         public enum Phase {
-            PLAY = 1,
-            ACTION = 2,
-            BUY = 3,
-            ADVANCE = 4,
-            END = 5,
-            DONE = 6
+            START = 1,
+            PLAY = 2,
+            ACTION = 3,
+            BUY = 4,
+            ADVANCE = 5,
+            END = 6,
+            DONE = 7
         }
 
         #endregion
@@ -26,6 +27,8 @@ namespace KingdomGame {
         #region Public Classes
 
         public class GameState : ICloneable {
+
+            #region Private Members
 
             private Game _game;
             private Phase _phase;
@@ -35,6 +38,23 @@ namespace KingdomGame {
 
             private Stack<IAction> _pendingActionStack;
             private Stack<Pair<IAction, IList<int>>> _executedActionStack;
+
+            #endregion
+
+            #region Constructors
+
+            public GameState(Game game) {
+                _game = game;
+                _phase = Phase.START;
+                _selectedCardId = null;
+                _turnNumber = 1;
+                _pendingActionStack = new Stack<IAction>();
+                _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
+            }
+
+            #endregion
+
+            #region Properties
 
             // Refactor - (MT): Handle backrefs more elegantly than this.
             internal Game Game { set { _game = value; } }
@@ -62,35 +82,41 @@ namespace KingdomGame {
 
             public Player CurrentPlayer { get { return _game.Players[_currentPlayerIndex]; } }
 
-            public GameState(Game game) {
-                _game = game;
-                _phase = Phase.PLAY;
-                _selectedCardId = null;
-                _turnNumber = 1;
-                _pendingActionStack = new Stack<IAction>();
-                _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
+            public bool HasNextPendingAction { get { return NextPendingAction != null; } }
+
+            public IAction NextPendingAction {
+                get {
+                    if ((_phase == Phase.ACTION) && (_pendingActionStack.Count > 0)) {
+                        return _pendingActionStack.Peek();
+                    }
+
+                    return null;
+                }
             }
 
-            public object Clone() {
-                GameState state = new GameState(_game);
+            #endregion
 
-                state._phase = _phase;
-                state._selectedCardId = _selectedCardId;
-                state._turnNumber = _turnNumber;
-                state._currentPlayerIndex = _currentPlayerIndex;
-                state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
-                state._executedActionStack = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
+            #region Public Methods
 
-                return state;
-            }
+            #region Exeuction Methods
 
             public void AdvanceTurn() {
                 _turnNumber++;
                 _currentPlayerIndex = (_currentPlayerIndex + 1) % _game._orderedPlayerList.Count;
             }
 
-            public void TransitionState() {
+            public void TransitionPhase() {
                 switch (Phase) {
+                    case Phase.START:
+                        if (Game.IsGameFinished(_game._cardsByTypeId)) {
+                            _phase = Phase.END;
+                        }
+                        else {
+                            _phase = Phase.PLAY;
+                        }
+
+                        break;
+
                     case Phase.PLAY:
                         _phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
                         if (SelectedCard != null) {
@@ -113,10 +139,9 @@ namespace KingdomGame {
                         break;
 
                     case Phase.BUY:
-                        if (_game.IsGameOver()) {
+                        if (Game.IsGameFinished(_game._cardsByTypeId)) {
                             _phase = Phase.END;
-                        }
-                        else if (CurrentPlayer.RemainingBuys == 0) {
+                        } else if (CurrentPlayer.RemainingBuys == 0) {
                             _phase = Phase.ADVANCE;
                         }
 
@@ -135,17 +160,6 @@ namespace KingdomGame {
                 }
             }
 
-            public bool HasNextPendingAction { get { return NextPendingAction != null; } }
-
-            public IAction NextPendingAction {
-                get {
-                    if ((_phase == Phase.ACTION) && (_pendingActionStack.Count > 0)) {
-                        return _pendingActionStack.Peek();
-                    }
-
-                    return null;
-                }
-            }
 
             public void AddPendingAction(IAction action) {
                 if(_phase != Phase.ACTION) {
@@ -173,6 +187,10 @@ namespace KingdomGame {
                 _executedActionStack.Push(new Pair<IAction, IList<int>>(pendingAction, targetIds));
             }
 
+            #endregion
+
+            #region History Query Methods
+
             // Refactor - (MT): Make the returned targets a generically typed parameter.
             public IList<int> GetTargetsFromLastExecutedAction(Type actionType) {
                 if (actionType == null) {
@@ -190,6 +208,23 @@ namespace KingdomGame {
                 }
 
                 return null;
+            }
+
+            #endregion
+
+            #region Clone and Equality Methods
+
+            public object Clone() {
+                GameState state = new GameState(_game);
+
+                state._phase = _phase;
+                state._selectedCardId = _selectedCardId;
+                state._turnNumber = _turnNumber;
+                state._currentPlayerIndex = _currentPlayerIndex;
+                state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
+                state._executedActionStack = new Stack<Pair<IAction, IList<int>>>(_executedActionStack);
+
+                return state;
             }
 
             public override bool Equals(object obj) {
@@ -266,7 +301,12 @@ namespace KingdomGame {
                 }
 
                 return code;
-            }        
+            }
+
+            #endregion
+
+            #endregion
+
         }
 
         // Refactor - (MT): Push this object down to the player level.
@@ -421,6 +461,8 @@ namespace KingdomGame {
 
         public GameState State { get { return _state; } }
 
+        public bool IsFinished { get { return _state.Phase == Phase.DONE; } }
+
         public Strategy CurrentStrategy { get { return _strategy; } }
 
         public IList<Player> Players { get { return new List<Player>(_orderedPlayerList); } }
@@ -432,29 +474,6 @@ namespace KingdomGame {
         #endregion
 
         #region Public Methods
-
-        public bool IsGameOver() {
-            IDictionary<int, int> emptyCardSetsByWeight = new Dictionary<int, int>();
-            foreach (int cardTypeId in _cardsByTypeId.Keys) {
-                if (_cardsByTypeId[cardTypeId].Size == 0) {
-                    int weight = CardType.GetCardTypeById(cardTypeId).EndOfGameWeight;
-                    if (weight == 0) {
-                        continue;
-                    }
-
-                    if (!emptyCardSetsByWeight.ContainsKey(weight)) {
-                        emptyCardSetsByWeight[weight] = 0;
-                    }
-
-                    emptyCardSetsByWeight[weight]++;
-                    if (emptyCardSetsByWeight[weight] >= weight) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
 
         #region Query Methods
 
@@ -591,7 +610,8 @@ namespace KingdomGame {
                 _orderedPlayerList = newOrderedPlayerList;
             }
 
-            State.CurrentPlayer.StartTurn();
+            // Handle the start step here.
+            PlayStep();
         }
 
         #endregion
@@ -624,6 +644,17 @@ namespace KingdomGame {
 
         public void PlayStep() {
             switch (State.Phase) {
+
+                case Phase.START:
+
+                    AssertCardSelected(false);
+                    AssertPendingActionAvailable(false);
+
+                    if (!Game.IsGameFinished(_cardsByTypeId)) {
+                        State.CurrentPlayer.StartTurn();
+                    }
+
+                    break;
 
                 case Phase.PLAY:
 
@@ -738,7 +769,7 @@ namespace KingdomGame {
                     break;
             }
 
-            State.TransitionState();
+            State.TransitionPhase();
         }
 
         #endregion
@@ -1005,6 +1036,29 @@ namespace KingdomGame {
         #endregion
 
         #region Calculation Utility Methods
+
+        private static bool IsGameFinished(IDictionary<int, Deck> cardsByTypeId) {
+            IDictionary<int, int> emptyCardSetsByWeight = new Dictionary<int, int>();
+            foreach (int cardTypeId in cardsByTypeId.Keys) {
+                if (cardsByTypeId[cardTypeId].Size == 0) {
+                    int weight = CardType.GetCardTypeById(cardTypeId).EndOfGameWeight;
+                    if (weight == 0) {
+                        continue;
+                    }
+
+                    if (!emptyCardSetsByWeight.ContainsKey(weight)) {
+                        emptyCardSetsByWeight[weight] = 0;
+                    }
+
+                    emptyCardSetsByWeight[weight]++;
+                    if (emptyCardSetsByWeight[weight] >= weight) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         private static IList<IList<CardType>> CalculateAllBuyOptions(
           int buysRemaining, 

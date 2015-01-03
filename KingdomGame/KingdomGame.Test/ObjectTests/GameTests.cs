@@ -34,8 +34,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeVillage.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame (2, gameCardCountsByTypeId, playerCardCountsByTypeId);
+            game.PlayStep();
 
-            Assert.AreEqual(false, game.IsGameOver(), "The game should not be over because no piles are empty.");
+            Assert.AreEqual(false, game.IsFinished, "The game should not be over because no piles are empty.");
         }
 
         [TestCategory("GameObjectTest"), TestCategory("EndOfGameTest"), TestMethod]
@@ -51,8 +52,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeVillage.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame (2, gameCardCountsByTypeId, playerCardCountsByTypeId);
+            game.PlayStep();
 
-            Assert.AreEqual(false, game.IsGameOver(), "The game should not be over because one non-critical pile is empty.");
+            Assert.AreEqual(false, game.IsFinished, "The game should not be over because one non-critical pile is empty.");
         }
 
         [TestCategory("GameObjectTest"), TestCategory("EndOfGameTest"), TestMethod]
@@ -68,8 +70,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeProvince.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame (2, gameCardCountsByTypeId, playerCardCountsByTypeId);
+            game.PlayStep();
 
-            Assert.AreEqual(true, game.IsGameOver(), "The game should be over because a critical pile is empty.");
+            Assert.AreEqual(true, game.IsFinished, "The game should be over because a critical pile is empty.");
         }
 
         [TestCategory("GameObjectTest"), TestCategory("EndOfGameTest"), TestMethod]
@@ -87,8 +90,9 @@ namespace KingdomGame.Test
             playerCardCountsByTypeId[TestSetup.CardTypeWorkshop.Id] = 1;
 
             Game game = TestSetup.GenerateStartingGame (2, gameCardCountsByTypeId, playerCardCountsByTypeId);
+            game.PlayStep();
 
-            Assert.AreEqual(true, game.IsGameOver(), "The game should be over because enough non-critical piles are empty.");
+            Assert.AreEqual(true, game.IsFinished, "The game should be over because enough non-critical piles are empty.");
         }
 
         #endregion
