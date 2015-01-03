@@ -41,8 +41,6 @@ namespace KingdomGame.Driver {
                 }
             }
 
-            // Todo - (MT): Make these path components configurable:
-            SaveGameHistory(game, Environment.CurrentDirectory, "GameResults", "_yyyy-dd-MM_HHmmss");
             TerminateGame(game, game.State.CurrentPlayer);
         }
 
@@ -687,6 +685,9 @@ namespace KingdomGame.Driver {
         }
 
         private static void TerminateGame(Game game, Player player) {
+            // Todo - (MT): Make these path components configurable:
+            SaveGameHistory(game, Environment.CurrentDirectory, "GameResults", "_yyyy-dd-MM_HHmmss");
+
             Console.WriteLine("Press enter to continue...");
             Console.ReadLine();
             Environment.Exit(0);
