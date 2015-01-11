@@ -71,7 +71,7 @@ namespace KingdomGame.Driver {
 
             PromptedDiscardingStrategy strategy = new PromptedDiscardingStrategy();
             strategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
-            game.CurrentStrategy.DiscardingStrategiesByPlayerId[player.Id] = strategy;
+            player.Strategy.DiscardingStrategy = strategy;
         }
 
         private static bool IsPlayerHuman(Player player) {

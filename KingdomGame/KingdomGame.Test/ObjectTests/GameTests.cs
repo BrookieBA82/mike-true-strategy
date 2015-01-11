@@ -361,8 +361,7 @@ namespace KingdomGame.Test
 
             Game clone = game.Clone() as Game;
 
-            game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id] = 
-              new ScriptedDiscardingStrategy(new List<Card>() {villageCard});
+            game.State.CurrentPlayer.Strategy.DiscardingStrategy = new ScriptedDiscardingStrategy(new List<Card>() {villageCard});
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after cards to discard are changed.");
         }

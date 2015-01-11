@@ -80,7 +80,7 @@ namespace KingdomGame {
             }
 
             for (int targetIndex = 0; targetIndex < _targets.Count; targetIndex++) {
-                if (!this._targets[targetIndex].Equals(strategy._targets[targetIndex])) {
+                if (this._targets[targetIndex].Id != strategy._targets[targetIndex].Id) {
                     return false;
                 }
             }
@@ -92,7 +92,7 @@ namespace KingdomGame {
             int code = _targets.Count.GetHashCode();
 
             for (int targetIndex = 0; targetIndex < _targets.Count; targetIndex++) {
-                code ^= _targets[targetIndex].GetHashCode();
+                code ^= _targets[targetIndex].Id.GetHashCode();
             }
 
             return code;

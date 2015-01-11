@@ -309,81 +309,6 @@ namespace KingdomGame {
 
         }
 
-        // Refactor - (MT): Push this object down to the player level.
-        public class Strategy : ICloneable {
-
-            public ICardSelectionStrategy CardSelectionStrategy { get; set; }
-
-            public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
-
-            public IBuyingStrategy BuyingStrategy { get; set; }
-
-            public IDictionary<int, IDiscardingStrategy> DiscardingStrategiesByPlayerId { get; private set; }
-
-            public Strategy(IList<int> playerIds) {
-                // Todo - (MT): Strategy point #4 - select best discard option (not just random)
-                DiscardingStrategiesByPlayerId = new Dictionary<int, IDiscardingStrategy>();
-                foreach(int playerId in playerIds) {
-                    DiscardingStrategiesByPlayerId[playerId] = new RandomDiscardingStrategy();
-                }
-            }
-
-            public object Clone() {
-                Strategy strategy = new Strategy(new List<int>(DiscardingStrategiesByPlayerId.Keys));
-
-                strategy.CardSelectionStrategy = CardSelectionStrategy.Clone() as ICardSelectionStrategy;
-                strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
-                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
-                foreach (int playerId in DiscardingStrategiesByPlayerId.Keys) {
-                    strategy.DiscardingStrategiesByPlayerId[playerId] = 
-                      DiscardingStrategiesByPlayerId[playerId].Clone() as IDiscardingStrategy;
-                }
-
-                return strategy;
-            }
-
-            public override bool Equals(object obj) {
-                Strategy strategy = obj as Strategy;
-                if (strategy == null) {
-                    return false;
-                }
-
-                if (DiscardingStrategiesByPlayerId.Count != strategy.DiscardingStrategiesByPlayerId.Count) {
-                    return false;
-                }
-
-                foreach(int playerId in DiscardingStrategiesByPlayerId.Keys) {
-                    if (!strategy.DiscardingStrategiesByPlayerId.ContainsKey(playerId)) {
-                        return false;
-                    }
-
-                    if (!DiscardingStrategiesByPlayerId[playerId].Equals(
-                      strategy.DiscardingStrategiesByPlayerId[playerId])) {
-                        return false;
-                    }
-                }
-
-                return CardSelectionStrategy.Equals(strategy.CardSelectionStrategy) 
-                  && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
-                  && BuyingStrategy.Equals(strategy.BuyingStrategy);
-            }
-
-            public override int GetHashCode() {
-                int code = CardSelectionStrategy.GetHashCode() 
-                  ^ TargetSelectionStrategy.GetHashCode() 
-                  ^ BuyingStrategy.GetHashCode();
-
-                code ^= DiscardingStrategiesByPlayerId.Keys.Count.GetHashCode();
-
-                foreach (int playerId in DiscardingStrategiesByPlayerId.Keys) {
-                    code ^= playerId.GetHashCode();
-                    code ^= DiscardingStrategiesByPlayerId[playerId].GetHashCode();
-                }
-
-                return code;
-            }
-        }
-
         #endregion
 
         #region Static Members
@@ -396,7 +321,6 @@ namespace KingdomGame {
 
         private int _id;
         private GameState _state;
-        private Strategy _strategy;
 
         private IList<Player> _orderedPlayerList;
         private IDictionary<int, Player> _playersById;
@@ -446,7 +370,6 @@ namespace KingdomGame {
                 _cardsByTypeId[cardTypeId] = toClone._cardsByTypeId[cardTypeId].Clone() as Deck;
             }
 
-            _strategy = toClone._strategy.Clone() as Strategy;
             _state = toClone._state.Clone() as GameState;
             _state.Game = this;
 
@@ -463,7 +386,7 @@ namespace KingdomGame {
 
         public bool IsFinished { get { return _state.Phase == Phase.DONE; } }
 
-        public Strategy CurrentStrategy { get { return _strategy; } }
+        public Player.PlayerStrategy CurrentStrategy { get { return _state.CurrentPlayer.Strategy; } }
 
         public IList<Player> Players { get { return new List<Player>(_orderedPlayerList); } }
 
@@ -663,7 +586,7 @@ namespace KingdomGame {
                     AssertRemainingActionsAvailable(true);
 
                     // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
-                    State.SelectedCard = _strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy(
+                    State.SelectedCard = _state.CurrentPlayer.Strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy(
                       this, 
                       new Deck(State.CurrentPlayer.Hand)
                     );
@@ -687,7 +610,7 @@ namespace KingdomGame {
 
                     // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
                     IAction action = State.NextPendingAction;
-                    IList<ITargetable> targets = _strategy.TargetSelectionStrategy.SelectTargets(
+                    IList<ITargetable> targets = _state.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
                         this, 
                         State.SelectedCard, 
                         action
@@ -712,7 +635,7 @@ namespace KingdomGame {
 
                     // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
                     IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
-                    CardType typeToBuy = _strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
+                    CardType typeToBuy = _state.CurrentPlayer.Strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
 
                     Debug.Assert(
                       (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),
@@ -872,10 +795,6 @@ namespace KingdomGame {
                 }
             }
 
-            if (!game._strategy.Equals(this._strategy)) {
-                return false;
-            }
-
             if (!game._state.Equals(this._state)) {
                 return false;
             }
@@ -897,7 +816,6 @@ namespace KingdomGame {
                 code = code ^ this._cardsByTypeId[entry.Key].GetHashCode();
             }
 
-            code = code ^ this._strategy.GetHashCode();
             code = code ^ this._state.GetHashCode();
 
             return code;
@@ -915,15 +833,6 @@ namespace KingdomGame {
         private void SetUpBasicGameDetails() {
             _id = Game.NextId++;
             _trash = new Deck();
-
-            _strategy = new Strategy(new List<int>(_playersById.Keys));
-            // Todo - (MT): Strategy point #1 - select best card (instead of random)
-            _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
-            // Todo - (MT): Strategy point #2 - select best (or at least random) target
-            _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
-            // Todo - (MT): Strategy point #3 - select best buy option (not just random)
-            _strategy.BuyingStrategy = new RandomBuyingStrategy();
-
             _state = new GameState(this);
             _cardsById = new Dictionary<int, Card>();
         }

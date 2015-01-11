@@ -8,6 +8,58 @@ namespace KingdomGame {
 
     public class Player : ICloneable, ICardOwner, ITargetable {
 
+        #region Public Classes
+
+        // Refactor - (MT): Get rid of the per-player discarding piece
+        public class PlayerStrategy : ICloneable {
+
+            public ICardSelectionStrategy CardSelectionStrategy { get; set; }
+
+            public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
+
+            public IBuyingStrategy BuyingStrategy { get; set; }
+
+            public IDiscardingStrategy DiscardingStrategy { get; set; }
+
+            public PlayerStrategy() {
+
+            }
+
+            public object Clone() {
+                PlayerStrategy strategy = new PlayerStrategy();
+
+                strategy.CardSelectionStrategy = CardSelectionStrategy.Clone() as ICardSelectionStrategy;
+                strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
+                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
+                strategy.DiscardingStrategy = DiscardingStrategy.Clone() as IDiscardingStrategy;
+                
+                return strategy;
+            }
+
+            public override bool Equals(object obj) {
+                PlayerStrategy strategy = obj as PlayerStrategy;
+                if (strategy == null) {
+                    return false;
+                }
+
+                return CardSelectionStrategy.Equals(strategy.CardSelectionStrategy) 
+                  && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
+                  && BuyingStrategy.Equals(strategy.BuyingStrategy)
+                  && DiscardingStrategy.Equals(strategy.DiscardingStrategy);
+            }
+
+            public override int GetHashCode() {
+                int code = CardSelectionStrategy.GetHashCode() 
+                  ^ TargetSelectionStrategy.GetHashCode() 
+                  ^ BuyingStrategy.GetHashCode()
+                  ^ DiscardingStrategy.GetHashCode();
+
+                return code;
+            }
+        }
+
+        #endregion
+
         #region Constants
 
         public const int DEFAULT_HAND_SIZE = 5;
@@ -34,6 +86,8 @@ namespace KingdomGame {
         private Deck _discard;
         private Deck _playArea;
 
+        private PlayerStrategy _strategy;
+
         #endregion
 
         #region Constructors
@@ -50,6 +104,16 @@ namespace KingdomGame {
             _deck = new Deck();
             _discard = new Deck();
             _playArea = new Deck();
+
+            _strategy = new PlayerStrategy();
+            // Todo - (MT): Strategy point #1 - select best card (instead of random)
+            _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
+            // Todo - (MT): Strategy point #2 - select best (or at least random) target
+            _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
+            // Todo - (MT): Strategy point #3 - select best buy option (not just random)
+            _strategy.BuyingStrategy = new RandomBuyingStrategy();
+            // Todo - (MT): Strategy point #4 - select best discard option (not just random)
+            _strategy.DiscardingStrategy = new RandomDiscardingStrategy();
         }
 
         public Player(string name) : this(Player.NextId++, name) {
@@ -65,6 +129,8 @@ namespace KingdomGame {
             this._deck = toClone._deck.Clone() as Deck;
             this._discard = toClone._discard.Clone() as Deck;
             this._playArea = toClone._playArea.Clone() as Deck;
+
+            this._strategy = toClone._strategy.Clone() as PlayerStrategy;
         }
 
         #endregion
@@ -137,6 +203,8 @@ namespace KingdomGame {
                 return score;
             }
         }
+
+        public PlayerStrategy Strategy { get { return _strategy; } }
 
         #endregion
 
@@ -296,7 +364,8 @@ namespace KingdomGame {
               && (this._deck.Equals(player._deck))
               && (this._discard.Equals(player._discard))
               && (this._hand.Equals(player._hand))
-              && (this._playArea.Equals(player._playArea));
+              && (this._playArea.Equals(player._playArea))
+              && (this._strategy.Equals(player._strategy));
         }
 
         public override int GetHashCode() {
@@ -308,7 +377,8 @@ namespace KingdomGame {
               ^ this._deck.GetHashCode()
               ^ this._discard.GetHashCode()
               ^ this._hand.GetHashCode()
-              ^ this._playArea.GetHashCode();
+              ^ this._playArea.GetHashCode()
+              ^ this._strategy.GetHashCode();
         }
 
         #endregion

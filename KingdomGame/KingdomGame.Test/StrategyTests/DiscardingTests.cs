@@ -33,8 +33,11 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             Card onlyCardInHand = game.State.CurrentPlayer.Hand[0];
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
+            IList<Card> cardsToDiscard = game.State.CurrentPlayer.Strategy.DiscardingStrategy.FindOptimalDiscardingStrategy(
+              game, 
+              game.State.CurrentPlayer, 
+              1
+            );
 
             Assert.AreEqual(
               1, 
@@ -57,8 +60,11 @@ namespace KingdomGame.Test
             Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 1);
+            IList<Card> cardsToDiscard = game.State.CurrentPlayer.Strategy.DiscardingStrategy.FindOptimalDiscardingStrategy(
+              game, 
+              game.State.CurrentPlayer, 
+              1
+            );
 
             Assert.AreEqual(
               0, 
@@ -77,8 +83,11 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             Card onlyCardInHand = game.State.CurrentPlayer.Hand[0];
-            IList<Card> cardsToDiscard = game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.State.CurrentPlayer.Id]
-              .FindOptimalDiscardingStrategy(game, game.State.CurrentPlayer, 2);
+            IList<Card> cardsToDiscard = game.State.CurrentPlayer.Strategy.DiscardingStrategy.FindOptimalDiscardingStrategy(
+              game, 
+              game.State.CurrentPlayer, 
+              2
+            );
 
             Assert.AreEqual(
               0, 

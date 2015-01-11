@@ -843,8 +843,7 @@ namespace KingdomGame.Test
             }
 
             // Ensure the other player doesn't discard any copper:
-            game.CurrentStrategy.DiscardingStrategiesByPlayerId[game.Players[1].Id] 
-              = new ScriptedDiscardingStrategy(cardsToDiscard);
+            game.Players[1].Strategy.DiscardingStrategy = new ScriptedDiscardingStrategy(cardsToDiscard);
 
             // Forcing the discard action:
             game.CurrentStrategy.TargetSelectionStrategy = 
