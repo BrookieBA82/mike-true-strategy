@@ -9,6 +9,7 @@ using System.Xml;
 
 namespace KingdomGame {
 
+    // Refactor - (MT): Break the static interface out into its own registry class?
     public class CardType : ITargetable {
 
         public enum CardClass {
@@ -421,6 +422,7 @@ namespace KingdomGame {
                 }
             }
 
+            // Refactor - (MT): Try to make the constructors for all actions private.
             Assembly assembly = assembliesByKey[assemblyKey];
             Type classType = assembly.GetType(className);
             IAction action = Activator.CreateInstance(classType) as IAction;

@@ -136,8 +136,8 @@ namespace KingdomGame.Driver {
                                 );
 
                                 if (
-                                  actionToPlay.ExecutingPlayerId.HasValue 
-                                  && !IsPlayerHuman(game.GetPlayerById(actionToPlay.ExecutingPlayerId.Value))
+                                  actionToPlay.TargetSelectorId.HasValue 
+                                  && !IsPlayerHuman(game.GetPlayerById(actionToPlay.TargetSelectorId.Value))
                                 ) {
                                     game.PlayStep();
                                     GameHistory.Action target = Logger.Instance.GetLastAction(game);

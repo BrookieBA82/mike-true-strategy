@@ -134,7 +134,7 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = village;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.State.AddPendingAction(village.Type.Actions[0]);
+            game.State.AddPendingAction(village.Type.Actions[0].Create(game.State.CurrentPlayer));
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
 

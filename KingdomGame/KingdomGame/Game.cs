@@ -121,7 +121,7 @@ namespace KingdomGame {
                         _phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
                         if (SelectedCard != null) {
                             for (int actionIndex = SelectedCard.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
-                                AddPendingAction(SelectedCard.Type.Actions[actionIndex]);
+                                AddPendingAction(SelectedCard.Type.Actions[actionIndex].Create(CurrentPlayer));
                             }
                         }
 
@@ -168,6 +168,10 @@ namespace KingdomGame {
 
                 if(action == null) {
                     throw new ArgumentNullException("Cannot add a null pending action.");
+                }
+
+                if (!action.TargetSelectorId.HasValue) {
+                    throw new ArgumentNullException("Cannot add an action without a valid target selector.");
                 }
 
                 _pendingActionStack.Push(action);
@@ -601,7 +605,8 @@ namespace KingdomGame {
 
                     // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
                     IAction action = State.NextPendingAction;
-                    IList<ITargetable> targets = _state.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
+                    Player targetSelector = GetPlayerById(action.TargetSelectorId.Value);
+                    IList<ITargetable> targets = targetSelector.Strategy.TargetSelectionStrategy.SelectTargets(
                         this, 
                         State.SelectedCard, 
                         action

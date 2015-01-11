@@ -14,21 +14,13 @@ namespace KingdomGame {
         protected Type _targetType;
         protected int _minTargets;
         protected int _maxTargets;
-        protected int? _executingPlayerId = null;
+        protected int? _targetSelectorId = null;
         protected bool _allValidTargetsRequired;
 
         protected bool _duplicateTargetsAllowed;
 
         protected string _displayName;
         protected string _actionDescription;
-
-        public BaseAction (
-          int minTargets, 
-          int maxTargets,
-          bool duplicateTargetsAllowed
-        ) : this(minTargets, maxTargets, duplicateTargetsAllowed, false) {
-
-        }
 
         public BaseAction (
           int minTargets, 
@@ -165,7 +157,7 @@ namespace KingdomGame {
 
         public Type TargetType { get { return _targetType; } }
 
-        public int? ExecutingPlayerId { get { return _executingPlayerId; } }
+        public int? TargetSelectorId { get { return _targetSelectorId; } }
 
         public bool AllValidTargetsRequired { get { return _allValidTargetsRequired; } }
 
@@ -179,6 +171,16 @@ namespace KingdomGame {
             set { _actionDescription = value; }
         }
 
+        public IAction Create(Player targetSelector) {
+            if (targetSelector == null) {
+                throw new ArgumentNullException("A valid player must be specified as the target selector for an action.");
+            }
+
+            BaseAction<TTarget> action = this.MemberwiseClone() as BaseAction<TTarget>;
+            action._targetSelectorId = targetSelector.Id;
+            return action;
+        }
+
         public override bool Equals(object obj) {
             BaseAction<TTarget> action = obj as BaseAction<TTarget>;
             if (action == null) {
@@ -190,8 +192,8 @@ namespace KingdomGame {
               && _maxTargets == action._maxTargets
               && _duplicateTargetsAllowed == action._duplicateTargetsAllowed
               && _allValidTargetsRequired == action._allValidTargetsRequired
-              && _executingPlayerId.HasValue == action._executingPlayerId.HasValue
-              && (!_executingPlayerId.HasValue || (_executingPlayerId.Value == action._executingPlayerId.Value));
+              && _targetSelectorId.HasValue == action._targetSelectorId.HasValue
+              && (!_targetSelectorId.HasValue || (_targetSelectorId.Value == action._targetSelectorId.Value));
         }
 
         public override int GetHashCode() {
@@ -200,7 +202,7 @@ namespace KingdomGame {
               ^ _maxTargets.GetHashCode()
               ^ _duplicateTargetsAllowed.GetHashCode()
               ^ _allValidTargetsRequired.GetHashCode()
-              ^ ((_executingPlayerId.HasValue) ? _executingPlayerId.Value.GetHashCode() : false.GetHashCode());
+              ^ ((_targetSelectorId.HasValue) ? _targetSelectorId.Value.GetHashCode() : false.GetHashCode());
         }
 
         protected abstract void ApplyInternal(

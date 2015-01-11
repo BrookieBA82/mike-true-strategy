@@ -23,7 +23,8 @@ namespace KingdomGame.BasicCardTypes {
           Game game
         ) {
             foreach (Player player in players) {
-                IAction forcedDiscardAction = new MilitiaForcedDiscardAction(player.Id);
+                // Refactor - (MT): See if you can convert this creation into the prototype pattern.
+                IAction forcedDiscardAction = new MilitiaForcedDiscardAction(player);
                 forcedDiscardAction.DisplayName = "Militia Forced Discard Phase";
                 forcedDiscardAction.ActionDescription = string.Format(
                   "discarding {0} cards for Militia",
@@ -53,15 +54,19 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MilitiaForcedDiscardAction : BasePlayerTargetAction {
 
-        public MilitiaForcedDiscardAction(int playerId) : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
-            _executingPlayerId = playerId;
+        public MilitiaForcedDiscardAction(Player targetSelector) : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
+            if (targetSelector == null) {
+                throw new ArgumentNullException("A valid player must be specified as the target selector for an action.");
+            }
+
+            _targetSelectorId = targetSelector.Id;
         }
 
         protected override void ApplyInternal(
           IList<Player> players, 
           Game game
         ) {
-            Player player = game.GetPlayerById(_executingPlayerId.Value);
+            Player player = game.GetPlayerById(_targetSelectorId.Value);
             IList<Card> cardsToDiscard = player.Strategy.DiscardingStrategy.
                 SelectDiscards(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0);
 

@@ -11,6 +11,7 @@ namespace KingdomGame {
     // Refactor - (MT): Add a target selecting player action to determine whose strategy should get used.
     public interface IAction {
 
+        // Refactor - (MT): See if you can make this function non-generic.
         bool IsTargetValid<TTarget>(
           IList<TTarget> targets, 
           Card targetingCard, 
@@ -29,15 +30,20 @@ namespace KingdomGame {
 
         IList<TTarget> GetAllPossibleTargets<TTarget>(Game game) where TTarget : class, ITargetable;
 
+        IAction Create(Player targetSelector);
+
+        // Refactor - (MT): Is this strictly necessary?
+        Type TargetType { get; }
+
+        // Refactor - (MT): Get the player from the game backreference.
+        int? TargetSelectorId { get; }
+
         // Refactor - (MT): Add a method for getting a target object from the game via ID.
+        // IList<ITargetable> GetTargetObjectById(int id);
 
         int MinTargets { get; }
 
         int MaxTargets { get; }
-
-        Type TargetType { get; }
-
-        int? ExecutingPlayerId { get; }
 
         bool AllValidTargetsRequired { get; }
 
