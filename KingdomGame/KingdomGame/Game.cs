@@ -584,7 +584,7 @@ namespace KingdomGame {
                     AssertRemainingActionsAvailable(true);
 
                     // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
-                    State.SelectedCard = _state.CurrentPlayer.Strategy.CardSelectionStrategy.FindOptimalCardSelectionStrategy(
+                    State.SelectedCard = _state.CurrentPlayer.Strategy.CardSelectionStrategy.SelectCard(
                       this, 
                       new Deck(State.CurrentPlayer.Hand)
                     );
@@ -633,7 +633,7 @@ namespace KingdomGame {
 
                     // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
                     IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
-                    CardType typeToBuy = _state.CurrentPlayer.Strategy.BuyingStrategy.FindOptimalBuyingStrategy(this, buyingOptions);
+                    CardType typeToBuy = _state.CurrentPlayer.Strategy.BuyingStrategy.SelectBuys(this, buyingOptions);
 
                     Debug.Assert(
                       (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),

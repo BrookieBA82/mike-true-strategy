@@ -63,7 +63,7 @@ namespace KingdomGame.BasicCardTypes {
         ) {
             Player player = game.GetPlayerById(_executingPlayerId.Value);
             IList<Card> cardsToDiscard = player.Strategy.DiscardingStrategy.
-                FindOptimalDiscardingStrategy(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0);
+                SelectDiscards(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0);
 
             foreach (Card card in cardsToDiscard) {
                 player.DiscardCard(card);

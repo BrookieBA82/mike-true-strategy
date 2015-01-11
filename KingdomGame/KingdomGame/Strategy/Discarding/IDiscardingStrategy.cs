@@ -11,7 +11,7 @@ namespace KingdomGame {
     // * Player somehow specifies targets in response to the action
     public interface IDiscardingStrategy : ICloneable {
 
-        IList<Card> FindOptimalDiscardingStrategy(Game game, Player player, int cardsToDiscard);
+        IList<Card> SelectDiscards(Game game, Player player, int cardsToDiscard);
 
     }
 }

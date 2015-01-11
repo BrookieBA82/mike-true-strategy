@@ -14,7 +14,7 @@ namespace KingdomGame {
             _cardsToDiscard = cardsToDiscard;
         }
 
-        public IList<Card> FindOptimalDiscardingStrategy(Game game, Player player, int cardsToDiscard) {
+        public IList<Card> SelectDiscards(Game game, Player player, int cardsToDiscard) {
             List<Card> targetCards = new List<Card>();
             if ((_cardsToDiscard.Count != cardsToDiscard) || (player.Hand.Count < cardsToDiscard)) {
                 return targetCards;

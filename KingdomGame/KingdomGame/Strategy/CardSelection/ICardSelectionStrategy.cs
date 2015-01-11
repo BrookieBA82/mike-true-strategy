@@ -8,7 +8,7 @@ namespace KingdomGame {
 
     public interface ICardSelectionStrategy : ICloneable {
 
-        Card FindOptimalCardSelectionStrategy(Game game, Deck currentHand);
+        Card SelectCard(Game game, Deck currentHand);
 
     }
 }

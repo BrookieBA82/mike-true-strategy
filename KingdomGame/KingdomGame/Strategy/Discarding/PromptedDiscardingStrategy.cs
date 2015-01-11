@@ -21,7 +21,7 @@ namespace KingdomGame {
 
         public event ForcedDiscardPromptEventHandler ForcedDiscardPromptRequired;
 
-        public IList<Card> FindOptimalDiscardingStrategy(
+        public IList<Card> SelectDiscards(
           Game game,
           Player player,
           int cardsToDiscard
@@ -35,7 +35,7 @@ namespace KingdomGame {
                 return new List<Card>(args.SelectedCards);
             }
             else {
-                return new RandomDiscardingStrategy().FindOptimalDiscardingStrategy(game, player, cardsToDiscard);
+                return new RandomDiscardingStrategy().SelectDiscards(game, player, cardsToDiscard);
             }
         }
 

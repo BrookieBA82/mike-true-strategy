@@ -8,7 +8,7 @@ namespace KingdomGame {
 
     public class RandomDiscardingStrategy : IDiscardingStrategy {
 
-        public IList<Card> FindOptimalDiscardingStrategy(Game game, Player player, int cardsToDiscard) {
+        public IList<Card> SelectDiscards(Game game, Player player, int cardsToDiscard) {
             List<Card> targetCards = new List<Card>();
             if (player.Hand.Count < cardsToDiscard) {
                 return targetCards;

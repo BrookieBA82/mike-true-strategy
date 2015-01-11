@@ -14,7 +14,7 @@ namespace KingdomGame {
             _cardToSelect = cardToSelect;
         }
 
-        public Card FindOptimalCardSelectionStrategy(Game game, Deck currentHand) {
+        public Card SelectCard(Game game, Deck currentHand) {
             foreach (Card card in currentHand.Cards) {
                 if (card.Type.Class == CardType.CardClass.ACTION && card.Equals(_cardToSelect)) {
                     return card;

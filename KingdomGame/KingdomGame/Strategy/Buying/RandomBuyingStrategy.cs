@@ -8,7 +8,7 @@ namespace KingdomGame {
 
     public class RandomBuyingStrategy : IBuyingStrategy {
 
-        public CardType FindOptimalBuyingStrategy(Game game, IList<IList<CardType>> buyingOptions) {
+        public CardType SelectBuys(Game game, IList<IList<CardType>> buyingOptions) {
             if (buyingOptions.Count == 0) {
                 return null;
             }

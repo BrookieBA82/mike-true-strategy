@@ -8,7 +8,7 @@ namespace KingdomGame {
 
     public class RandomCardSelectionStrategy : ICardSelectionStrategy {
 
-        public Card FindOptimalCardSelectionStrategy(Game game, Deck currentHand) {
+        public Card SelectCard(Game game, Deck currentHand) {
             Deck randomizedHand = currentHand.Clone() as Deck;
             randomizedHand.Shuffle();
 
