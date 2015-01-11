@@ -10,8 +10,9 @@ namespace KingdomGame {
 
         #region Public Classes
 
-        // Refactor - (MT): Get rid of the per-player discarding piece
         public class PlayerStrategy : ICloneable {
+
+            #region Properties
 
             public ICardSelectionStrategy CardSelectionStrategy { get; set; }
 
@@ -21,9 +22,9 @@ namespace KingdomGame {
 
             public IDiscardingStrategy DiscardingStrategy { get; set; }
 
-            public PlayerStrategy() {
+            #endregion
 
-            }
+            #region Public Methods
 
             public object Clone() {
                 PlayerStrategy strategy = new PlayerStrategy();
@@ -56,6 +57,9 @@ namespace KingdomGame {
 
                 return code;
             }
+
+            #endregion
+
         }
 
         #endregion
@@ -135,7 +139,7 @@ namespace KingdomGame {
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
         public int Id {
             get { return _id; }
@@ -210,6 +214,8 @@ namespace KingdomGame {
 
         #region Public Methods
 
+        #region Turn Management Methods
+
         public void StartTurn() {
             _remainingBuys = 1;
             _remainingActions = 1;
@@ -226,9 +232,9 @@ namespace KingdomGame {
             DrawHand();
         }
 
-        public object Clone() {
-            return new Player(this);
-        }
+        #endregion
+
+        #region Card Management Methods
 
         public int Draw() {
             return this.Draw(1);
@@ -250,23 +256,6 @@ namespace KingdomGame {
             return this.Draw(Player.DEFAULT_HAND_SIZE);
         }
 
-        public Card DiscardCard(Card card) {
-
-            if (!_hand.Contains(card)) {
-                return null;
-            }
-
-            _hand.Remove(card);
-            _discard.Add(card);
-            _remainingMoney -= card.Value;
-
-            return card;
-        }
-
-        public void ShuffleDeck() {
-            _deck.Shuffle();
-        }
-
         public Card PlayCard(Card card) {
 
             if (!_hand.Contains(card)) {
@@ -280,6 +269,19 @@ namespace KingdomGame {
             _remainingActions--;
             _hand.Remove(card);
             _playArea.Add(card);
+
+            return card;
+        }
+
+        public Card DiscardCard(Card card) {
+
+            if (!_hand.Contains(card)) {
+                return null;
+            }
+
+            _hand.Remove(card);
+            _discard.Add(card);
+            _remainingMoney -= card.Value;
 
             return card;
         }
@@ -346,8 +348,20 @@ namespace KingdomGame {
             return true;
         }
 
+        public void ShuffleDeck() {
+            _deck.Shuffle();
+        }
+
+        #endregion
+
+        #region Clone and Equality Methods
+
         public override string ToString() {
             return Name;
+        }
+
+        public object Clone() {
+            return new Player(this);
         }
 
         public override bool Equals(object obj) {
@@ -380,6 +394,8 @@ namespace KingdomGame {
               ^ this._playArea.GetHashCode()
               ^ this._strategy.GetHashCode();
         }
+
+        #endregion
 
         #endregion
 
