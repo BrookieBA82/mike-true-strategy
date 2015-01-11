@@ -430,7 +430,6 @@ namespace KingdomGame.Test
 
         private static bool IsBuyingOptionValid(Game game, IList<CardType> buyingOption, int maxBuys) {
             Game clone = game.Clone() as Game;
-            clone.StartGame();
             TestUtilities.ForceGamePhase(clone, Game.Phase.BUY);
             clone.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(new List<CardType>(buyingOption));
             clone.State.CurrentPlayer.RemainingBuys = maxBuys;

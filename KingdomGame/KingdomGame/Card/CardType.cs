@@ -134,6 +134,17 @@ namespace KingdomGame {
             get { return new List<CardType>(CardTypesById.Values); }
         }
 
+        public static IDictionary<int, int> DefaultCardCountsByType {
+            get {
+                IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
+                foreach(CardType type in CardType.CardTypes) {
+                    defaultGameCardCountsByType[type.Id] = CardType.GetDefaultQuantityByTypeId(type.Id);
+                }
+
+                return defaultGameCardCountsByType;
+            }
+        }
+
         public static void InitializeCardTypes(string configFilePath) {
             ResetCardTypes();
 

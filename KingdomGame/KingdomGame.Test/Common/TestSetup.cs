@@ -195,7 +195,7 @@ namespace KingdomGame.Test
             }
 
             Game game = new Game(players, gameCardCountsByTypeId);
-            game.StartGame(playerCardCountsByTypeId, handCardCountsByTypeId);
+            game.StartGame(playerCardCountsByTypeId, handCardCountsByTypeId, false);
             return game;
         }
 

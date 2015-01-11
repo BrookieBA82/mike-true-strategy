@@ -334,16 +334,18 @@ namespace KingdomGame {
 
         #region Constructors
 
-        public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, Game.GetDefaultCardCountsByType()) {
+        public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, CardType.DefaultCardCountsByType) {
 
         }
 
-        public Game(IList<Player> orderedPlayerList, IDictionary<int, int> gameCardCountsByType) {
-            SetUpPlayerIndexes(orderedPlayerList);
-            SetUpBasicGameDetails();
+        public Game(IList<Player> orderedPlayerList, IDictionary<int, int> gameCardCountsByType) : this() {
+            _state = new GameState(this);
 
+            SetUpPlayerIndex(orderedPlayerList);
+
+            _trash = new Deck();
             _cardsByTypeId = new Dictionary<int, Deck>();
-            foreach(int cardTypeId in gameCardCountsByType.Keys) {
+           foreach(int cardTypeId in gameCardCountsByType.Keys) {
                 _cardsByTypeId[cardTypeId] = new Deck();
                 CardType cardType = CardType.GetCardTypeById(cardTypeId);
 
@@ -356,13 +358,14 @@ namespace KingdomGame {
             SetUpCardIndex();
         }
 
-        // Refactor - (MT): Make an attribute-based clone factory to properly handle deep/shallow/backrefs
-        private Game(Game toClone) {
-            // Note - (MT): Games do not have their ID copied over on clones, by design
+        private Game(Game toClone) : this() {
+            // Refactor - (MT): Make an attribute-based clone factory to properly handle deep/shallow/backrefs
+            _state = toClone._state.Clone() as GameState;
+            _state.Game = this;
+
             List<Player> players = toClone._orderedPlayerList as List<Player>;
             List<Player> clonedPlayers = players.ConvertAll<Player>(delegate(Player player) { return player.Clone() as Player; });
-            SetUpPlayerIndexes(clonedPlayers);
-            SetUpBasicGameDetails();
+            SetUpPlayerIndex(clonedPlayers);
 
             _trash = toClone._trash.Clone() as Deck;
             _cardsByTypeId = new Dictionary<int, Deck>();
@@ -370,10 +373,12 @@ namespace KingdomGame {
                 _cardsByTypeId[cardTypeId] = toClone._cardsByTypeId[cardTypeId].Clone() as Deck;
             }
 
-            _state = toClone._state.Clone() as GameState;
-            _state.Game = this;
-
             SetUpCardIndex();
+        }
+
+        private Game() {
+            // Note - (MT): Games do not retain their ID on clones, by design.
+            _id = Game.NextId++;
         }
 
         #endregion
@@ -401,11 +406,11 @@ namespace KingdomGame {
         #region Player Query Methods
 
         public Player GetPlayerById(int id) {
-            return _playersById.ContainsKey(id) ? _playersById[id] : null;
+            return (_playersById.ContainsKey(id)) ? _playersById[id] : null;
         }
 
         public Player GetPlayerByName(string name) {
-            return _playersByName.ContainsKey(name) ? _playersByName[name] : null;
+            return (_playersByName.ContainsKey(name)) ? _playersByName[name] : null;
         }
 
         #endregion
@@ -413,19 +418,11 @@ namespace KingdomGame {
         #region Card Query Methods
 
         public Card GetCardById(int cardId) {
-            if (!_cardsById.ContainsKey(cardId)) {
-                return null;
-            }
-
-            return _cardsById[cardId];
+            return (_cardsById.ContainsKey(cardId)) ? _cardsById[cardId] : null;
         }
 
         public IList<Card> GetCardsByType(CardType type) {
-            if (!_cardsByTypeId.ContainsKey(type.Id)) {
-                return null;
-            }
-
-            return new List<Card>(_cardsByTypeId[type.Id].Cards);
+            return (_cardsByTypeId.ContainsKey(type.Id)) ? new List<Card>(_cardsByTypeId[type.Id].Cards) : null;
         }
 
         #endregion
@@ -453,19 +450,11 @@ namespace KingdomGame {
 
         #region Initialization Methods
 
-        public void StartGame() {
-            StartGame(new Dictionary<int, int>(), null, false);
-        }
-
-        public void StartGame(IDictionary<int, int> playerCardCountsByType) {
-            StartGame(playerCardCountsByType, null, false);
-        }
-
         public void StartGame(
           IDictionary<int, int> playerCardCountsByType,
-          IDictionary<int, int> handCardCountsByType
+          bool randomizePlayerOrder
         ) {
-            StartGame(playerCardCountsByType, handCardCountsByType, false);
+            StartGame(playerCardCountsByType, null, randomizePlayerOrder);
         }
 
         public void StartGame(
@@ -473,6 +462,10 @@ namespace KingdomGame {
           IDictionary<int, int> handCardCountsByType,
           bool randomizePlayerOrder
         ) {
+            if (_state.Phase != Phase.START) {
+                throw new Exception("Cannot start a game which has already been started.");
+            }
+
             foreach (int cardTypeId in playerCardCountsByType.Keys) {
                 if (!_cardsByTypeId.ContainsKey(cardTypeId)) {
                     throw new ArgumentException(
@@ -827,15 +820,7 @@ namespace KingdomGame {
 
         #region Setup Methods
 
-        // Refactor - (MT): This is a bad method name and might indicate a bad method.
-        private void SetUpBasicGameDetails() {
-            _id = Game.NextId++;
-            _trash = new Deck();
-            _state = new GameState(this);
-            _cardsById = new Dictionary<int, Card>();
-        }
-
-        private void SetUpPlayerIndexes(IList<Player> orderedPlayerList) {
+        private void SetUpPlayerIndex(IList<Player> orderedPlayerList) {
             _orderedPlayerList = new List<Player>(orderedPlayerList);
             _playersById = new Dictionary<int, Player>();
             _playersByName = new Dictionary<string, Player>(StringComparer.InvariantCultureIgnoreCase);
@@ -876,15 +861,6 @@ namespace KingdomGame {
             foreach (Card card in Trash) {
                 _cardsById[card.Id] = card;
             }
-        }
-
-        private static IDictionary<int, int> GetDefaultCardCountsByType() {
-            IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
-            foreach(CardType type in CardType.CardTypes) {
-                defaultGameCardCountsByType[type.Id] = CardType.GetDefaultQuantityByTypeId(type.Id);
-            }
-
-            return defaultGameCardCountsByType;
         }
 
         #endregion

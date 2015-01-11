@@ -30,7 +30,7 @@ namespace KingdomGame.Driver {
             Game game = InitializeGame(configFilePath);
 
             // Todo - (MT): Force this to be a player specified by a menu option.
-            SetupHumanPlayer(game, game.Players[0]);
+            SetupHumanPlayer(game, game.GetPlayerById(1));
 
             while (!game.IsFinished) {
                 if (!IsPlayerHuman(game.State.CurrentPlayer)) {
@@ -60,9 +60,11 @@ namespace KingdomGame.Driver {
             IDictionary<int, int> playerCardCountsByTypeId = new Dictionary<int, int>();
             playerCardCountsByTypeId[copperTypeId] = 7;
             playerCardCountsByTypeId[estateTypeId] = 3;
+
+            bool randomizePlayers = true;
             // End Todo Block
 
-            game.StartGame(playerCardCountsByTypeId);
+            game.StartGame(playerCardCountsByTypeId, randomizePlayers);
             return game;
         }
 
