@@ -37,7 +37,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeVillage });
             game.PlayStep();
             
@@ -89,7 +89,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeGold });
             game.PlayStep();
             
@@ -136,7 +136,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<ITargetable>() { TestSetup.CardTypeVillage, TestSetup.CardTypeSilver });
             game.PlayStep();
             
@@ -184,7 +184,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeGold });
             game.PlayStep();
             
@@ -231,7 +231,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>());
             game.PlayStep();
             

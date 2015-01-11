@@ -45,7 +45,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -58,12 +58,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Acquiring the smithy card:
             Card smithyCard = game.GetCardsByType(TestSetup.CardTypeSmithy)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSmithy });
             game.PlayStep();
             
@@ -131,7 +131,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -144,12 +144,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCardToTrash, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCardToTrash, null);
             game.PlayStep();
 
             // Acquiring another estate card:
             Card estateCardToGain = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeEstate });
             game.PlayStep();
             
@@ -216,17 +216,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
             // Attempt to trash as the first action (no valid card):
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>(), null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>(), null);
             game.PlayStep();
 
             // Attempting to acquire an estate card:
             Card estateCard = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeEstate });
             game.PlayStep();
             
@@ -284,7 +284,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -296,12 +296,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Attempting to acquire a smithy card:
             Card smithyCard = game.GetCardsByType(TestSetup.CardTypeSmithy)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSmithy });
             game.PlayStep();
             
@@ -359,7 +359,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -371,12 +371,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>() { estateCard, estateCard}, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>() { estateCard, estateCard}, null);
             game.PlayStep();
 
             // Attempting to acquire a smithy card:
             Card smithyCard = game.GetCardsByType(TestSetup.CardTypeSmithy)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSmithy });
             game.PlayStep();
             
@@ -439,7 +439,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -451,12 +451,12 @@ namespace KingdomGame.Test
                     break;
                 }
             }
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire an estate card:
             Card estateCard = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeEstate });
             game.PlayStep();
             
@@ -515,7 +515,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -528,12 +528,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to acquire the gold card:
             Card goldCard = game.GetCardsByType(TestSetup.CardTypeGold)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeGold });
             game.PlayStep();
             
@@ -597,7 +597,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -610,13 +610,13 @@ namespace KingdomGame.Test
             }
 
             // Trashing the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to acquire multiple smithy cards:
             Card firstCard = game.GetCardsByType(TestSetup.CardTypeCopper)[0];
             Card secondCard = game.GetCardsByType(TestSetup.CardTypeEstate)[1];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<ITargetable>() {TestSetup.CardTypeCopper, TestSetup.CardTypeEstate});
             game.PlayStep();
             
@@ -681,7 +681,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(remodelCard);
             game.PlayStep();
 
@@ -694,11 +694,11 @@ namespace KingdomGame.Test
             }
 
             // Trashing the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to acquire the smithy card:           
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() {TestSetup.CardTypeSmithy });
             game.PlayStep();
             

@@ -56,7 +56,7 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
             game.PlayStep();
 
             Assert.IsNull(
@@ -88,7 +88,7 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(estateCard);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(estateCard);
             game.PlayStep();
 
             Assert.IsNull(
@@ -120,7 +120,7 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(
@@ -155,7 +155,7 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(

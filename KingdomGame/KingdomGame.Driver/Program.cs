@@ -217,10 +217,10 @@ namespace KingdomGame.Driver {
                 )];
             }
 
-            ICardSelectionStrategy originalStrategy = game.CurrentStrategy.CardSelectionStrategy;
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(selectedCardToPlay);
+            ICardSelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.CardSelectionStrategy;
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(selectedCardToPlay);
             game.PlayPhase();
-            game.CurrentStrategy.CardSelectionStrategy = originalStrategy;
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = originalStrategy;
         }
 
         private static void ExecuteHumanPlayerAction(
@@ -309,13 +309,13 @@ namespace KingdomGame.Driver {
                     } while (!validTargetSpecified);
                 }
 
-                ITargetSelectionStrategy originalStrategy = game.CurrentStrategy.TargetSelectionStrategy;
-                game.CurrentStrategy.TargetSelectionStrategy 
+                ITargetSelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy;
+                game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
                   = new ScriptedTargetSelectionStrategy(new List<ITargetable>(selectedTargets));
 
                 PrintActionTargets(action, selectedTargets);
                 game.PlayStep();
-                game.CurrentStrategy.TargetSelectionStrategy = originalStrategy;
+                game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = originalStrategy;
             }
             else {
                 Console.WriteLine(string.Format(
@@ -368,13 +368,13 @@ namespace KingdomGame.Driver {
                     )];
                 }
 
-                IBuyingStrategy originalStrategy = game.CurrentStrategy.BuyingStrategy;
-                game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(
+                IBuyingStrategy originalStrategy = game.State.CurrentPlayer.Strategy.BuyingStrategy;
+                game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(
                   (selectedBuyOption != null)
                     ? new List<CardType>() {selectedBuyOption} 
                     : new List<CardType>());
                 game.PlayStep();
-                game.CurrentStrategy.BuyingStrategy = originalStrategy;
+                game.State.CurrentPlayer.Strategy.BuyingStrategy = originalStrategy;
             }
         }
 

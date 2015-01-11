@@ -51,7 +51,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -64,12 +64,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -138,7 +138,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -150,12 +150,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the estate cards:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
             IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -228,7 +228,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -240,12 +240,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the estate cards:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
             IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -327,18 +327,18 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
             // Discarding no cards:
             IList<Card> cardsToDiscard = new List<Card>();
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(cardsToDiscard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(cardsToDiscard, null);
             game.PlayStep();
 
             // Drawing no replacement cards:
             IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -404,7 +404,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -418,12 +418,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the duplicate estate cards:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -491,7 +491,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -504,12 +504,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for the wrong player:
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -587,7 +587,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -600,12 +600,12 @@ namespace KingdomGame.Test
             }
 
             // Discarding the estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for multiple players:
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
             
@@ -684,7 +684,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -692,12 +692,12 @@ namespace KingdomGame.Test
             game.TrashCard(estateCard);
 
             // Attempting to discard the trashed estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(
@@ -761,7 +761,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
@@ -775,12 +775,12 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.DiscardCard(estateCard);
 
             // Attempting to discard an already discarded estate card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
             Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
             Assert.AreEqual(

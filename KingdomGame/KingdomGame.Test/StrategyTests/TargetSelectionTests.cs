@@ -46,9 +46,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = village;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
               village.Type.Actions[0]
@@ -80,7 +80,7 @@ namespace KingdomGame.Test
             }
 
             game.State.SelectedCard = village;
-            TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
               village.Type.Actions[0]
@@ -113,8 +113,8 @@ namespace KingdomGame.Test
             }
 
             game.State.SelectedCard = village;
-            TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
               village.Type.Actions[0]
@@ -213,11 +213,11 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = village;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<Card>(), 
               new List<Player>() {game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
               village.Type.Actions[0]
@@ -250,9 +250,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = workshop;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
               workshop.Type.Actions[0]
@@ -293,9 +293,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = cellar;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { estate });
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellar, 
               cellar.Type.Actions[0]
@@ -337,9 +337,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = cellar;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { estate });
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellar, 
               cellar.Type.Actions[0]
@@ -373,9 +373,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = workshop;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeEstate });
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
               workshop.Type.Actions[0]
@@ -410,9 +410,9 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = workshop;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeEstate });
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
               workshop.Type.Actions[0]
@@ -448,8 +448,8 @@ namespace KingdomGame.Test
             game.State.SelectedCard = workshop;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
             Card goldCard = game.GetCardsByType(TestSetup.CardTypeGold)[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(goldCard, null);
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(goldCard, null);
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
               workshop.Type.Actions[0]
@@ -497,8 +497,8 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = cellarCard;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
               cellarCard.Type.Actions[0]
@@ -552,11 +552,11 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = cellarCard;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<Card>() {estateCard, gameCard},
               null
             );
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
               cellarCard.Type.Actions[0]
@@ -605,11 +605,11 @@ namespace KingdomGame.Test
 
             game.State.SelectedCard = cellarCard;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<Card>() {estateCard, estateCard},
               null
             );
-            IList<ITargetable> targets = game.CurrentStrategy.TargetSelectionStrategy.SelectTargets(
+            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
               cellarCard.Type.Actions[0]

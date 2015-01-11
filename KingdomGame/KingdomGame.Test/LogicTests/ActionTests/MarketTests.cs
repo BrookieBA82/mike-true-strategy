@@ -43,7 +43,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
@@ -89,7 +89,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
@@ -135,7 +135,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
@@ -181,7 +181,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
@@ -226,7 +226,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
 
@@ -271,7 +271,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
 
@@ -321,7 +321,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
 
@@ -371,7 +371,7 @@ namespace KingdomGame.Test
             Card marketCard = TestUtilities.SetUpCardToPlay(game, TestSetup.CardTypeMarket);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer });
             game.PlayStep();
 

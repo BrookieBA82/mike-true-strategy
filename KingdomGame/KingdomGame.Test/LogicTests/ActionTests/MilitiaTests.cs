@@ -42,17 +42,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -116,17 +116,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (cannot target anyone because the opponent has a moat):
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>());
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -191,17 +191,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -289,17 +289,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -399,17 +399,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -504,17 +504,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying the current player, which should fail):
             IList<Player> playersToDiscard = new List<Player>() { game.State.CurrentPlayer, game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -590,17 +590,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying a player which has the moat, which should fail):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[1], game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -671,17 +671,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying a duplicate player, which should fail):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[2], game.Players[2], game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -752,17 +752,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (not specifying an opponent without a moat, which should fail):
             IList<Player> playersToDiscard = new List<Player>() { game.Players[3] };
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, playersToDiscard);
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -831,7 +831,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
@@ -846,12 +846,12 @@ namespace KingdomGame.Test
             game.Players[1].Strategy.DiscardingStrategy = new ScriptedDiscardingStrategy(cardsToDiscard);
 
             // Forcing the discard action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
 
             // Performing the monetary gain action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer });
             game.PlayPhase();
             
@@ -918,17 +918,17 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
 
             // Performing the monetary gain action on the wrong player:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayPhase();
             
@@ -995,18 +995,18 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
             game.PlayStep();
 
             // Performing the monetary gain action on multiple players:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
             
@@ -1073,18 +1073,18 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.Players[1] });
             game.PlayStep();
             game.PlayStep();
 
             // Performing the monetary gain action on duplicate players:
-            game.CurrentStrategy.TargetSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 
               new ScriptedTargetSelectionStrategy(null, new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer });
             game.PlayStep();
             

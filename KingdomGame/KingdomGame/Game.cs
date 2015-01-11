@@ -386,8 +386,6 @@ namespace KingdomGame {
 
         public bool IsFinished { get { return _state.Phase == Phase.DONE; } }
 
-        public Player.PlayerStrategy CurrentStrategy { get { return _state.CurrentPlayer.Strategy; } }
-
         public IList<Player> Players { get { return new List<Player>(_orderedPlayerList); } }
 
         public IList<Card> Cards { get { return new List<Card>(_cardsById.Values); } }

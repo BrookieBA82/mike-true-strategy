@@ -135,14 +135,14 @@ namespace KingdomGame.Test
             game.State.SelectedCard = village;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
             game.State.AddPendingAction(village.Type.Actions[0]);
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
 
             Assert.AreEqual(
-              game.CurrentStrategy, 
-              clone.CurrentStrategy, 
+              game.State, 
+              clone.State, 
               "Game strategy should match that of its clone after sharing a common initial previous action history."
             );
         }
@@ -245,17 +245,17 @@ namespace KingdomGame.Test
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestBuyingStrategyChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.CurrentStrategy.BuyingStrategy = new RandomBuyingStrategy();
+            game.State.CurrentPlayer.Strategy.BuyingStrategy = new RandomBuyingStrategy();
             Game clone = game.Clone() as Game;
             List<CardType> gameOption = new List<CardType>();
             gameOption.Add(TestSetup.CardTypeCopper);
-            game.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(gameOption);
+            game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(gameOption);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its buying strategy.");
 
             List<CardType> cloneOption = new List<CardType>();
             cloneOption.Add(TestSetup.CardTypeEstate);
-            clone.CurrentStrategy.BuyingStrategy = new ScriptedBuyingStrategy(cloneOption);
+            clone.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(cloneOption);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its buying strategy.");
         }
@@ -263,26 +263,26 @@ namespace KingdomGame.Test
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestCardSelectionStrategyChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.CurrentStrategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(game.State.CurrentPlayer.Hand[0]);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(game.State.CurrentPlayer.Hand[0]);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its card selection strategy.");
  
-            clone.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
+            clone.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its card selection strategy.");
         }
 
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestTargetSelectionStrategyChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.CurrentStrategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its target selection strategy.");
 
-            clone.CurrentStrategy.TargetSelectionStrategy 
+            clone.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its target selection strategy.");
         }
@@ -392,11 +392,11 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(cellarCard);
             game.PlayStep();
 
             // Play a null operation which should leave the clone in a state different only by action stack:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>(), null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(new List<Card>(), null);
             game.PlayStep();
             Game clone = game.Clone() as Game;
 
@@ -431,12 +431,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
             game.PlayStep();
 
             Game clone = game.Clone() as Game;
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
-            clone.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            clone.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
 
             game.PlayStep();

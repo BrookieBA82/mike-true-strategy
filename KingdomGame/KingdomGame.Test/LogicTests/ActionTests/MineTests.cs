@@ -44,7 +44,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -57,12 +57,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Acquiring the silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -129,7 +129,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -142,12 +142,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Acquiring another copper card:
             copperCard = game.GetCardsByType(TestSetup.CardTypeCopper)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeCopper } );
             game.PlayStep();
             
@@ -214,7 +214,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -223,7 +223,7 @@ namespace KingdomGame.Test
 
             // Attempting to acquire a silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -286,7 +286,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -298,12 +298,12 @@ namespace KingdomGame.Test
                     break;
                 }
             }
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to acquire a silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -366,7 +366,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -378,12 +378,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCards, null);
             game.PlayStep();
 
             // Attempting to acquire a silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -446,7 +446,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -460,12 +460,12 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCards, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCards, null);
             game.PlayStep();
 
             // Attempting to acquire a silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -533,7 +533,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -545,12 +545,12 @@ namespace KingdomGame.Test
                     break;
                 }
             }
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire a silver card:
             Card silverCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -613,7 +613,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -626,12 +626,12 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire the gold card:
             Card goldCard = game.GetCardsByType(TestSetup.CardTypeGold)[0];
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeGold } );
             game.PlayStep();
             
@@ -699,7 +699,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -712,13 +712,13 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire multiple treasure cards:
             Card firstCard = game.GetCardsByType(TestSetup.CardTypeSilver)[0];
             Card secondCard = game.GetCardsByType(TestSetup.CardTypeCopper)[0];
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               new List<ITargetable>() { TestSetup.CardTypeSilver, TestSetup.CardTypeCopper } );
             game.PlayStep();
             
@@ -791,7 +791,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -804,11 +804,11 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire a silver card card:
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeSilver } );
             game.PlayStep();
             
@@ -872,7 +872,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.CurrentStrategy.CardSelectionStrategy = 
+            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
               new ScriptedCardSelectionStrategy(mineCard);
             game.PlayStep();
 
@@ -885,11 +885,11 @@ namespace KingdomGame.Test
             }
 
             // Trashing the copper card:
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(copperCard, null);
             game.PlayStep();
 
             // Attempting to acquire a village card:
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<ITargetable>() { TestSetup.CardTypeVillage } );
             game.PlayStep();
             

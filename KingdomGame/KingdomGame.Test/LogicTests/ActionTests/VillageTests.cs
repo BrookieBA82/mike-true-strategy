@@ -41,7 +41,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
@@ -81,7 +81,7 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             game.PlayStep();
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
@@ -128,7 +128,7 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.State.CurrentPlayer.RemainingActions = 2;
             game.PlayStep();
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>() { game.State.CurrentPlayer });
             game.PlayStep();
             
@@ -174,7 +174,7 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
-            game.CurrentStrategy.TargetSelectionStrategy 
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(new List<Card>(), new List<Player>());
             game.PlayStep();
             
@@ -221,7 +221,7 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null, 
               new List<Player>() {game.Players[1]}
             );
@@ -275,7 +275,7 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null, 
               new List<Player>(game.Players)
             );
@@ -329,7 +329,7 @@ namespace KingdomGame.Test
                 (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
             game.PlayStep();
 
-            game.CurrentStrategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(
               null,
               new List<Player>() { game.State.CurrentPlayer, game.State.CurrentPlayer}
             );
