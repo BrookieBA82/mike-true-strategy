@@ -900,6 +900,13 @@ namespace KingdomGame {
               shouldPendingActionBeAvailable ? "always" : "never",
               State.Phase.ToString()); 
             Debug.Assert((State.HasNextPendingAction == shouldPendingActionBeAvailable), assertMessage);
+
+            if(shouldPendingActionBeAvailable) {
+                Debug.Assert(
+                  State.NextPendingAction.TargetSelectorId.HasValue, 
+                  "Next pending action should always have a valid target selector."
+                );
+            }
         }
 
         private void AssertRemainingActionsAvailable(bool shouldRemainingActionsBeAvailable) {
