@@ -38,7 +38,7 @@ namespace KingdomGame {
 
         protected override IList<CardType> GetAllPossibleTargetsBase(Game game) {
             IList<CardType> types = new List<CardType>();
-            foreach (CardType type in CardType.CardTypes) {
+            foreach (CardType type in CardTypeRegistry.Instance.CardTypes) {
                 IList<Card> cardsByType = game.GetCardsByType(type);
                 if(cardsByType != null) {                    
                     types.Add(type);

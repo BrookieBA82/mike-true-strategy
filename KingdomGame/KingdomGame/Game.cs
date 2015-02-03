@@ -338,7 +338,7 @@ namespace KingdomGame {
 
         #region Constructors
 
-        public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, CardType.DefaultCardCountsByType) {
+        public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, CardTypeRegistry.Instance.DefaultCardCountsByType) {
 
         }
 
@@ -351,7 +351,7 @@ namespace KingdomGame {
             _cardsByTypeId = new Dictionary<int, Deck>();
            foreach(int cardTypeId in gameCardCountsByType.Keys) {
                 _cardsByTypeId[cardTypeId] = new Deck();
-                CardType cardType = CardType.GetCardTypeById(cardTypeId);
+                CardType cardType = CardTypeRegistry.Instance.GetCardTypeById(cardTypeId);
 
                 for(int cardTypeIndex = 0; cardTypeIndex < gameCardCountsByType[cardTypeId]; cardTypeIndex++) {
                     Card card = new Card(cardType, null);
@@ -497,7 +497,7 @@ namespace KingdomGame {
             }
 
             foreach(int cardTypeId in playerCardCountsByType.Keys) {
-                CardType cardType = CardType.GetCardTypeById(cardTypeId);
+                CardType cardType = CardTypeRegistry.Instance.GetCardTypeById(cardTypeId);
 
                 foreach (Player player in _orderedPlayerList) {
                     for(int cardTypeIndex = 0; cardTypeIndex < playerCardCountsByType[cardTypeId]; cardTypeIndex++) {
@@ -936,7 +936,7 @@ namespace KingdomGame {
             IDictionary<int, int> emptyCardSetsByWeight = new Dictionary<int, int>();
             foreach (int cardTypeId in cardsByTypeId.Keys) {
                 if (cardsByTypeId[cardTypeId].Size == 0) {
-                    int weight = CardType.GetCardTypeById(cardTypeId).EndOfGameWeight;
+                    int weight = CardTypeRegistry.Instance.GetCardTypeById(cardTypeId).EndOfGameWeight;
                     if (weight == 0) {
                         continue;
                     }
@@ -971,7 +971,7 @@ namespace KingdomGame {
                     continue;
                 }
 
-                CardType type = CardType.GetCardTypeById(typeId);
+                CardType type = CardTypeRegistry.Instance.GetCardTypeById(typeId);
                 int cardCost = type.Cost;
                 if(cardCost > moneyRemaining) {
                     continue;

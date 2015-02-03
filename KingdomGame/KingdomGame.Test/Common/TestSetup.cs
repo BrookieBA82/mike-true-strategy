@@ -20,112 +20,112 @@ namespace KingdomGame.Test
         public static CardType CardTypeCopper {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Copper");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Copper");
             }
         }
 
         public static CardType CardTypeSilver {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Silver");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Silver");
             }
         }
 
         public static CardType CardTypeGold {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Gold");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Gold");
             }
         }
 
         public static CardType CardTypeEstate {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Estate");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Estate");
             }
         }
 
         public static CardType CardTypeDuchy {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Duchy");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Duchy");
             }
         }
 
         public static CardType CardTypeProvince {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Province");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Province");
             }
         }
 
         public static CardType CardTypeCellar {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Cellar");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Cellar");
             }
         }
 
         public static CardType CardTypeMoat {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Moat");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Moat");
             }
         }
 
         public static CardType CardTypeVillage {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Village");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Village");
             }
         }
 
         public static CardType CardTypeWorkshop {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Workshop");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Workshop");
             }
         }
 
         public static CardType CardTypeWoodcutter {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Woodcutter");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Woodcutter");
             }
         }
 
         public static CardType CardTypeMilitia {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Militia");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Militia");
             }
         }
 
         public static CardType CardTypeRemodel {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Remodel");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Remodel");
             }
         }
 
         public static CardType CardTypeSmithy {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Smithy");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Smithy");
             }
         }
 
         public static CardType CardTypeMine {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Mine");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Mine");
             }
         }
 
         public static CardType CardTypeMarket {
             get {
                 TestSetup.InitializeTypes();
-                return CardType.GetCardTypeByName("Market");
+                return CardTypeRegistry.Instance.GetCardTypeByName("Market");
             }
         }
 
@@ -139,7 +139,7 @@ namespace KingdomGame.Test
             }
 
             string configFilePath = string.Format(@"{0}\Common\TestTypes.xml", Environment.CurrentDirectory);
-            CardType.InitializeCardTypes(configFilePath);
+            CardTypeRegistry.Instance.InitializeCardTypes(configFilePath);
             TypesInitialized = true;
         }
 
@@ -212,7 +212,7 @@ namespace KingdomGame.Test
         public static Deck GenerateSimpleDeck(IDictionary<int, int> cardCountsByTypeId) {
             Deck deck = new Deck();
             foreach(int cardTypeId in cardCountsByTypeId.Keys) {
-                CardType cardType = CardType.GetCardTypeById(cardTypeId);
+                CardType cardType = CardTypeRegistry.Instance.GetCardTypeById(cardTypeId);
 
                 for(int cardTypeIndex = 0; cardTypeIndex < cardCountsByTypeId[cardTypeId]; cardTypeIndex++) {
                     Card card = new Card(cardType, null);

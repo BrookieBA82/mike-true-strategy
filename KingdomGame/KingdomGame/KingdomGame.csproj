@@ -50,6 +50,7 @@
     <Compile Include="Card\Card.cs" />
     <Compile Include="Card\CardType.cs" />
     <Compile Include="Card\CardProperty.cs" />
+    <Compile Include="Card\CardTypeRegistry.cs" />
     <Compile Include="Card\ICardOwner.cs" />
     <Compile Include="Common\Logging\GameHistory.cs" />
     <Compile Include="Common\Logging\Logger.cs" />
