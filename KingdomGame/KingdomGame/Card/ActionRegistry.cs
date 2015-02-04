@@ -9,29 +9,120 @@ using System.Xml;
 
 namespace KingdomGame {
 
-    public class CardTypeRegistry {
-        
-        private static CardTypeRegistry _instance = null;
+    public class ActionRegistry {
 
-        public static CardTypeRegistry Instance {
+        #region Static Members
+
+        private static ActionRegistry _instance = null;
+
+        #endregion
+
+        #region Static Properties
+
+        public static ActionRegistry Instance {
             get {
                 if (_instance == null) {
-                    _instance = new CardTypeRegistry();
+                    _instance = new ActionRegistry();
                 }
 
                 return _instance;
             }
         }
 
+        #endregion
+
+        #region Private Members
+
         private IDictionary<int, CardType> _cardTypesById;
         private IDictionary<string, CardType> _cardTypesByName;
         private IDictionary<int, int> _defaultQuantitiesByTypeId;
 
-        private CardTypeRegistry() {
+        #endregion
+
+        #region Constructors
+
+        private ActionRegistry() {
             ResetCardTypes();
         }
 
-        public CardType RegisterCardType(
+        #endregion
+
+        #region Properties
+
+        public IList<CardType> CardTypes {
+            get { return new List<CardType>(_cardTypesById.Values); }
+        }
+
+        public IDictionary<int, int> DefaultCardCountsByType {
+            get {
+                IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
+                foreach(CardType type in CardTypes) {
+                    defaultGameCardCountsByType[type.Id] = GetDefaultQuantityByTypeId(type.Id);
+                }
+
+                return defaultGameCardCountsByType;
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        #region Registry Management Methods
+
+        public void InitializeCardTypes(string configFilePath) {
+            ResetCardTypes();
+
+            using (XmlReader reader = XmlReader.Create(new StringReader(File.ReadAllText(configFilePath))))
+            {
+                IDictionary<string, Assembly> assembliesByKey;
+                reader.ReadToFollowing("assemblies");
+                using (XmlReader assembliesReader = reader.ReadSubtree()) {
+                    assembliesByKey = ParseAssembliesData(assembliesReader);
+                }
+
+                IDictionary<string, CardType> cardTypesByKey;
+                reader.ReadToFollowing("types");
+                using (XmlReader cardTypesReader = reader.ReadSubtree()) {
+                    cardTypesByKey = ParseCardTypesData(cardTypesReader, assembliesByKey);
+                }
+
+                // Todo - (MT): Return the Card Types table, or something else?
+            }
+        }
+
+        public void ResetCardTypes() {
+            // Todo - (MT): Place a reset call to card properties as well?
+            _cardTypesById = new Dictionary<int, CardType>();
+            _cardTypesByName = new Dictionary<string, CardType>(StringComparer.InvariantCultureIgnoreCase);
+            _defaultQuantitiesByTypeId = new Dictionary<int, int>();
+        }
+
+        #endregion
+
+        #region Registry Query Methods
+
+        public CardType GetCardTypeById(int id) {
+            return _cardTypesById.ContainsKey(id) ? _cardTypesById[id] : null;
+        }
+
+        public CardType GetCardTypeByName(string name) {
+            return _cardTypesByName.ContainsKey(name) ? _cardTypesByName[name] : null;
+        }
+
+        public int GetDefaultQuantityByTypeId(int id) {
+            return _defaultQuantitiesByTypeId.ContainsKey(id) ? _defaultQuantitiesByTypeId[id] : 0;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Helper Methods
+
+        #region Registration Methods
+
+        private CardType RegisterCardType(
             string name, 
             CardType.CardClass cardClass, 
             int cost, 
@@ -74,60 +165,9 @@ namespace KingdomGame {
             return type;
         }
 
-        public CardType GetCardTypeById(int id) {
-            return _cardTypesById.ContainsKey(id) ? _cardTypesById[id] : null;
-        }
+        #endregion
 
-        public CardType GetCardTypeByName(string name) {
-            return _cardTypesByName.ContainsKey(name) ? _cardTypesByName[name] : null;
-        }
-
-        public int GetDefaultQuantityByTypeId(int id) {
-            return _defaultQuantitiesByTypeId.ContainsKey(id) ? _defaultQuantitiesByTypeId[id] : 0;
-        }
-
-        public IList<CardType> CardTypes {
-            get { return new List<CardType>(_cardTypesById.Values); }
-        }
-
-        public IDictionary<int, int> DefaultCardCountsByType {
-            get {
-                IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
-                foreach(CardType type in CardTypes) {
-                    defaultGameCardCountsByType[type.Id] = GetDefaultQuantityByTypeId(type.Id);
-                }
-
-                return defaultGameCardCountsByType;
-            }
-        }
-
-        public void InitializeCardTypes(string configFilePath) {
-            ResetCardTypes();
-
-            using (XmlReader reader = XmlReader.Create(new StringReader(File.ReadAllText(configFilePath))))
-            {
-                IDictionary<string, Assembly> assembliesByKey;
-                reader.ReadToFollowing("assemblies");
-                using (XmlReader assembliesReader = reader.ReadSubtree()) {
-                    assembliesByKey = ParseAssembliesData(assembliesReader);
-                }
-
-                IDictionary<string, CardType> cardTypesByKey;
-                reader.ReadToFollowing("types");
-                using (XmlReader cardTypesReader = reader.ReadSubtree()) {
-                    cardTypesByKey = ParseCardTypesData(cardTypesReader, assembliesByKey);
-                }
-
-                // Todo - (MT): Return the Card Types table, or something else?
-            }
-        }
-
-        public void ResetCardTypes() {
-            // Todo - (MT): Place a reset call to card properties as well?
-            _cardTypesById = new Dictionary<int, CardType>();
-            _cardTypesByName = new Dictionary<string, CardType>(StringComparer.InvariantCultureIgnoreCase);
-            _defaultQuantitiesByTypeId = new Dictionary<int, int>();
-        }
+        #region Parsing Methods
 
         private IDictionary<string, Assembly> ParseAssembliesData(XmlReader assembliesReader) {
             // Todo - (MT): Add better parsing and error handling.
@@ -327,5 +367,10 @@ namespace KingdomGame {
             }
             return action;
         }
+
+        #endregion
+
+        #endregion
+
     }
 }

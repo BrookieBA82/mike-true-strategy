@@ -9,8 +9,9 @@ using System.Xml;
 
 namespace KingdomGame {
 
-    // Refactor - (MT): Break the static interface out into its own registry class?
     public class CardType : ITargetable {
+
+        #region Enums
 
         public enum CardClass {
             ACTION = 0,
@@ -18,7 +19,15 @@ namespace KingdomGame {
             TREASURE = 2,
         }
 
+        #endregion
+
+        #region Static Members
+
         private static int NextId = 1;
+
+        #endregion
+
+        #region Private Members
 
         private int _id;
         private string _name;
@@ -34,6 +43,10 @@ namespace KingdomGame {
         private IDictionary<string, CardProperty> _propertiesByName;
 
         private IList<IAction> _actions;
+
+        #endregion
+
+        #region Constructors
 
         public CardType(string name, 
             CardType.CardClass cardClass, 
@@ -67,6 +80,10 @@ namespace KingdomGame {
 
             _actions = new List<IAction>(actions);
         }
+
+        #endregion
+
+        #region Properties
 
         public int Id {
             get { return _id; }
@@ -108,6 +125,10 @@ namespace KingdomGame {
             get { return new List<IAction>(_actions); }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public bool IsProperty(CardProperty property) {
             return _propertiesByName.ContainsKey(property.Name);
         }
@@ -128,5 +149,8 @@ namespace KingdomGame {
         public override int GetHashCode() {
             return this.Id.GetHashCode();
         }
+
+        #endregion
+
     }
 }

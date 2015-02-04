@@ -50,13 +50,13 @@ namespace KingdomGame.Driver {
 
         private static Game InitializeGame(string configFilePath) {
             // Todo - (MT): Make this block entirely read out of the config file path, including the type path:
-            CardTypeRegistry.Instance.InitializeCardTypes(configFilePath);
+            ActionRegistry.Instance.InitializeCardTypes(configFilePath);
             IList<Player> players = new List<Player>() { new Player("Player 1"), new Player("Player 2")};
             Game game = new Game(players);
             Logger.Instance.TrackGame(game);
 
-            int copperTypeId = CardTypeRegistry.Instance.GetCardTypeByName("Copper").Id;
-            int estateTypeId = CardTypeRegistry.Instance.GetCardTypeByName("Estate").Id;
+            int copperTypeId = ActionRegistry.Instance.GetCardTypeByName("Copper").Id;
+            int estateTypeId = ActionRegistry.Instance.GetCardTypeByName("Estate").Id;
             IDictionary<int, int> playerCardCountsByTypeId = new Dictionary<int, int>();
             playerCardCountsByTypeId[copperTypeId] = 7;
             playerCardCountsByTypeId[estateTypeId] = 3;
@@ -616,7 +616,7 @@ namespace KingdomGame.Driver {
 
         private static void PrintAvailableCardCounts(Game game, Player player) {
             Console.WriteLine("\tCards available:");
-            foreach (CardType cardType in CardTypeRegistry.Instance.CardTypes) {
+            foreach (CardType cardType in ActionRegistry.Instance.CardTypes) {
                 Console.WriteLine(string.Format("\t\t{0}: {1}", cardType.Name, game.GetCardsByType(cardType).Count));
             }
             Console.WriteLine();
@@ -634,7 +634,7 @@ namespace KingdomGame.Driver {
             IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>();
             IDictionary<string, CardType> optionsByIndex = new Dictionary<string, CardType>();
 
-            foreach (CardType type in CardTypeRegistry.Instance.CardTypes) {
+            foreach (CardType type in ActionRegistry.Instance.CardTypes) {
                 if (game.GetCardsByType(type) != null) {
                     string optionPrompt = optionCounter.ToString();
                     optionsByIndex[optionPrompt] = type;
@@ -703,7 +703,7 @@ namespace KingdomGame.Driver {
             IList<CardType> validBuyOptions = new List<CardType>();
 
             if (game.State.CurrentPlayer.RemainingBuys > 0) {
-                foreach (CardType type in CardTypeRegistry.Instance.CardTypes) {
+                foreach (CardType type in ActionRegistry.Instance.CardTypes) {
                     if (game.GetCardsByType(type).Count > 0 && type.Cost <= game.State.CurrentPlayer.RemainingMoney) {
                         validBuyOptions.Add(type);
                     }
