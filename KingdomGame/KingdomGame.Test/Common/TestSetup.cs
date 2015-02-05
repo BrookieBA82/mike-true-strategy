@@ -139,7 +139,7 @@ namespace KingdomGame.Test
             }
 
             string configFilePath = string.Format(@"{0}\Common\TestTypes.xml", Environment.CurrentDirectory);
-            ActionRegistry.Instance.InitializeCardTypes(configFilePath);
+            ActionRegistry.Instance.InitializeRegistry(configFilePath);
             TypesInitialized = true;
         }
 

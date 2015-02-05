@@ -11,6 +11,81 @@ namespace KingdomGame {
 
     public class ActionRegistry {
 
+        #region Private Classes
+
+        private class ActionLoadInfo {
+
+            #region Properties
+
+            public string AssemblyKey { get; private set; }
+            public string ClassName { get; private set; }
+            public string DisplayName { get; private set; }
+            public string ActionDescription { get; private set; }
+
+            #endregion
+
+            #region Constructors
+
+            public ActionLoadInfo(string assemblyKey, string className, string displayName, string actionDescription) {
+                AssemblyKey = assemblyKey;
+                ClassName = className;
+                DisplayName = displayName;
+                ActionDescription = actionDescription;
+            }
+
+            #endregion
+
+        }
+
+        private class CardTypeLoadInfo {
+
+            #region Properties
+
+            public string Name { get; private set; }
+            public CardType.CardClass CardClass { get; private set; }
+            public int Cost { get; private set; }
+            public int VictoryValue { get; private set; }
+            public int MonetaryValue { get; private set; }
+            public int EndOfGameWeight { get; private set; }
+            public int DefaultQuantity { get; private set; }
+            public string CardText { get; private set; }
+            public IList<CardProperty> Properties { get; private set; }
+            public IList<ActionLoadInfo> ActionsLoadInfo { get; private set; }
+
+            #endregion
+
+            #region Constructors
+
+            public CardTypeLoadInfo(
+              string name, 
+              CardType.CardClass cardClass, 
+              int cost, 
+              int victoryValue,
+              int monetaryValue,
+              int endOfGameWeight,
+              int defaultQuantity,
+              string cardText,
+              IList<CardProperty> properties,
+              IList<ActionLoadInfo> actionsLoadInfo
+            ) {
+                Name = name;
+                CardClass = cardClass;
+                Cost = cost;
+                VictoryValue = victoryValue;
+                MonetaryValue = monetaryValue;
+                EndOfGameWeight = endOfGameWeight;
+                DefaultQuantity = defaultQuantity;
+                CardText = cardText;
+                Properties = properties;
+                ActionsLoadInfo = actionsLoadInfo;
+            }
+
+            #endregion
+
+        }
+
+        #endregion
+
         #region Static Members
 
         private static ActionRegistry _instance = null;
@@ -37,12 +112,14 @@ namespace KingdomGame {
         private IDictionary<string, CardType> _cardTypesByName;
         private IDictionary<int, int> _defaultQuantitiesByTypeId;
 
+        private IDictionary<Type, IAction> _actionsByType;
+
         #endregion
 
         #region Constructors
 
         private ActionRegistry() {
-            ResetCardTypes();
+            ResetRegistry();
         }
 
         #endregion
@@ -57,7 +134,7 @@ namespace KingdomGame {
             get {
                 IDictionary<int, int> defaultGameCardCountsByType = new Dictionary<int, int>();
                 foreach(CardType type in CardTypes) {
-                    defaultGameCardCountsByType[type.Id] = GetDefaultQuantityByTypeId(type.Id);
+                    defaultGameCardCountsByType[type.Id] = _defaultQuantitiesByTypeId[type.Id];
                 }
 
                 return defaultGameCardCountsByType;
@@ -70,8 +147,8 @@ namespace KingdomGame {
 
         #region Registry Management Methods
 
-        public void InitializeCardTypes(string configFilePath) {
-            ResetCardTypes();
+        public void InitializeRegistry(string configFilePath) {
+            ResetRegistry();
 
             using (XmlReader reader = XmlReader.Create(new StringReader(File.ReadAllText(configFilePath))))
             {
@@ -81,26 +158,63 @@ namespace KingdomGame {
                     assembliesByKey = ParseAssembliesData(assembliesReader);
                 }
 
-                IDictionary<string, CardType> cardTypesByKey;
+                IList<CardTypeLoadInfo> cardTypesLoadInfo = new List<CardTypeLoadInfo>();
                 reader.ReadToFollowing("types");
                 using (XmlReader cardTypesReader = reader.ReadSubtree()) {
-                    cardTypesByKey = ParseCardTypesData(cardTypesReader, assembliesByKey);
+                    cardTypesLoadInfo = ParseCardTypesData(cardTypesReader);
+                    foreach (CardTypeLoadInfo cardTypeLoadInfo in cardTypesLoadInfo) {
+                        IList<IAction> actions = new List<IAction>();
+                        foreach (ActionLoadInfo actionLoadInfo in cardTypeLoadInfo.ActionsLoadInfo) {
+                            Assembly assembly = assembliesByKey[actionLoadInfo.AssemblyKey];
+                            IAction action = RegisterAction(
+                              assembly, 
+                              actionLoadInfo.ClassName, 
+                              actionLoadInfo.DisplayName, 
+                              actionLoadInfo.ActionDescription
+                            );
+                            actions.Add(action);
+                        }
+
+                        CardType cardType = RegisterCardType(   
+                            cardTypeLoadInfo.Name, 
+                            cardTypeLoadInfo.CardClass, 
+                            cardTypeLoadInfo.Cost, 
+                            cardTypeLoadInfo.VictoryValue, 
+                            cardTypeLoadInfo.MonetaryValue,
+                            cardTypeLoadInfo.EndOfGameWeight,
+                            cardTypeLoadInfo.DefaultQuantity,
+                            cardTypeLoadInfo.CardText,
+                            cardTypeLoadInfo.Properties, 
+                            actions
+                        );
+
+                    }            
                 }
 
-                // Todo - (MT): Return the Card Types table, or something else?
+                if(reader.ReadToFollowing("actions")) {
+                    using (XmlReader actionTypesReader = reader.ReadSubtree()) {
+                        IList<ActionLoadInfo> actionsLoadInfo = ParseActionsData(actionTypesReader);
+                        foreach (ActionLoadInfo actionLoadInfo in actionsLoadInfo) {
+                            Assembly assembly = assembliesByKey[actionLoadInfo.AssemblyKey];
+                            RegisterAction(assembly, actionLoadInfo.ClassName, actionLoadInfo.DisplayName, actionLoadInfo.ActionDescription);
+                        }
+                    }
+                }
             }
         }
 
-        public void ResetCardTypes() {
+        public void ResetRegistry() {
             // Todo - (MT): Place a reset call to card properties as well?
             _cardTypesById = new Dictionary<int, CardType>();
             _cardTypesByName = new Dictionary<string, CardType>(StringComparer.InvariantCultureIgnoreCase);
             _defaultQuantitiesByTypeId = new Dictionary<int, int>();
+
+            _actionsByType = new Dictionary<Type, IAction>();
         }
 
         #endregion
 
-        #region Registry Query Methods
+        #region Registry Lookup Methods
 
         public CardType GetCardTypeById(int id) {
             return _cardTypesById.ContainsKey(id) ? _cardTypesById[id] : null;
@@ -110,8 +224,8 @@ namespace KingdomGame {
             return _cardTypesByName.ContainsKey(name) ? _cardTypesByName[name] : null;
         }
 
-        public int GetDefaultQuantityByTypeId(int id) {
-            return _defaultQuantitiesByTypeId.ContainsKey(id) ? _defaultQuantitiesByTypeId[id] : 0;
+        public IAction GetActionByType(Type type) {
+            return _actionsByType.ContainsKey(type) ? _actionsByType[type] : null;
         }
 
         #endregion
@@ -165,6 +279,21 @@ namespace KingdomGame {
             return type;
         }
 
+        private IAction RegisterAction(Assembly assembly, string className, string displayName, string actionDescription) {
+            // Refactor - (MT): Try to make the constructors for all actions private.
+            Type classType = assembly.GetType(className);
+            IAction action = Activator.CreateInstance(classType) as IAction;
+            if (displayName != null) {
+                action.DisplayName = displayName;
+            }
+            if (actionDescription != null) {
+                action.ActionDescription = actionDescription;
+            }
+
+            _actionsByType[classType] = action;
+            return action;
+        }
+
         #endregion
 
         #region Parsing Methods
@@ -187,28 +316,24 @@ namespace KingdomGame {
             return assembliesByKey;
         }
 
-        private IDictionary<string, CardType> ParseCardTypesData(
-          XmlReader cardTypesReader, 
-          IDictionary<string, Assembly> assembliesByKey
-        ) {
+        private IList<CardTypeLoadInfo> ParseCardTypesData(XmlReader cardTypesReader) {
             // Todo - (MT): Add better parsing and error handling.
-            IDictionary<string, CardType> cardTypesByKey = new Dictionary<string, CardType>();
+            IList<CardTypeLoadInfo> cardTypesLoadInfo = new List<CardTypeLoadInfo>();
             while (cardTypesReader.ReadToFollowing("type")) {
                 using (XmlReader cardTypeReader = cardTypesReader.ReadSubtree()) {
                     cardTypesReader.MoveToAttribute("key");
                     string key = cardTypesReader.Value;
-                    CardType cardType = ParseCardTypeData(cardTypeReader, key, assembliesByKey);
-                    cardTypesByKey[key] = cardType;
+                    CardTypeLoadInfo cardTypeLoadInfo = ParseCardTypeData(cardTypeReader, key);
+                    cardTypesLoadInfo.Add(cardTypeLoadInfo);
                 }
             }
 
-            return cardTypesByKey;
+            return cardTypesLoadInfo;
         }
 
-        private CardType ParseCardTypeData(
+        private CardTypeLoadInfo ParseCardTypeData(
           XmlReader cardTypeReader, 
-          string key,           
-          IDictionary<string, Assembly> assembliesByKey
+          string key
         ) {
             // Default values to use if not specified in configuration file:
             CardType.CardClass cardClass = CardType.CardClass.ACTION;
@@ -219,7 +344,7 @@ namespace KingdomGame {
             int defaultQuantity = 10;
             string cardText = null;
             IList<CardProperty> properties = new List<CardProperty>();
-            IList<IAction> actions = new List<IAction>();
+            IList<ActionLoadInfo> actionsLoadInfo = new List<ActionLoadInfo>();
 
             while (cardTypeReader.Read()) {
                 if (cardTypeReader.NodeType == XmlNodeType.Element) {
@@ -261,7 +386,7 @@ namespace KingdomGame {
 
                         case "actions":
                             using (XmlReader actionsReader = cardTypeReader.ReadSubtree()) {
-                                actions = ParseActionsData(actionsReader, assembliesByKey);
+                                actionsLoadInfo = ParseActionsData(actionsReader);
                             }
                             break;
 
@@ -272,7 +397,7 @@ namespace KingdomGame {
                 }
             }
 
-            return RegisterCardType (   
+            return new CardTypeLoadInfo(   
                 key, 
                 cardClass, 
                 cost, 
@@ -282,7 +407,7 @@ namespace KingdomGame {
                 defaultQuantity,
                 cardText,
                 properties, 
-                actions
+                actionsLoadInfo
             );
         }
 
@@ -303,24 +428,22 @@ namespace KingdomGame {
             return cardProperties;
         }
 
-        private IList<IAction> ParseActionsData(
-          XmlReader actionsReader, 
-          IDictionary<string, Assembly> assembliesByKey
+        private IList<ActionLoadInfo> ParseActionsData(
+          XmlReader actionsReader
         ) {
             // Todo - (MT): Add better parsing and error handling.
-            IList<IAction> actions = new List<IAction>();
+            IList<ActionLoadInfo> actions = new List<ActionLoadInfo>();
             while (actionsReader.ReadToFollowing("action")) {
                 using (XmlReader actionReader = actionsReader.ReadSubtree()) {
-                    actions.Add(ParseActionData(actionReader, assembliesByKey));
+                    actions.Add(ParseActionData(actionReader));
                 }
             }
 
             return actions;
         }
 
-        private IAction ParseActionData(
-          XmlReader actionReader, 
-          IDictionary<string, Assembly> assembliesByKey
+        private ActionLoadInfo ParseActionData(
+          XmlReader actionReader
         ) {
             // Todo - (MT): Add better parsing and error handling.
             string assemblyKey = null;
@@ -355,17 +478,7 @@ namespace KingdomGame {
                 }
             }
 
-            // Refactor - (MT): Try to make the constructors for all actions private.
-            Assembly assembly = assembliesByKey[assemblyKey];
-            Type classType = assembly.GetType(className);
-            IAction action = Activator.CreateInstance(classType) as IAction;
-            if (displayName != null) {
-                action.DisplayName = displayName;
-            }
-            if (actionDescription != null) {
-                action.ActionDescription = actionDescription;
-            }
-            return action;
+            return new ActionLoadInfo(assemblyKey, className, displayName, actionDescription);
         }
 
         #endregion
