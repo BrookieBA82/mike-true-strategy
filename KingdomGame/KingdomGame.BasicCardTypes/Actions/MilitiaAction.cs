@@ -27,7 +27,7 @@ namespace KingdomGame.BasicCardTypes {
                 IAction forcedDiscardAction = new MilitiaForcedDiscardAction(player);
                 forcedDiscardAction.DisplayName = "Militia Forced Discard Phase";
                 forcedDiscardAction.ActionDescription = string.Format(
-                  "discarding {0} cards for Militia",
+                  "discarding cards for Militia",
                   Math.Max(player.Hand.Count - 3, 0)
                 );
                 game.State.AddPendingAction(forcedDiscardAction);
@@ -53,6 +53,10 @@ namespace KingdomGame.BasicCardTypes {
     }
 
     public class MilitiaForcedDiscardAction : BasePlayerTargetAction {
+
+        public MilitiaForcedDiscardAction() : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
+
+        }
 
         public MilitiaForcedDiscardAction(Player targetSelector) : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
             if (targetSelector == null) {

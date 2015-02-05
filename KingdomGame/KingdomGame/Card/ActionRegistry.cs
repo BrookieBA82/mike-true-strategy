@@ -112,7 +112,7 @@ namespace KingdomGame {
         private IDictionary<string, CardType> _cardTypesByName;
         private IDictionary<int, int> _defaultQuantitiesByTypeId;
 
-        private IDictionary<Type, IAction> _actionsByType;
+        private IDictionary<string, IAction> _actionsByTypeName;
 
         #endregion
 
@@ -209,7 +209,7 @@ namespace KingdomGame {
             _cardTypesByName = new Dictionary<string, CardType>(StringComparer.InvariantCultureIgnoreCase);
             _defaultQuantitiesByTypeId = new Dictionary<int, int>();
 
-            _actionsByType = new Dictionary<Type, IAction>();
+            _actionsByTypeName = new Dictionary<string, IAction>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         #endregion
@@ -225,7 +225,7 @@ namespace KingdomGame {
         }
 
         public IAction GetActionByType(Type type) {
-            return _actionsByType.ContainsKey(type) ? _actionsByType[type] : null;
+            return _actionsByTypeName.ContainsKey(type.Name) ? _actionsByTypeName[type.Name] : null;
         }
 
         #endregion
@@ -290,7 +290,7 @@ namespace KingdomGame {
                 action.ActionDescription = actionDescription;
             }
 
-            _actionsByType[classType] = action;
+            _actionsByTypeName[classType.Name] = action;
             return action;
         }
 

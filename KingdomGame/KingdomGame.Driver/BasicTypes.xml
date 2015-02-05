@@ -294,4 +294,12 @@
       </actions>
     </type>
   </types>
+  <actions>
+    <action>
+      <assemblyKey>types</assemblyKey>
+      <className>KingdomGame.BasicCardTypes.MilitiaForcedDiscardAction</className>
+      <displayName>Militia Forced Discard Phase</displayName>
+      <actionDescription>discarding cards for Militia</actionDescription>
+    </action>
+  </actions>  
 </config>
