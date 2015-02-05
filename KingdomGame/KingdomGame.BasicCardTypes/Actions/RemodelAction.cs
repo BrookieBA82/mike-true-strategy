@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class RemodelTrashingAction : BaseCardTargetAction {
 
-        public RemodelTrashingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, 1) {
+        private RemodelTrashingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, 1) {
 
         }
 
@@ -35,7 +35,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class RemodelGainingAction : BaseCardTypeTargetAction {
 
-        public RemodelGainingAction() : base(1, 1, true, true) {
+        private RemodelGainingAction() : base(1, 1, true, true) {
 
         }
 

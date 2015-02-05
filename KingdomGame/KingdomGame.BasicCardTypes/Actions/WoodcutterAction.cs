@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class WoodcutterAction : BasePlayerTargetAction {
 
-        public WoodcutterAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private WoodcutterAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

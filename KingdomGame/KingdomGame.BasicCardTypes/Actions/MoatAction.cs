@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MoatAction : BasePlayerTargetAction {
 
-        public MoatAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private MoatAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

@@ -280,9 +280,9 @@ namespace KingdomGame {
         }
 
         private IAction RegisterAction(Assembly assembly, string className, string displayName, string actionDescription) {
-            // Refactor - (MT): Try to make the constructors for all actions private.
             Type classType = assembly.GetType(className);
-            IAction action = Activator.CreateInstance(classType) as IAction;
+            ConstructorInfo constructor = classType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            IAction action = constructor.Invoke(null) as IAction;
             if (displayName != null) {
                 action.DisplayName = displayName;
             }

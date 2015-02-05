@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MarketAction : BasePlayerTargetAction {
 
-        public MarketAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private MarketAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

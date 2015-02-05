@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class SmithyAction : BasePlayerTargetAction {
 
-        public SmithyAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private SmithyAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

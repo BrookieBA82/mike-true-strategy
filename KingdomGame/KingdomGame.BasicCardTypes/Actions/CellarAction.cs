@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class CellarDiscardingAction : BaseCardTargetAction {
 
-        public CellarDiscardingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, int.MaxValue) {
+        private CellarDiscardingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, int.MaxValue) {
 
         }
 
@@ -37,7 +37,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class CellarDrawingAction : BasePlayerTargetAction {
 
-        public CellarDrawingAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private CellarDrawingAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

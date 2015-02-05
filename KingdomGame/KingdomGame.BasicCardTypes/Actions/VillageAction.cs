@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class VillageAction : BasePlayerTargetAction {
 
-        public VillageAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private VillageAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

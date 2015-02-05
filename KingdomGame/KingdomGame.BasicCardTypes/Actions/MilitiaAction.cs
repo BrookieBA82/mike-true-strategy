@@ -13,7 +13,7 @@ namespace KingdomGame.BasicCardTypes {
         // Todo - (MT): Parameterize this into the config file.
         private static readonly string ATTACK_DEFENSE_PROPERTY = "Attack_Defense";
 
-        public MilitiaDiscardTargetSelectionAction() 
+        private MilitiaDiscardTargetSelectionAction() 
           : base(BasePlayerTargetAction.PlayerTargetType.OTHER, 0, int.MaxValue, true) {
 
         }
@@ -48,7 +48,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MilitiaForcedDiscardAction : BasePlayerTargetAction {
 
-        public MilitiaForcedDiscardAction() : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
+        private MilitiaForcedDiscardAction() : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
 
         }
 
@@ -79,7 +79,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MilitiaMoneyGainAction : BasePlayerTargetAction {
 
-        public MilitiaMoneyGainAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
+        private MilitiaMoneyGainAction() : base(BasePlayerTargetAction.PlayerTargetType.SELF, 1, 1) {
 
         }
 

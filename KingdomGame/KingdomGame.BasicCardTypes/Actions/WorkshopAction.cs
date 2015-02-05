@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class WorkshopAction : BaseCardTypeTargetAction {
 
-        public WorkshopAction() : base(1, 1, true, true) {
+        private WorkshopAction() : base(1, 1, true, true) {
 
         }
 

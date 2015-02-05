@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MineTrashingAction : BaseCardTargetAction {
 
-        public MineTrashingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, 1) {
+        private MineTrashingAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, 1) {
 
         }
 
@@ -36,7 +36,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class MineGainingAction : BaseCardTypeTargetAction {
 
-        public MineGainingAction() : base(1, 1, true, true) {
+        private MineGainingAction() : base(1, 1, true, true) {
 
         }
 
@@ -72,5 +72,4 @@ namespace KingdomGame.BasicCardTypes {
             return true;
         }
     }
-
 }
