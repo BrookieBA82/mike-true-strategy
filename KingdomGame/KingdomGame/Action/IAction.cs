@@ -11,12 +11,11 @@ namespace KingdomGame {
     // Refactor - (MT): Add a target selecting player action to determine whose strategy should get used.
     public interface IAction {
 
-        // Refactor - (MT): See if you can make this function non-generic.
-        bool IsTargetValid<TTarget>(
-          IList<TTarget> targets, 
+        bool IsTargetValid(
+          IList<ITargetable> targets, 
           Card targetingCard, 
           Game game
-        ) where TTarget : class, ITargetable;
+        );
 
         void Apply(
           IList<ITargetable> targets,

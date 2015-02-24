@@ -295,7 +295,7 @@ namespace KingdomGame.Driver {
                             selectedTargets.Add(selectedTarget);
                         }
 
-                        validTargetSpecified = action.IsTargetValid<ITargetable>(
+                        validTargetSpecified = action.IsTargetValid(
                           selectedTargets, 
                           cardToPlay, 
                           game

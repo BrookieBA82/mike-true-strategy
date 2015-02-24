@@ -50,14 +50,9 @@ namespace KingdomGame {
           Card card, 
           IAction action
         ) {
-            Type targetType = action.TargetType;
-
-            object genericResult = typeof(ScriptedTargetSelectionStrategy)
-              .GetMethod("SelectTargetsTyped", BindingFlags.NonPublic | BindingFlags.Instance)
-              .MakeGenericMethod(targetType)
-              .Invoke(this, new object[] {game, card, action});
-
-            return genericResult as IList<ITargetable>;
+            return action.IsTargetValid(_targets, card, game)
+              ? new List<ITargetable>(_targets)
+              : new List<ITargetable>();
         }
 
         public object Clone() {
@@ -96,24 +91,6 @@ namespace KingdomGame {
             }
 
             return code;
-        }
-
-        private IList<ITargetable> SelectTargetsTyped<TTarget>(
-          Game game, 
-          Card card, 
-          IAction action
-        ) where TTarget : class, ITargetable {
-            if (typeof(TTarget).Equals(_targetType)) {
-                IList<TTarget> targets = new List<TTarget>();
-                foreach (ITargetable target in _targets) {
-                    targets.Add(target as TTarget);
-                }
-                return action.IsTargetValid<TTarget>(targets, card, game)
-                  ? new List<ITargetable>(targets)
-                  : new List<ITargetable>();
-            }
-
-            return new List<ITargetable>();
         }
     }
 }

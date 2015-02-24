@@ -48,7 +48,7 @@ namespace KingdomGame {
         ) where TTarget : class, ITargetable {
             List<ITargetable> validTargets = new List<ITargetable>();
             foreach(TTarget target in action.GetAllPossibleTargets<TTarget>(game)) {
-                if (action.IsTargetValid<TTarget>(new List<TTarget>() { target }, card, game)) {
+                if (action.IsTargetValid(new List<ITargetable>() { target }, card, game)) {
                     validTargets.Add(target);
                 }
             }

@@ -39,67 +39,63 @@ namespace KingdomGame {
             _allValidTargetsRequired = allValidTargetsRequired;
         }
 
-        public bool IsTargetValid<TType>(
-          IList<TType> targetSet, 
+        public bool IsTargetValid(
+          IList<ITargetable> targetSet, 
           Card targetingCard, 
           Game game
-        ) where TType : class, ITargetable {
-            if(typeof(TType) == _targetType  || typeof(TType) == typeof(ITargetable)) {
-                IList<TTarget> typedTargetSet = new List<TTarget>();
-                foreach(TType target in targetSet) {
-                    if(!(target is TTarget)) {
+        ) {
+            IList<TTarget> typedTargetSet = new List<TTarget>();
+            foreach(ITargetable target in targetSet) {
+                if(!(target is TTarget)) {
+                    return false;
+                }
+
+                typedTargetSet.Add(target as TTarget);
+            }
+
+            if ((typedTargetSet.Count < _minTargets) || (typedTargetSet.Count > _maxTargets)) {
+                return false;
+            }
+
+            if (!_duplicateTargetsAllowed) {
+                Set<ITargetable> targets = new Set<ITargetable>();
+                foreach (ITargetable target in typedTargetSet) {
+                    if (targets.Contains(target)) {
                         return false;
                     }
 
-                    typedTargetSet.Add(target as TTarget);
+                    targets.Add(target);
                 }
+            }
 
-                if ((typedTargetSet.Count < _minTargets) || (typedTargetSet.Count > _maxTargets)) {
-                    return false;
-                }
-
-                if (!_duplicateTargetsAllowed) {
-                    Set<TTarget> targets = new Set<TTarget>();
-                    foreach (TTarget target in typedTargetSet) {
-                        if (targets.Contains(target)) {
-                            return false;
-                        }
-
-                        targets.Add(target);
-                    }
-                }
-
-                IList<TTarget> eligibleTargets = new List<TTarget>();
-                IList<TTarget> allTypedTargets = GetAllPossibleTargetsBase(game);
-                foreach(TTarget target in allTypedTargets) {
-                    if (IsTargetValidBase(
-                      target,
-                      targetingCard, 
-                      game
-                    )) {
-                        eligibleTargets.Add(target);
-                    }
-                    else {
-                        if (typedTargetSet.Contains(target)) {
-                            return false;
-                        }
-                    }
-                }
-
-                if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(
-                  typedTargetSet, 
-                  eligibleTargets, 
-                  allTypedTargets, 
+            IList<TTarget> eligibleTargets = new List<TTarget>();
+            IList<TTarget> allTypedTargets = GetAllPossibleTargetsBase(game);
+            foreach(TTarget target in allTypedTargets) {
+                if (IsTargetValidBase(
+                  target,
                   targetingCard, 
                   game
                 )) {
-                    return false;
+                    eligibleTargets.Add(target);
                 }
-
-                return IsTargetValidInternal(typedTargetSet, targetingCard, game);
+                else {
+                    if (typedTargetSet.Contains(target)) {
+                        return false;
+                    }
+                }
             }
 
-            return false;
+            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(
+              typedTargetSet, 
+              eligibleTargets, 
+              allTypedTargets, 
+              targetingCard, 
+              game
+            )) {
+                return false;
+            }
+
+            return IsTargetValidInternal(typedTargetSet, targetingCard, game);
         }
 
         public void Apply(
@@ -129,7 +125,7 @@ namespace KingdomGame {
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
             foreach (ITargetable target in GetAllPossibleTargets<ITargetable>(game)) {
-                if (IsTargetValid<ITargetable>(new List<ITargetable>() { target }, targetingCard, game)) {
+                if (IsTargetValid(new List<ITargetable>() { target }, targetingCard, game)) {
                     validTargets.Add(target);
                 }
             }
