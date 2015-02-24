@@ -124,7 +124,7 @@ namespace KingdomGame {
           Game game
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
-            foreach (ITargetable target in GetAllPossibleTargets<ITargetable>(game)) {
+            foreach (ITargetable target in GetAllPossibleTargets(game)) {
                 if (IsTargetValid(new List<ITargetable>() { target }, targetingCard, game)) {
                     validTargets.Add(target);
                 }
@@ -133,18 +133,14 @@ namespace KingdomGame {
             return validTargets;
         }
 
-        public IList<TType> GetAllPossibleTargets<TType>(Game game) where TType : class, ITargetable {
-            if(typeof(TType) == _targetType || typeof(TType) == typeof(ITargetable)) {
-                IList<TTarget> allPossibleTargets = GetAllPossibleTargetsBase(game);
-                IList<TType> allTypedTargets = new List<TType>();
-                foreach (TTarget target in allPossibleTargets) {
-                    allTypedTargets.Add(target as TType);
-                }
-
-                return allTypedTargets;
+        public IList<ITargetable> GetAllPossibleTargets(Game game) {
+            IList<TTarget> allPossibleTargets = GetAllPossibleTargetsBase(game);
+            IList<ITargetable> allTypedTargets = new List<ITargetable>();
+            foreach (TTarget target in allPossibleTargets) {
+                allTypedTargets.Add(target);
             }
 
-            return new List<TType>();
+            return allTypedTargets;
         }
 
         public int MinTargets { get { return _minTargets; } }

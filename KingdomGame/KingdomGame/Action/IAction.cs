@@ -27,7 +27,7 @@ namespace KingdomGame {
           Game game
         );
 
-        IList<TTarget> GetAllPossibleTargets<TTarget>(Game game) where TTarget : class, ITargetable;
+        IList<ITargetable> GetAllPossibleTargets(Game game);
 
         IAction Create(Player targetSelector);
 

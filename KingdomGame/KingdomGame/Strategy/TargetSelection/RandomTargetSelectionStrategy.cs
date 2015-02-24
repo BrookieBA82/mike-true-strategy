@@ -15,14 +15,18 @@ namespace KingdomGame {
           Card card, 
           IAction action
         ) {
-            Type targetType = action.TargetType;
+            List<ITargetable> validTargets = new List<ITargetable>();
+            foreach(ITargetable target in action.GetAllPossibleTargets(game)) {
+                if (action.IsTargetValid(new List<ITargetable>() { target }, card, game)) {
+                    validTargets.Add(target);
+                }
+            }
 
-            object genericResult = typeof(RandomTargetSelectionStrategy)
-              .GetMethod("SelectTargetsTyped", BindingFlags.NonPublic | BindingFlags.Instance)
-              .MakeGenericMethod(targetType)
-              .Invoke(this, new object[] {game, card, action});
+            if (action.AllValidTargetsRequired) {
+                return validTargets;
+            }
 
-            return genericResult as IList<ITargetable>;
+            return Combinations.SelectRandomItemsFromList<ITargetable>(validTargets, action.MinTargets, action.MaxTargets);
         }
 
         public object Clone() {
@@ -39,25 +43,6 @@ namespace KingdomGame {
 
         public override int GetHashCode() {
             return this.GetType().GetHashCode();
-        }
-
-        private IList<ITargetable> SelectTargetsTyped<TTarget>(
-          Game game, 
-          Card card, 
-          IAction action
-        ) where TTarget : class, ITargetable {
-            List<ITargetable> validTargets = new List<ITargetable>();
-            foreach(TTarget target in action.GetAllPossibleTargets<TTarget>(game)) {
-                if (action.IsTargetValid(new List<ITargetable>() { target }, card, game)) {
-                    validTargets.Add(target);
-                }
-            }
-
-            if (action.AllValidTargetsRequired) {
-                return validTargets;
-            }
-
-            return Combinations.SelectRandomItemsFromList<ITargetable>(validTargets, action.MinTargets, action.MaxTargets);
         }
     }
 }
