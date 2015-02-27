@@ -57,15 +57,15 @@ namespace KingdomGame.BasicCardTypes {
           Game game
         ) {
             Player player = game.GetPlayerById(_targetSelectorId.Value);
-            IList<Card> cardsToDiscard = player.Strategy.DiscardingStrategy.
-                SelectDiscards(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0);
+            IList<ITargetable> cardsToDiscard = new List<ITargetable>(player.Strategy.DiscardingStrategy.
+                SelectDiscards(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0));
 
             foreach (Card card in cardsToDiscard) {
                 player.DiscardCard(card);
             }
 
             // Modify the history so the effective target for this action are the discarded cards:
-            Logger.Instance.UpdateLastAction(game, null, cardsToDiscard);
+            Logger.Instance.UpdateLastAction(game, cardsToDiscard);
         }
 
         protected override bool IsTargetValidInternal(

@@ -210,6 +210,10 @@ namespace KingdomGame {
 
         public PlayerStrategy Strategy { get { return _strategy; } }
 
+        public object Serializable {
+            get { return new GameHistory.PlayerInfo(this); }
+        }
+
         #endregion
 
         #region Public Methods
@@ -393,6 +397,11 @@ namespace KingdomGame {
               ^ this._hand.GetHashCode()
               ^ this._playArea.GetHashCode()
               ^ this._strategy.GetHashCode();
+        }
+
+
+        public string ToString(string format) {
+            return string.Format("{0} ({1})", Name,  Id);
         }
 
         #endregion

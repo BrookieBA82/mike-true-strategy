@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace KingdomGame {
-    
+
     public interface ITargetable {
 
         int Id { get; }
 
-        // Todo - (MT): Force a ToString override which accepts a format string.
+        object Serializable { get; }
+
+        string ToString(string format);
+
     }
 }

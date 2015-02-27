@@ -31,9 +31,6 @@ namespace KingdomGame {
 
         IAction Create(Player targetSelector);
 
-        // Refactor - (MT): Is this strictly necessary?
-        Type TargetType { get; }
-
         // Refactor - (MT): Get the player from the game backreference.
         int? TargetSelectorId { get; }
 

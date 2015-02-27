@@ -539,31 +539,17 @@ namespace KingdomGame.Driver {
             }
         }
 
-        private static void PrintAction(GameHistory.Action target) {
-            Console.WriteLine(string.Format("\tAction summary for {0}:", target.Command.DisplayName));
-            if (target.PlayerTargets.Count > 0) {
-                foreach (GameHistory.PlayerInfo player in target.PlayerTargets) {
-                    Console.WriteLine(string.Format("\t\t{0} ({1})", player.Name, player.Id));
-                }
-            }
-            else if (target.CardTargets.Count > 0) {
-                foreach (GameHistory.CardInfo card in target.CardTargets) {
-                    Console.WriteLine(string.Format("\t\t{0} ({1})", card.TypeName, card.Id));
-                }
+        private static void PrintAction(GameHistory.Action action) {
+            Console.WriteLine(string.Format("\tAction summary for {0}:", action.Command.DisplayName));
+            foreach (ITargetable target in action.Targets) {
+                Console.WriteLine(string.Format("\t\t{0}", target.ToString(null)));
             }
         }
 
-        private static void PrintAction(GameHistory.Action target, int targetNumber) {
-            Console.WriteLine(string.Format("\t\tAction #{0}: {1}", targetNumber, target.Command.DisplayName));
-            if (target.PlayerTargets.Count > 0) {
-                foreach (GameHistory.PlayerInfo player in target.PlayerTargets) {
-                    Console.WriteLine(string.Format("\t\t\t{0} ({1})", player.Name, player.Id));
-                }
-            }
-            else if (target.CardTargets.Count > 0) {
-                foreach (GameHistory.CardInfo card in target.CardTargets) {
-                    Console.WriteLine(string.Format("\t\t\t{0} ({1})", card.TypeName, card.Id));
-                }
+        private static void PrintAction(GameHistory.Action action, int targetNumber) {
+            Console.WriteLine(string.Format("\t\tAction #{0}: {1}", targetNumber, action.Command.DisplayName));
+            foreach (ITargetable target in action.Targets) {
+                Console.WriteLine(string.Format("\t\t\t{0}", target.ToString(null)));
             }
         }
 

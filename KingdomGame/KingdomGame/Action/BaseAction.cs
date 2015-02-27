@@ -11,7 +11,6 @@ namespace KingdomGame {
     // Refactor - (MT): Consider a base class for making a general choice (between actions).
     public abstract class BaseAction<TTarget> : IAction where TTarget : class, ITargetable {
 
-        protected Type _targetType;
         protected int _minTargets;
         protected int _maxTargets;
         protected int? _targetSelectorId = null;
@@ -32,7 +31,6 @@ namespace KingdomGame {
                 throw new ArgumentException("Cannot specify a minimum number of targets larger than the maximum.");
             }
 
-            _targetType = typeof(TTarget);
             _minTargets = minTargets;
             _maxTargets = maxTargets;
             _duplicateTargetsAllowed = duplicateTargetsAllowed;
@@ -111,7 +109,7 @@ namespace KingdomGame {
                     throw new InvalidOperationException(string.Format(
                     "Cannot apply this action to a target set containing {0} because it can only be applied to {1}.",
                         target.GetType().ToString(),
-                        _targetType.ToString()
+                        typeof(TTarget).ToString()
                     ));
                 }
             }
@@ -146,8 +144,6 @@ namespace KingdomGame {
         public int MinTargets { get { return _minTargets; } }
 
         public int MaxTargets { get { return _maxTargets; } }
-
-        public Type TargetType { get { return _targetType; } }
 
         public int? TargetSelectorId { get { return _targetSelectorId; } }
 

@@ -125,16 +125,16 @@ namespace KingdomGame {
             get { return new List<IAction>(_actions); }
         }
 
+        public object Serializable {
+            get { return new GameHistory.CardTypeInfo(this); }
+        }
+
         #endregion
 
         #region Public Methods
 
         public bool IsProperty(CardProperty property) {
             return _propertiesByName.ContainsKey(property.Name);
-        }
-
-        public override string ToString() {
-            return Name;
         }
 
         public override bool Equals(object obj) {
@@ -148,6 +148,14 @@ namespace KingdomGame {
 
         public override int GetHashCode() {
             return this.Id.GetHashCode();
+        }
+
+        public override string ToString() {
+            return Name;
+        }
+
+        public string ToString(string format) {
+            return ToString();
         }
 
         #endregion

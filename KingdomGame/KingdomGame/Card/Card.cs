@@ -87,6 +87,10 @@ namespace KingdomGame
             return new Card(this);
         }
 
+        public object Serializable {
+            get { return new GameHistory.CardInfo(this); }
+        }
+
         #endregion
 
         #region Public Methods
@@ -106,6 +110,10 @@ namespace KingdomGame
 
         public override int GetHashCode() {
             return Id ^ Type.Id;
+        }
+
+        public string ToString(string format) {
+            return string.Format("{0} ({1})", Type.Name,  Id);
         }
 
         #endregion

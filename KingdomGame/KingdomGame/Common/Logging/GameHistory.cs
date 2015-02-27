@@ -136,10 +136,8 @@ namespace KingdomGame {
 
         [XmlType("action")]
         public class Action {
-            
-            private IList<Player> _playerTargets;
-            private IList<Card> _cardTargets;
-            private IList<CardType> _typeTargets;
+
+            private IList<ITargetable> _targets;
 
             [XmlIgnore()]
             public Player Player { get; private set; }
@@ -156,46 +154,23 @@ namespace KingdomGame {
                 set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
             }
 
-            [XmlArray("cardTargets")]
-            public List<CardInfo> CardTargets { 
+            [XmlArray("targets")]
+            public List<object> HistoryTargets { 
                 get {
-                    List<CardInfo> cards = new List<CardInfo>();
-                    foreach (Card card in _cardTargets) {
-                        cards.Add(new CardInfo(card));
+                    List<object> targetObjects = new List<object>();
+                    foreach (ITargetable target in _targets) {
+                        targetObjects.Add(target.Serializable);
                     }
 
-                    return cards; 
+                    return targetObjects; 
                 }
 
                 set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
             }
 
-            [XmlArray("playerTargets")]
-            public List<PlayerInfo> PlayerTargets { 
-                get {
-                    List<PlayerInfo> players = new List<PlayerInfo>();
-                    foreach (Player player in _playerTargets) {
-                        players.Add(new PlayerInfo(player));
-                    }
-
-                    return players; 
-                }
-
-                set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
-            }
-
-            [XmlArray("cardTypeTargets")]
-            public List<CardTypeInfo> TypeTargets { 
-                get {
-                    List<CardTypeInfo> cardTypes = new List<CardTypeInfo>();
-                    foreach (CardType type in _typeTargets) {
-                        cardTypes.Add(new CardTypeInfo(type));
-                    }
-
-                    return cardTypes; 
-                }
-
-                set { throw new NotSupportedException("History deserialization is not presently supported." ); } 
+            [XmlIgnore()]
+            public List<ITargetable> Targets {
+                get { return new List<ITargetable>(_targets); }
             }
 
             public Action() {
@@ -206,9 +181,7 @@ namespace KingdomGame {
               toClone.Player,
               toClone.Card,
               toClone.Command,
-              new List<Player>(toClone._playerTargets).ConvertAll<Player>(delegate(Player player) { return player.Clone() as Player; }),
-              new List<Card>(toClone._cardTargets),
-              new List<CardType>(toClone._typeTargets)
+              new List<ITargetable>(toClone._targets)
             ) {
 
             }
@@ -217,21 +190,16 @@ namespace KingdomGame {
               Player player, 
               Card card, 
               IAction action, 
-              IList<Player> playerTargets, 
-              IList<Card> cardTargets,
-              IList<CardType> typeTargets
+              IList<ITargetable> targets
             ){
                 Player = player.Clone() as Player;
                 Card = card;
                 Command = action;
-                _playerTargets = playerTargets ?? new List<Player>();
-                _cardTargets = cardTargets ?? new List<Card>();
-                _typeTargets = typeTargets ?? new List<CardType>();
+                _targets = targets ?? new List<ITargetable>();
             }
 
-            internal void SetTargets(List<Player> playerTargets, List<Card> cardTargets) {
-                _playerTargets = playerTargets;
-                _cardTargets = cardTargets;
+            internal void SetTargets(List<ITargetable> targets) {
+                _targets = targets;
             }
         }
 

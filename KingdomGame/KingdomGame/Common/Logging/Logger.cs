@@ -56,44 +56,7 @@ namespace KingdomGame {
                 GameHistory.Turn turn = history.TurnsByNumber[game.State.TurnNumber];
                 if (turn.Plays.Count > 0) {
                     GameHistory.Play lastPlay = turn.Plays[turn.Plays.Count - 1];
-                    // Refactor - (MT): Eliminate the need for this ugliness:
-                    switch (action.TargetType.Name) {
-                        case "Player":
-                            lastPlay.Actions.Add(new GameHistory.Action(
-                              player, 
-                              card, 
-                              action, 
-                              new List<ITargetable>(targets).ConvertAll<Player>(delegate(ITargetable target) { return target as Player;}), 
-                              null,
-                              null
-                            ));
-                            break;
-
-                        case "Card":
-                            lastPlay.Actions.Add(new GameHistory.Action(
-                              player, 
-                              card, 
-                              action, 
-                              null, 
-                              new List<ITargetable>(targets).ConvertAll<Card>(delegate(ITargetable target) { return target as Card; }),
-                              null
-                            ));
-                            break;
-
-                        case "CardType":
-                            lastPlay.Actions.Add(new GameHistory.Action(
-                              player, 
-                              card, 
-                              action, 
-                              null,
-                              null,
-                              new List<ITargetable>(targets).ConvertAll<CardType>(delegate(ITargetable target) { return target as CardType; })
-                            ));
-                            break;
-
-                        default:
-                            break;
-                    }
+                    lastPlay.Actions.Add(new GameHistory.Action(player, card, action, new List<ITargetable>(targets)));
                 }
             }
         }
@@ -127,7 +90,7 @@ namespace KingdomGame {
             }
         }
 
-        public void UpdateLastAction(Game game, IList<Player> playerTargets, IList<Card> cardTargets) {
+        public void UpdateLastAction(Game game, IList<ITargetable> targets) {
             if (_historyByGame.ContainsKey(game.Id)) {
                 GameHistory history = _historyByGame[game.Id];
                 if (history.TurnsByNumber.Count > 0) {
@@ -137,10 +100,7 @@ namespace KingdomGame {
                         GameHistory.Play lastPlay = lastTurn.Plays[lastTurn.Plays.Count - 1];
                         if (lastPlay.Actions.Count > 0) {
                             GameHistory.Action action = lastPlay.Actions[lastPlay.Actions.Count - 1];
-                            action.SetTargets(
-                              (playerTargets != null) ? new List<Player>(playerTargets) : new List<Player>(),
-                              (cardTargets!= null) ? new List<Card>(cardTargets) : new List<Card>()
-                            );
+                            action.SetTargets((targets != null) ? new List<ITargetable>(targets) : new List<ITargetable>());
                         }
                     }
                 }
