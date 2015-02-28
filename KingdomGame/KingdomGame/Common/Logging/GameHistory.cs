@@ -155,11 +155,11 @@ namespace KingdomGame {
             }
 
             [XmlArray("targets")]
-            public List<object> HistoryTargets { 
+            public List<TargetInfo> HistoryTargets { 
                 get {
-                    List<object> targetObjects = new List<object>();
+                    List<TargetInfo> targetObjects = new List<TargetInfo>();
                     foreach (ITargetable target in _targets) {
-                        targetObjects.Add(target.Serializable);
+                        targetObjects.Add(target.TargetInfo);
                     }
 
                     return targetObjects; 
@@ -243,11 +243,19 @@ namespace KingdomGame {
             }
         }
 
-        [XmlType("player")]
-        public class PlayerInfo {
+        [XmlType("target")]
+        [XmlInclude(typeof(CardInfo))]
+        [XmlInclude(typeof(PlayerInfo))]
+        [XmlInclude(typeof(CardTypeInfo))]
+        public abstract class TargetInfo {
 
             [XmlAttribute("id")]
             public int Id { get; set; }
+
+        }
+
+        [XmlType("player")]
+        public class PlayerInfo : TargetInfo {
 
             [XmlAttribute("name")]
             public string Name { get; set; }
@@ -271,10 +279,7 @@ namespace KingdomGame {
         }
 
         [XmlType("card")]
-        public class CardInfo {
-
-            [XmlAttribute("id")]
-            public int Id { get; set; }
+        public class CardInfo : TargetInfo {
 
             [XmlAttribute("type")]
             public string TypeName { get; set; }
@@ -298,12 +303,9 @@ namespace KingdomGame {
         }
 
         [XmlType("cardType")]
-        public class CardTypeInfo {
+        public class CardTypeInfo : TargetInfo {
 
-            [XmlAttribute("id")]
-            public int Id { get; set; }
-
-            [XmlAttribute("type")]
+            [XmlAttribute("name")]
             public string Name { get; set; }
 
             public CardTypeInfo() {

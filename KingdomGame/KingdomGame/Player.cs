@@ -210,7 +210,7 @@ namespace KingdomGame {
 
         public PlayerStrategy Strategy { get { return _strategy; } }
 
-        public object Serializable {
+        public GameHistory.TargetInfo TargetInfo {
             get { return new GameHistory.PlayerInfo(this); }
         }
 

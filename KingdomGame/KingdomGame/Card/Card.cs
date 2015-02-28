@@ -87,7 +87,7 @@ namespace KingdomGame
             return new Card(this);
         }
 
-        public object Serializable {
+        public GameHistory.TargetInfo TargetInfo {
             get { return new GameHistory.CardInfo(this); }
         }
 

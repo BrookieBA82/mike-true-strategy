@@ -125,7 +125,7 @@ namespace KingdomGame {
             get { return new List<IAction>(_actions); }
         }
 
-        public object Serializable {
+        public GameHistory.TargetInfo TargetInfo {
             get { return new GameHistory.CardTypeInfo(this); }
         }
 

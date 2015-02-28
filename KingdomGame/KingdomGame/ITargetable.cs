@@ -10,7 +10,7 @@ namespace KingdomGame {
 
         int Id { get; }
 
-        object Serializable { get; }
+        GameHistory.TargetInfo TargetInfo { get; }
 
         string ToString(string format);
 
