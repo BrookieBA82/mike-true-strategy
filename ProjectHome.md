@@ -1,0 +1,1 @@
+This is my attempt at learning AI techniques by creating strategies for playing some of my favorite board and card games.
