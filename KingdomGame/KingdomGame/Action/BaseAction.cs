@@ -42,6 +42,10 @@ namespace KingdomGame {
           Card targetingCard, 
           Game game
         ) {
+            if (targetSet == null) {
+                return false;
+            }
+
             IList<TTarget> typedTargetSet = new List<TTarget>();
             foreach(ITargetable target in targetSet) {
                 if(!(target is TTarget)) {

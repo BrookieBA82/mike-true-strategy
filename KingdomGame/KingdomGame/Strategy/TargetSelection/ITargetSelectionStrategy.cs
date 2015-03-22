@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
     public interface ITargetSelectionStrategy : ICloneable {
 
-        IList<ITargetable> SelectTargets(
-          Game game, 
-          Card card, 
-          IAction action
-        );
+        IList<ITargetable> SelectTargets(Game game, Card card, IAction action);
 
     }
 }

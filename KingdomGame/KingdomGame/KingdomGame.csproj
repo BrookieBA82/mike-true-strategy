@@ -73,6 +73,7 @@
     <Compile Include="Strategy\Discarding\ScriptedDiscardingStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\ITargetSelectionStrategy.cs" />
     <Compile Include="Strategy\Discarding\PromptedDiscardingStrategy.cs" />
+    <Compile Include="Strategy\TargetSelection\PromptedTargetSelectionStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\RandomTargetSelectionStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\ScriptedTargetSelectionStrategy.cs" />
   </ItemGroup>
