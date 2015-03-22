@@ -15,7 +15,7 @@ namespace KingdomGame {
         public IList<Card> SelectedCards { get; set; }
     }
 
-    public delegate void ForcedDiscardPromptEventHandler(Object sender, ForcedDiscardPromptEventArgs e);
+    public delegate void ForcedDiscardPromptEventHandler(Object sender, ForcedDiscardPromptEventArgs args);
 
     public class PromptedDiscardingStrategy : IDiscardingStrategy {
 

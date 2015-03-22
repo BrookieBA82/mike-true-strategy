@@ -602,7 +602,6 @@ namespace KingdomGame {
                     AssertCardSelected(true);
                     AssertPendingActionAvailable(true);
 
-                    // Refactor - (MT): Obtain these targets using a prompted strategy for human players.
                     IAction action = State.NextPendingAction;
                     Player targetSelector = GetPlayerById(action.TargetSelectorId.Value);
                     IList<ITargetable> targets = targetSelector.Strategy.TargetSelectionStrategy.SelectTargets(

@@ -13,7 +13,7 @@ namespace KingdomGame {
         public Card SelectedPlay { get; set; }
     }
 
-    public delegate void PlaySelectionPromptEventHandler(Object sender, PlaySelectionPromptEventArgs e);
+    public delegate void PlaySelectionPromptEventHandler(Object sender, PlaySelectionPromptEventArgs args);
 
     public class PromptedPlaySelectionStrategy : IPlaySelectionStrategy {
 

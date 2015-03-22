@@ -14,7 +14,7 @@ namespace KingdomGame {
         public IList<ITargetable> SelectedTargets { get; set; }
     }
 
-    public delegate void TargetSelectionPromptEventHandler(Object sender, TargetSelectionPromptEventArgs e);
+    public delegate void TargetSelectionPromptEventHandler(Object sender, TargetSelectionPromptEventArgs args);
 
     public class PromptedTargetSelectionStrategy : ITargetSelectionStrategy {
 
