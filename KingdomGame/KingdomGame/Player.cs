@@ -14,7 +14,7 @@ namespace KingdomGame {
 
             #region Properties
 
-            public ICardSelectionStrategy CardSelectionStrategy { get; set; }
+            public IPlaySelectionStrategy PlaySelectionStrategy { get; set; }
 
             public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
 
@@ -29,7 +29,7 @@ namespace KingdomGame {
             public object Clone() {
                 PlayerStrategy strategy = new PlayerStrategy();
 
-                strategy.CardSelectionStrategy = CardSelectionStrategy.Clone() as ICardSelectionStrategy;
+                strategy.PlaySelectionStrategy = PlaySelectionStrategy.Clone() as IPlaySelectionStrategy;
                 strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
                 strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
                 strategy.DiscardingStrategy = DiscardingStrategy.Clone() as IDiscardingStrategy;
@@ -43,14 +43,14 @@ namespace KingdomGame {
                     return false;
                 }
 
-                return CardSelectionStrategy.Equals(strategy.CardSelectionStrategy) 
+                return PlaySelectionStrategy.Equals(strategy.PlaySelectionStrategy) 
                   && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
                   && BuyingStrategy.Equals(strategy.BuyingStrategy)
                   && DiscardingStrategy.Equals(strategy.DiscardingStrategy);
             }
 
             public override int GetHashCode() {
-                int code = CardSelectionStrategy.GetHashCode() 
+                int code = PlaySelectionStrategy.GetHashCode() 
                   ^ TargetSelectionStrategy.GetHashCode() 
                   ^ BuyingStrategy.GetHashCode()
                   ^ DiscardingStrategy.GetHashCode();
@@ -111,7 +111,7 @@ namespace KingdomGame {
 
             _strategy = new PlayerStrategy();
             // Todo - (MT): Strategy point #1 - select best card (instead of random)
-            _strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
+            _strategy.PlaySelectionStrategy = new RandomPlaySelectionStrategy();
             // Todo - (MT): Strategy point #2 - select best (or at least random) target
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)

@@ -6,35 +6,35 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public class CardSelectionPromptEventArgs : EventArgs
+    public class PlaySelectionPromptEventArgs : EventArgs
     {
         public Game Game { get; set; }
         public Deck CurrentHand { get; set; }
-        public Card SelectedCard { get; set; }
+        public Card SelectedPlay { get; set; }
     }
 
-    public delegate void CardSelectionPromptEventHandler(Object sender, CardSelectionPromptEventArgs e);
+    public delegate void PlaySelectionPromptEventHandler(Object sender, PlaySelectionPromptEventArgs e);
 
-    public class PromptedCardSelectionStrategy : ICardSelectionStrategy {
+    public class PromptedPlaySelectionStrategy : IPlaySelectionStrategy {
 
-        public event CardSelectionPromptEventHandler CardSelectionPromptRequired;
+        public event PlaySelectionPromptEventHandler PlaySelectionPromptRequired;
 
-        public Card SelectCard(Game game, Deck currentHand) {
-            if (CardSelectionPromptRequired != null) {
-                CardSelectionPromptEventArgs args = new CardSelectionPromptEventArgs();
+        public Card SelectPlay(Game game, Deck currentHand) {
+            if (PlaySelectionPromptRequired != null) {
+                PlaySelectionPromptEventArgs args = new PlaySelectionPromptEventArgs();
                 args.Game = game;
                 args.CurrentHand = currentHand.Clone() as Deck;
-                CardSelectionPromptRequired(this, args);
-                Card selectedCard = args.SelectedCard;
-                return (selectedCard != null && currentHand.Contains(selectedCard)) ? selectedCard : null;
+                PlaySelectionPromptRequired(this, args);
+                Card selectedPlay = args.SelectedPlay;
+                return (selectedPlay != null && currentHand.Contains(selectedPlay)) ? selectedPlay : null;
             }
             else {
-                return new RandomCardSelectionStrategy().SelectCard(game, currentHand);
+                return new RandomPlaySelectionStrategy().SelectPlay(game, currentHand);
             }
         }
 
         public object Clone() {
-            return new PromptedCardSelectionStrategy();
+            return new PromptedPlaySelectionStrategy();
         }
 
         public override bool Equals(object obj) {

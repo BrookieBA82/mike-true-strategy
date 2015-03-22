@@ -42,8 +42,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
@@ -116,8 +116,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (cannot target anyone because the opponent has a moat):
@@ -191,8 +191,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
@@ -289,8 +289,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
@@ -399,8 +399,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (should need to specifiy both players without a moat):
@@ -504,8 +504,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying the current player, which should fail):
@@ -590,8 +590,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying a player which has the moat, which should fail):
@@ -671,8 +671,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (specifying a duplicate player, which should fail):
@@ -752,8 +752,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action (not specifying an opponent without a moat, which should fail):
@@ -831,8 +831,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             IList<Card> cardsToDiscard = new List<Card>();
@@ -918,8 +918,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
@@ -995,8 +995,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:
@@ -1073,8 +1073,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(militiaCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
             // Forcing the discard action:

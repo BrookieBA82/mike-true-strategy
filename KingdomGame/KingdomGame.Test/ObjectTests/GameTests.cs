@@ -132,7 +132,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.SelectedCard = village;
+            game.State.SelectedPlay = village;
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);
             game.State.AddPendingAction(village.Type.Actions[0].Create(game.State.CurrentPlayer));
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
@@ -261,15 +261,15 @@ namespace KingdomGame.Test
         }
 
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
-        public void TestCardSelectionStrategyChangeCloneIndependence() {
+        public void TestPlaySelectionStrategyChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new RandomCardSelectionStrategy();
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new RandomPlaySelectionStrategy();
             Game clone = game.Clone() as Game;
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(game.State.CurrentPlayer.Hand[0]);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(game.State.CurrentPlayer.Hand[0]);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its card selection strategy.");
  
-            clone.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
+            clone.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(null);
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its card selection strategy.");
         }
 
@@ -300,7 +300,7 @@ namespace KingdomGame.Test
         }
 
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
-        public void TestStrategySelectedCardChangeCloneIndependence() {
+        public void TestStrategySelectedPlayChangeCloneIndependence() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -321,7 +321,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.SelectedCard = firstVillage;
+            game.State.SelectedPlay = firstVillage;
             Game clone = game.Clone() as Game;
 
             Card secondVillage = null;
@@ -332,7 +332,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.SelectedCard = secondVillage;
+            game.State.SelectedPlay = secondVillage;
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after selected card is changed.");
         }
@@ -392,7 +392,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             // Play a null operation which should leave the clone in a state different only by action stack:
@@ -431,7 +431,7 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(villageCard);
             game.PlayStep();
 
             Game clone = game.Clone() as Game;

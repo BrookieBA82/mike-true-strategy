@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace KingdomGame.Test
 {
     [TestClass]
-    public class CardSelectionTests {
+    public class PlaySelectionTests {
 
         #region Test Setup
 
         [TestInitialize]
-        public void CardSelectionTestsSetup() {
+        public void PlaySelectionTestsSetup() {
             TestSetup.InitializeTypes();
         }
 
@@ -21,8 +21,8 @@ namespace KingdomGame.Test
 
         #region Tests
 
-        [TestCategory("CardSelectionTest"), TestMethod]
-        public void TestNoOptionCardSelection() {
+        [TestCategory("PlaySelectionTest"), TestMethod]
+        public void TestNoOptionPlaySelection() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -37,13 +37,13 @@ namespace KingdomGame.Test
 
             Assert.AreEqual(
               null, 
-              game.State.SelectedCard, 
+              game.State.SelectedPlay, 
               "No card should be selected if no action is eligible for selection."
             );
         }
 
-        [TestCategory("CardSelectionTest"), TestMethod]
-        public void TestEmptyScriptedCardSelection() {
+        [TestCategory("PlaySelectionTest"), TestMethod]
+        public void TestEmptyScriptedPlaySelection() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -56,17 +56,17 @@ namespace KingdomGame.Test
 
             Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(null);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(null);
             game.PlayStep();
 
             Assert.IsNull(
-              game.State.SelectedCard, 
+              game.State.SelectedPlay, 
               "No card should be selected if the scripted choice was to play nothing."
             );
         }
 
-        [TestCategory("CardSelectionTest"), TestMethod]
-        public void TestNonActionScriptedCardSelection() {
+        [TestCategory("PlaySelectionTest"), TestMethod]
+        public void TestNonActionScriptedPlaySelection() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -88,17 +88,17 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(estateCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(estateCard);
             game.PlayStep();
 
             Assert.IsNull(
-              game.State.SelectedCard, 
+              game.State.SelectedPlay, 
               "No card should be selected if an invalid scripted choice was selected."
             );
         }
 
-        [TestCategory("CardSelectionTest"), TestMethod]
-        public void TestSingleOptionCardSelection() {
+        [TestCategory("PlaySelectionTest"), TestMethod]
+        public void TestSingleOptionPlaySelection() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -120,18 +120,18 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(
               villageCard, 
-              game.State.SelectedCard, 
+              game.State.SelectedPlay, 
               "The village card should be selected if it is the scripted choice."
             );
         }
 
-        [TestCategory("CardSelectionTest"), TestMethod]
-        public void TestMultipleOptionScriptedCardSelection() {
+        [TestCategory("PlaySelectionTest"), TestMethod]
+        public void TestMultipleOptionScriptedPlaySelection() {
             Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
             gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
             gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
@@ -155,12 +155,12 @@ namespace KingdomGame.Test
             }
 
             TestUtilities.ForceGamePhase(game, Game.Phase.PLAY);
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(villageCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(villageCard);
             game.PlayStep();
 
             Assert.AreEqual(
               villageCard, 
-              game.State.SelectedCard, 
+              game.State.SelectedPlay, 
               "The village card should be selected if it is the scripted choice."
             );
         }

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public class ScriptedCardSelectionStrategy : ICardSelectionStrategy {
+    public class ScriptedPlaySelectionStrategy : IPlaySelectionStrategy {
 
         private Card _cardToSelect;
 
-        public ScriptedCardSelectionStrategy(Card cardToSelect) {
+        public ScriptedPlaySelectionStrategy(Card cardToSelect) {
             _cardToSelect = cardToSelect;
         }
 
-        public Card SelectCard(Game game, Deck currentHand) {
+        public Card SelectPlay(Game game, Deck currentHand) {
             foreach (Card card in currentHand.Cards) {
                 if (card.Type.Class == CardType.CardClass.ACTION && card.Equals(_cardToSelect)) {
                     return card;
@@ -26,11 +26,11 @@ namespace KingdomGame {
 
         public object Clone() {
             Card card = (_cardToSelect != null) ? _cardToSelect.Clone() as Card : null;
-            return new ScriptedCardSelectionStrategy(card);
+            return new ScriptedPlaySelectionStrategy(card);
         }
 
         public override bool Equals(object obj) {
-            ScriptedCardSelectionStrategy strategy = obj as ScriptedCardSelectionStrategy;
+            ScriptedPlaySelectionStrategy strategy = obj as ScriptedPlaySelectionStrategy;
             if(strategy == null) {
                 return false;
             }

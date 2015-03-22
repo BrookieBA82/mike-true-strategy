@@ -34,7 +34,7 @@ namespace KingdomGame {
             private Phase _phase;
             private int _turnNumber;
             private int _currentPlayerIndex;
-            private int? _selectedCardId;
+            private int? _selectedPlayId;
 
             private Stack<IAction> _pendingActionStack;
             private Stack<Pair<IAction, IList<int>>> _executedActionStack;
@@ -46,7 +46,7 @@ namespace KingdomGame {
             public GameState(Game game) {
                 _game = game;
                 _phase = Phase.START;
-                _selectedCardId = null;
+                _selectedPlayId = null;
                 _turnNumber = 1;
                 _pendingActionStack = new Stack<IAction>();
                 _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
@@ -61,8 +61,8 @@ namespace KingdomGame {
 
             public Phase Phase { get { return _phase; } }
 
-            public Card SelectedCard { 
-                get { return (_selectedCardId.HasValue) ? _game.GetCardById(_selectedCardId.Value) : null; }
+            public Card SelectedPlay { 
+                get { return (_selectedPlayId.HasValue) ? _game.GetCardById(_selectedPlayId.Value) : null; }
                 set {
                     if (value != null) {
                         if (Phase != Phase.PLAY) {
@@ -70,10 +70,10 @@ namespace KingdomGame {
                               "Cannot set a selected card outside of the play phase.");
                         }
 
-                        _selectedCardId = (int ?) value.Id;
+                        _selectedPlayId = (int ?) value.Id;
                     }
                     else {
-                        _selectedCardId = null;
+                        _selectedPlayId = null;
                     }
                 }
             }
@@ -118,10 +118,10 @@ namespace KingdomGame {
                         break;
 
                     case Phase.PLAY:
-                        _phase = (SelectedCard != null) ? Phase.ACTION : Phase.BUY;
-                        if (SelectedCard != null) {
-                            for (int actionIndex = SelectedCard.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
-                                AddPendingAction(SelectedCard.Type.Actions[actionIndex].Create(CurrentPlayer));
+                        _phase = (SelectedPlay != null) ? Phase.ACTION : Phase.BUY;
+                        if (SelectedPlay != null) {
+                            for (int actionIndex = SelectedPlay.Type.Actions.Count - 1; actionIndex >= 0; actionIndex--) {
+                                AddPendingAction(SelectedPlay.Type.Actions[actionIndex].Create(CurrentPlayer));
                             }
                         }
 
@@ -131,7 +131,7 @@ namespace KingdomGame {
                         if (!HasNextPendingAction) {
                             _phase = (CurrentPlayer.RemainingActions > 0) ? Phase.PLAY : Phase.BUY;
 
-                            SelectedCard = null;
+                            SelectedPlay = null;
                             _pendingActionStack = new Stack<IAction>();
                             _executedActionStack = new Stack<Pair<IAction, IList<int>>>();
                         }
@@ -222,7 +222,7 @@ namespace KingdomGame {
                 GameState state = new GameState(_game);
 
                 state._phase = _phase;
-                state._selectedCardId = _selectedCardId;
+                state._selectedPlayId = _selectedPlayId;
                 state._turnNumber = _turnNumber;
                 state._currentPlayerIndex = _currentPlayerIndex;
                 state._pendingActionStack = new Stack<IAction>(_pendingActionStack);
@@ -276,14 +276,14 @@ namespace KingdomGame {
                 }
 
                 return _phase == state._phase 
-                  && _selectedCardId == state._selectedCardId
+                  && _selectedPlayId == state._selectedPlayId
                   && _turnNumber == state._turnNumber
                   && _currentPlayerIndex == state._currentPlayerIndex;
             }
 
             public override int GetHashCode() {
                 int code = _phase.GetHashCode() 
-                  ^ _selectedCardId.GetHashCode() 
+                  ^ _selectedPlayId.GetHashCode() 
                   ^ _turnNumber.GetHashCode() 
                   ^ _currentPlayerIndex.GetHashCode();
 
@@ -580,20 +580,20 @@ namespace KingdomGame {
                     AssertPendingActionAvailable(false);
                     AssertRemainingActionsAvailable(true);
 
-                    State.SelectedCard = _state.CurrentPlayer.Strategy.CardSelectionStrategy.SelectCard(
+                    State.SelectedPlay = _state.CurrentPlayer.Strategy.PlaySelectionStrategy.SelectPlay(
                       this, 
                       new Deck(State.CurrentPlayer.Hand)
                     );
 
-                    if (State.SelectedCard != null) {               
-                        State.CurrentPlayer.PlayCard(State.SelectedCard);
+                    if (State.SelectedPlay != null) {               
+                        State.CurrentPlayer.PlayCard(State.SelectedPlay);
                     } 
                     else {
                         // If no card is selected, skip all remaining actions.
                         State.CurrentPlayer.RemainingActions = 0;
                     }
 
-                    Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedCard);
+                    Logger.Instance.RecordPlay(this, State.CurrentPlayer, State.SelectedPlay);
 
                     break;
 
@@ -607,7 +607,7 @@ namespace KingdomGame {
                     Player targetSelector = GetPlayerById(action.TargetSelectorId.Value);
                     IList<ITargetable> targets = targetSelector.Strategy.TargetSelectionStrategy.SelectTargets(
                         this, 
-                        State.SelectedCard, 
+                        State.SelectedPlay, 
                         action
                     );
 
@@ -617,7 +617,7 @@ namespace KingdomGame {
 
                     action.Apply(targets, this);
 
-                    Logger.Instance.RecordAction(this, State.CurrentPlayer, State.SelectedCard, action, targets);
+                    Logger.Instance.RecordAction(this, State.CurrentPlayer, State.SelectedPlay, action, targets);
 
                     break;
 
@@ -890,7 +890,7 @@ namespace KingdomGame {
               "Game should {0} start the {1} phase with a card selected.",
               shouldCardBeSelected ? "always" : "never",
               State.Phase.ToString()); 
-            Debug.Assert(((State.SelectedCard != null) == shouldCardBeSelected), assertMessage);
+            Debug.Assert(((State.SelectedPlay != null) == shouldCardBeSelected), assertMessage);
         }
 
         private void AssertPendingActionAvailable(bool shouldPendingActionBeAvailable) {

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public interface ICardSelectionStrategy : ICloneable {
+    public interface IPlaySelectionStrategy : ICloneable {
 
-        Card SelectCard(Game game, Deck currentHand);
+        Card SelectPlay(Game game, Deck currentHand);
 
     }
 }

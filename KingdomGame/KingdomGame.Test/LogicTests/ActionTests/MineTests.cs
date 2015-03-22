@@ -44,8 +44,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;
@@ -129,8 +129,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;
@@ -214,8 +214,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             // Attempt to trash as the first action (no valid card):
@@ -286,8 +286,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             // Attempt to trash a non-valid card the first action:
@@ -366,8 +366,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             // Attempt to trash multiple the first action:
@@ -446,8 +446,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             // Attempt to trash duplicate cards the first action:
@@ -533,8 +533,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             // Attempt to trash a card from the deck as the first action:
@@ -613,8 +613,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;
@@ -699,8 +699,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;
@@ -791,8 +791,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;
@@ -872,8 +872,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(mineCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(mineCard);
             game.PlayStep();
 
             Card copperCard = null;

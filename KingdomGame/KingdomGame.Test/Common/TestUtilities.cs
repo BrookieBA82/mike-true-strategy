@@ -13,7 +13,7 @@ namespace KingdomGame.Test
         public static Card SetUpCardToPlay(Game game, CardType type) {
             foreach (Card card in game.State.CurrentPlayer.Hand) {
                 if (card.Type.Equals(type)) {
-                    game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(card);
+                    game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(card);
                     return card;
                 }
             }
@@ -55,7 +55,7 @@ namespace KingdomGame.Test
             }
 
             if (phase != Game.Phase.ACTION) {
-                game.State.SelectedCard = null;
+                game.State.SelectedPlay = null;
             }
 
             if (game.State.CurrentPlayer.RemainingActions > 0

@@ -45,8 +45,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -131,8 +131,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             Card estateCardToTrash = null;
@@ -216,8 +216,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             // Attempt to trash as the first action (no valid card):
@@ -284,8 +284,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             // Attempt to trash multiple the first action:
@@ -359,8 +359,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             // Attempt to trash duplicate cards as the first action:
@@ -439,8 +439,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             // Attempt to trash a card from the deck as the first action:
@@ -515,8 +515,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -597,8 +597,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -681,8 +681,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(remodelCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(remodelCard);
             game.PlayStep();
 
             Card estateCard = null;

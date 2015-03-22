@@ -71,9 +71,9 @@ namespace KingdomGame.Driver {
         private static void SetupHumanPlayer(Game game, Player player) {
             _humanPlayerIds.Add(player.Id);
 
-            PromptedCardSelectionStrategy cardSelectionStrategy = new PromptedCardSelectionStrategy();
-            cardSelectionStrategy.CardSelectionPromptRequired += new CardSelectionPromptEventHandler(ExecuteHumanPlayerPlay);
-            player.Strategy.CardSelectionStrategy = cardSelectionStrategy;
+            PromptedPlaySelectionStrategy playSelectionStrategy = new PromptedPlaySelectionStrategy();
+            playSelectionStrategy.PlaySelectionPromptRequired += new PlaySelectionPromptEventHandler(ExecuteHumanPlayerPlay);
+            player.Strategy.PlaySelectionStrategy = playSelectionStrategy;
 
             PromptedDiscardingStrategy discardStrategy = new PromptedDiscardingStrategy();
             discardStrategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
@@ -130,12 +130,12 @@ namespace KingdomGame.Driver {
 
                     case Game.Phase.ACTION:
 
-                        if (game.State.SelectedCard != null) {
+                        if (game.State.SelectedPlay != null) {
 
                             while(game.State.HasNextPendingAction) {
                                 IAction actionToPlay = game.State.NextPendingAction;
                                 IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
-                                  game.State.SelectedCard, 
+                                  game.State.SelectedPlay, 
                                   game
                                 );
 
@@ -151,7 +151,7 @@ namespace KingdomGame.Driver {
                                 else if (validTargets.Count > 0) {
                                     ExecuteHumanPlayerAction(
                                       game, 
-                                      game.State.SelectedCard,
+                                      game.State.SelectedPlay,
                                       actionToPlay, 
                                       validTargets
                                     );
@@ -194,9 +194,9 @@ namespace KingdomGame.Driver {
             Console.WriteLine("\n");
         }
 
-        private static void ExecuteHumanPlayerPlay(object sender, CardSelectionPromptEventArgs args) {
+        private static void ExecuteHumanPlayerPlay(object sender, PlaySelectionPromptEventArgs args) {
             if (!IsPlayerHuman(args.Game.State.CurrentPlayer)) {
-                args.SelectedCard = null;
+                args.SelectedPlay = null;
                 return;
             }
 
@@ -213,14 +213,14 @@ namespace KingdomGame.Driver {
                 }
             }
 
-            Card selectedCardToPlay;
+            Card selectedPlay;
             if (optionsByIndex.Count == 1) {
                 Console.WriteLine("Skipping action selection because no action cards are in the hand\n");
-                selectedCardToPlay = null;
+                selectedPlay = null;
             }
             else {
                 string promptMessage = "Please select a card to play from the following menu:";
-                selectedCardToPlay = optionsByIndex[PromptUserForOptionInput(
+                selectedPlay = optionsByIndex[PromptUserForOptionInput(
                   args.Game, 
                   args.Game.State.CurrentPlayer, 
                   promptMessage, 
@@ -228,7 +228,7 @@ namespace KingdomGame.Driver {
                 )];
             }
 
-            args.SelectedCard = selectedCardToPlay;
+            args.SelectedPlay = selectedPlay;
         }
 
         private static void ExecuteHumanPlayerAction(

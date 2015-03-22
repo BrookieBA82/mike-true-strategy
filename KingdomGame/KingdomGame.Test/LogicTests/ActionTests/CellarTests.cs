@@ -51,8 +51,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -138,8 +138,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
@@ -228,8 +228,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
@@ -327,8 +327,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             // Discarding no cards:
@@ -404,8 +404,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             IList<Card> estateCards = new List<Card>();
@@ -491,8 +491,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -587,8 +587,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = null;
@@ -684,8 +684,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
@@ -761,8 +761,8 @@ namespace KingdomGame.Test
                 }
             }
 
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = 
-              new ScriptedCardSelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
+              new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = null;

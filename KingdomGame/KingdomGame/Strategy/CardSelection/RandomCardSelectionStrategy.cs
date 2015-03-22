@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public class RandomCardSelectionStrategy : ICardSelectionStrategy {
+    public class RandomPlaySelectionStrategy : IPlaySelectionStrategy {
 
-        public Card SelectCard(Game game, Deck currentHand) {
+        public Card SelectPlay(Game game, Deck currentHand) {
             Deck randomizedHand = currentHand.Clone() as Deck;
             randomizedHand.Shuffle();
 
@@ -22,7 +22,7 @@ namespace KingdomGame {
         }
 
         public object Clone() {
-            return new RandomCardSelectionStrategy();
+            return new RandomPlaySelectionStrategy();
         }
 
         public override bool Equals(object obj) {
