@@ -580,7 +580,6 @@ namespace KingdomGame {
                     AssertPendingActionAvailable(false);
                     AssertRemainingActionsAvailable(true);
 
-                    // Refactor - (MT): Obtain these plays using a prompted strategy for human players.
                     State.SelectedCard = _state.CurrentPlayer.Strategy.CardSelectionStrategy.SelectCard(
                       this, 
                       new Deck(State.CurrentPlayer.Hand)

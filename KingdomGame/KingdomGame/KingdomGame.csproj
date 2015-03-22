@@ -65,6 +65,7 @@
     <Compile Include="Strategy\Buying\RandomBuyingStrategy.cs" />
     <Compile Include="Strategy\Buying\ScriptedBuyingStrategy.cs" />
     <Compile Include="Strategy\CardSelection\ICardSelectionStrategy.cs" />
+    <Compile Include="Strategy\CardSelection\PromptedCardSelectionStrategy.cs" />
     <Compile Include="Strategy\CardSelection\RandomCardSelectionStrategy.cs" />
     <Compile Include="Strategy\CardSelection\ScriptedCardSelectionStrategy.cs" />
     <Compile Include="Strategy\Discarding\IDiscardingStrategy.cs" />

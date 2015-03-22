@@ -71,9 +71,13 @@ namespace KingdomGame.Driver {
         private static void SetupHumanPlayer(Game game, Player player) {
             _humanPlayerIds.Add(player.Id);
 
-            PromptedDiscardingStrategy strategy = new PromptedDiscardingStrategy();
-            strategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
-            player.Strategy.DiscardingStrategy = strategy;
+            PromptedCardSelectionStrategy cardSelectionStrategy = new PromptedCardSelectionStrategy();
+            cardSelectionStrategy.CardSelectionPromptRequired += new CardSelectionPromptEventHandler(ExecuteHumanPlayerPlay);
+            player.Strategy.CardSelectionStrategy = cardSelectionStrategy;
+
+            PromptedDiscardingStrategy discardStrategy = new PromptedDiscardingStrategy();
+            discardStrategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
+            player.Strategy.DiscardingStrategy = discardStrategy;
         }
 
         private static bool IsPlayerHuman(Player player) {
@@ -121,7 +125,7 @@ namespace KingdomGame.Driver {
 
                 switch (game.State.Phase) {
                     case Game.Phase.PLAY:
-                        ExecuteHumanPlayerPlay(game);
+                        game.PlayPhase();
                         break;
 
                     case Game.Phase.ACTION:
@@ -190,12 +194,17 @@ namespace KingdomGame.Driver {
             Console.WriteLine("\n");
         }
 
-        private static void ExecuteHumanPlayerPlay(Game game) {
+        private static void ExecuteHumanPlayerPlay(object sender, CardSelectionPromptEventArgs args) {
+            if (!IsPlayerHuman(args.Game.State.CurrentPlayer)) {
+                args.SelectedCard = null;
+                return;
+            }
+
             int optionCounter = 2;
             IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>() {{"1", "<no action>"}};
             IDictionary<string, Card> optionsByIndex = new Dictionary<string, Card>() { { "1", null } };
 
-            foreach (Card card in game.State.CurrentPlayer.Hand) {
+            foreach (Card card in args.Game.State.CurrentPlayer.Hand) {
                 if (card.Type.Class == CardType.CardClass.ACTION) {
                     string optionPrompt = optionCounter.ToString();
                     optionsByIndex[optionPrompt] = card;
@@ -212,17 +221,14 @@ namespace KingdomGame.Driver {
             else {
                 string promptMessage = "Please select a card to play from the following menu:";
                 selectedCardToPlay = optionsByIndex[PromptUserForOptionInput(
-                  game, 
-                  game.State.CurrentPlayer, 
+                  args.Game, 
+                  args.Game.State.CurrentPlayer, 
                   promptMessage, 
                   optionPromptsByIndex
                 )];
             }
 
-            ICardSelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.CardSelectionStrategy;
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = new ScriptedCardSelectionStrategy(selectedCardToPlay);
-            game.PlayPhase();
-            game.State.CurrentPlayer.Strategy.CardSelectionStrategy = originalStrategy;
+            args.SelectedCard = selectedCardToPlay;
         }
 
         private static void ExecuteHumanPlayerAction(
