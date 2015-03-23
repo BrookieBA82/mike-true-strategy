@@ -75,6 +75,10 @@ namespace KingdomGame.Driver {
             playSelectionStrategy.PlaySelectionPromptRequired += new PlaySelectionPromptEventHandler(ExecuteHumanPlayerPlay);
             player.Strategy.PlaySelectionStrategy = playSelectionStrategy;
 
+            PromptedTargetSelectionStrategy targetSelectionStrategy = new PromptedTargetSelectionStrategy();
+            targetSelectionStrategy.TargetSelectionPromptRequired += new TargetSelectionPromptEventHandler(ExecuteHumanPlayerAction);
+            player.Strategy.TargetSelectionStrategy = targetSelectionStrategy;
+
             PromptedDiscardingStrategy discardStrategy = new PromptedDiscardingStrategy();
             discardStrategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
             player.Strategy.DiscardingStrategy = discardStrategy;
@@ -134,10 +138,6 @@ namespace KingdomGame.Driver {
 
                             while(game.State.HasNextPendingAction) {
                                 IAction actionToPlay = game.State.NextPendingAction;
-                                IList<ITargetable> validTargets = actionToPlay.GetAllValidTargets(
-                                  game.State.SelectedPlay, 
-                                  game
-                                );
 
                                 if (
                                   actionToPlay.TargetSelectorId.HasValue 
@@ -148,16 +148,7 @@ namespace KingdomGame.Driver {
                                     PrintAction(target);
                                     Console.WriteLine();
                                 }
-                                else if (validTargets.Count > 0) {
-                                    ExecuteHumanPlayerAction(
-                                      game, 
-                                      game.State.SelectedPlay,
-                                      actionToPlay, 
-                                      validTargets
-                                    );
-                                }
                                 else {
-                                    // The action can potentially just fizzle if there are no valid targets for it.
                                     game.PlayStep();
                                 }
                             }
@@ -231,13 +222,11 @@ namespace KingdomGame.Driver {
             args.SelectedPlay = selectedPlay;
         }
 
-        private static void ExecuteHumanPlayerAction(
-          Game game, 
-          Card cardToPlay,
-          IAction action, 
-          IList<ITargetable> validTargets
-        ) {
-            if (action.MinTargets <= validTargets.Count) {
+        private static void ExecuteHumanPlayerAction(Object sender, TargetSelectionPromptEventArgs args) {
+
+            IList<ITargetable> validTargets = args.CurrentAction.GetAllValidTargets(args.Game.State.SelectedPlay, args.Game);
+
+            if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
                 Console.WriteLine("Valid target summary list:");
                 foreach (ITargetable target in validTargets) {
@@ -248,11 +237,11 @@ namespace KingdomGame.Driver {
                 Console.WriteLine();
 
                 List<ITargetable> selectedTargets;
-                if (action.MinTargets == validTargets.Count) {
+                if (args.CurrentAction.MinTargets == validTargets.Count) {
                     selectedTargets = new List<ITargetable>(validTargets);
                     Console.WriteLine("Automatically selected targets because only one valid option was available\n");
                 }
-                else if (action.AllValidTargetsRequired) {
+                else if (args.CurrentAction.AllValidTargetsRequired) {
                     selectedTargets = new List<ITargetable>(validTargets);
                     Console.WriteLine("Automatically selected targets because all valid options are required\n");
                 }
@@ -262,14 +251,14 @@ namespace KingdomGame.Driver {
                     do {
 
                         int selectedTargetCount = PromptUserForNumericInput(
-                          game,
-                          game.State.CurrentPlayer,
+                          args.Game,
+                          args.Game.State.CurrentPlayer,
                           string.Format(
                             "Please enter the number of targets you wish to select for {0}:", 
-                            action.ActionDescription
+                            args.CurrentAction.ActionDescription
                           ),
-                          action.MinTargets,
-                          Math.Min(action.MaxTargets, validTargets.Count)
+                          args.CurrentAction.MinTargets,
+                          Math.Min(args.CurrentAction.MaxTargets, validTargets.Count)
                         );
 
                         selectedTargets = new List<ITargetable>();
@@ -287,8 +276,8 @@ namespace KingdomGame.Driver {
                             }
 
                             ITargetable selectedTarget = optionsByIndex[PromptUserForOptionInput(
-                              game,
-                              game.State.CurrentPlayer,
+                              args.Game,
+                              args.Game.State.CurrentPlayer,
                               string.Format(
                                 "Please select target #{0} (of {1}):", 
                                 targetNumber, 
@@ -301,37 +290,31 @@ namespace KingdomGame.Driver {
                             selectedTargets.Add(selectedTarget);
                         }
 
-                        validTargetSpecified = action.IsTargetValid(
+                        validTargetSpecified = args.CurrentAction.IsTargetValid(
                           selectedTargets, 
-                          cardToPlay, 
-                          game
+                          args.CurrentPlay, 
+                          args.Game
                         );
 
                         if(!validTargetSpecified) {
                             Console.WriteLine(string.Format(
                               "Invalid target selection for {0}, please try again:\n", 
-                              action.ActionDescription)
+                              args.CurrentAction.ActionDescription)
                             );
                         }
 
                     } while (!validTargetSpecified);
                 }
 
-                ITargetSelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy;
-                game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
-                  = new ScriptedTargetSelectionStrategy(new List<ITargetable>(selectedTargets));
-
-                PrintActionTargets(action, selectedTargets);
-                game.PlayStep();
-                game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = originalStrategy;
+                args.SelectedTargets = selectedTargets;
             }
             else {
                 Console.WriteLine(string.Format(
                   "No valid targets available for {0}, skipping action...\n", 
-                  action.ActionDescription
+                  args.CurrentAction.ActionDescription
                 ));
 
-                game.PlayStep();
+                args.SelectedTargets = new List<ITargetable>();
             }
         }
 
