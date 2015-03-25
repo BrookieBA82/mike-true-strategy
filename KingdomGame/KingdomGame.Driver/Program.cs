@@ -256,16 +256,23 @@ namespace KingdomGame.Driver {
                     bool validTargetSpecified = false;
                     do {
 
-                        int selectedTargetCount = PromptUserForNumericInput(
-                          args.Game,
-                          args.Game.State.CurrentPlayer,
-                          string.Format(
-                            "Please enter the number of targets you wish to select for {0}:", 
-                            args.CurrentAction.ActionDescription
-                          ),
-                          args.CurrentAction.MinTargets,
-                          Math.Min(args.CurrentAction.MaxTargets, validTargets.Count)
-                        );
+                        int selectedTargetCount;
+                        int maxValidTargets = Math.Min(args.CurrentAction.MaxTargets, validTargets.Count);
+                        if (args.CurrentAction.MinTargets < maxValidTargets) {
+                            selectedTargetCount = PromptUserForNumericInput(
+                              args.Game,
+                              args.Game.State.CurrentPlayer,
+                              string.Format(
+                                "Please enter the number of targets you wish to select for {0}:", 
+                                args.CurrentAction.ActionDescription
+                              ),
+                              args.CurrentAction.MinTargets,
+                              Math.Min(args.CurrentAction.MaxTargets, validTargets.Count)
+                            );
+                        }
+                        else {
+                            selectedTargetCount = maxValidTargets;
+                        }
 
                         selectedTargets = new List<ITargetable>();
                         List<ITargetable> remainingTargets = new List<ITargetable>(validTargets);
