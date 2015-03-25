@@ -79,6 +79,10 @@ namespace KingdomGame.Driver {
             targetSelectionStrategy.TargetSelectionPromptRequired += new TargetSelectionPromptEventHandler(ExecuteHumanPlayerAction);
             player.Strategy.TargetSelectionStrategy = targetSelectionStrategy;
 
+            PromptedBuySelectionStrategy buySelectionStrategy = new PromptedBuySelectionStrategy();
+            buySelectionStrategy.BuySelectionPromptRequired += new BuySelectionPromptEventHandler(ExecuteHumanPlayerBuy);
+            player.Strategy.BuySelectionStrategy = buySelectionStrategy;
+
             PromptedDiscardingStrategy discardStrategy = new PromptedDiscardingStrategy();
             discardStrategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
             player.Strategy.DiscardingStrategy = discardStrategy;
@@ -161,7 +165,9 @@ namespace KingdomGame.Driver {
                         Program.PrintHand(game.State.CurrentPlayer.Hand);
                         Console.WriteLine();
 
-                        ExecuteHumanPlayerBuy(game);
+                        while (game.State.Phase == Game.Phase.BUY) {
+                            game.PlayStep();
+                        }
 
                         GameHistory.Buy lastBuy = Logger.Instance.GetLastBuy(game);
                         PrintBuys(lastBuy);
@@ -318,55 +324,47 @@ namespace KingdomGame.Driver {
             }
         }
 
-        private static void ExecuteHumanPlayerBuy(Game game) {
-            while (game.State.Phase == Game.Phase.BUY) {
-                int optionCounter = 2;
-                IDictionary<string, string> optionPromptsByIndex = 
-                  new Dictionary<string, string>() { { "1", "<no buy>" } };
-                IDictionary<string, CardType> optionsByIndex = 
-                  new Dictionary<string, CardType>() { { "1", null } };
+        private static void ExecuteHumanPlayerBuy(object sender, BuySelectionPromptEventArgs args) {
+            int optionCounter = 2;
+            IDictionary<string, string> optionPromptsByIndex = 
+                new Dictionary<string, string>() { { "1", "<no buy>" } };
+            IDictionary<string, CardType> optionsByIndex = 
+                new Dictionary<string, CardType>() { { "1", null } };
 
-                IList<CardType> buyOptions = GetValidBuyOptions(game);
-                foreach (CardType buyOption in buyOptions) {
-                    string optionPrompt = optionCounter.ToString();
-                    optionsByIndex[optionPrompt] = buyOption;
-                    optionPromptsByIndex[optionPrompt] = 
-                      string.Format("{0} ({1} cost, {2} remaining)",
-                      buyOption.Name,
-                      buyOption.Cost,
-                      game.GetCardsByType(buyOption).Count
-                    );
-                    optionCounter++;
-                }
-
-                CardType selectedBuyOption;
-                if (optionsByIndex.Count == 1) {
-                    Console.WriteLine("Skipping buy selection because there are no valid options for buying\n");
-                    selectedBuyOption = null;
-                }
-                else {
-                    string promptMessage = string.Format(
-                      "Please select a buy option from the following menu ({0} money, {1} buy(s) remain):", 
-                      game.State.CurrentPlayer.RemainingMoney, 
-                      game.State.CurrentPlayer.RemainingBuys
-                    );
-
-                    selectedBuyOption = optionsByIndex[PromptUserForOptionInput(
-                      game, 
-                      game.State.CurrentPlayer, 
-                      promptMessage, 
-                      optionPromptsByIndex
-                    )];
-                }
-
-                IBuySelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.BuyingStrategy;
-                game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuySelectionStrategy(
-                  (selectedBuyOption != null)
-                    ? new List<CardType>() {selectedBuyOption} 
-                    : new List<CardType>());
-                game.PlayStep();
-                game.State.CurrentPlayer.Strategy.BuyingStrategy = originalStrategy;
+            IList<CardType> buyOptions = GetValidBuyOptions(args.Game);
+            foreach (CardType buyOption in buyOptions) {
+                string optionPrompt = optionCounter.ToString();
+                optionsByIndex[optionPrompt] = buyOption;
+                optionPromptsByIndex[optionPrompt] = 
+                    string.Format("{0} ({1} cost, {2} remaining)",
+                    buyOption.Name,
+                    buyOption.Cost,
+                    args.Game.GetCardsByType(buyOption).Count
+                );
+                optionCounter++;
             }
+
+            CardType selectedBuyOption;
+            if (optionsByIndex.Count == 1) {
+                Console.WriteLine("Skipping buy selection because there are no valid options for buying\n");
+                selectedBuyOption = null;
+            }
+            else {
+                string promptMessage = string.Format(
+                    "Please select a buy option from the following menu ({0} money, {1} buy(s) remain):", 
+                    args.Game.State.CurrentPlayer.RemainingMoney, 
+                    args.Game.State.CurrentPlayer.RemainingBuys
+                );
+
+                selectedBuyOption = optionsByIndex[PromptUserForOptionInput(
+                    args.Game, 
+                    args.Game.State.CurrentPlayer, 
+                    promptMessage, 
+                    optionPromptsByIndex
+                )];
+            }
+
+            args.SelectedBuy = selectedBuyOption;
         }
 
         private static void ExecuteHumanPlayerDiscard(object sender, ForcedDiscardPromptEventArgs args) {

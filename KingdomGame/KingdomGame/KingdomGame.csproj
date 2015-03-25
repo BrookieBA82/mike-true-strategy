@@ -61,9 +61,10 @@
     <Compile Include="ITargetable.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strategy\Buying\IBuyingStrategy.cs" />
-    <Compile Include="Strategy\Buying\RandomBuyingStrategy.cs" />
-    <Compile Include="Strategy\Buying\ScriptedBuyingStrategy.cs" />
+    <Compile Include="Strategy\BuySelection\IBuySelectionStrategy.cs" />
+    <Compile Include="Strategy\BuySelection\PromptedBuySelectionStrategy.cs" />
+    <Compile Include="Strategy\BuySelection\RandomBuySelectionStrategy.cs" />
+    <Compile Include="Strategy\BuySelection\ScriptedBuySelectionStrategy.cs" />
     <Compile Include="Strategy\PlaySelection\IPlaySelectionStrategy.cs" />
     <Compile Include="Strategy\PlaySelection\PromptedPlaySelectionStrategy.cs" />
     <Compile Include="Strategy\PlaySelection\RandomPlaySelectionStrategy.cs" />

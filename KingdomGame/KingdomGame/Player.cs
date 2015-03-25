@@ -18,7 +18,7 @@ namespace KingdomGame {
 
             public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
 
-            public IBuySelectionStrategy BuyingStrategy { get; set; }
+            public IBuySelectionStrategy BuySelectionStrategy { get; set; }
 
             public IDiscardingStrategy DiscardingStrategy { get; set; }
 
@@ -29,10 +29,14 @@ namespace KingdomGame {
             public object Clone() {
                 PlayerStrategy strategy = new PlayerStrategy();
 
-                strategy.PlaySelectionStrategy = PlaySelectionStrategy.Clone() as IPlaySelectionStrategy;
-                strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
-                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuySelectionStrategy;
-                strategy.DiscardingStrategy = DiscardingStrategy.Clone() as IDiscardingStrategy;
+                strategy.PlaySelectionStrategy = 
+                    (PlaySelectionStrategy != null) ? PlaySelectionStrategy.Clone() as IPlaySelectionStrategy : null;
+                strategy.TargetSelectionStrategy = 
+                    (TargetSelectionStrategy != null) ? TargetSelectionStrategy.Clone() as ITargetSelectionStrategy : null;
+                strategy.BuySelectionStrategy = 
+                    (BuySelectionStrategy != null) ? BuySelectionStrategy.Clone() as IBuySelectionStrategy : null;
+                strategy.DiscardingStrategy = 
+                    (DiscardingStrategy != null) ? DiscardingStrategy.Clone() as IDiscardingStrategy : null;
                 
                 return strategy;
             }
@@ -45,14 +49,14 @@ namespace KingdomGame {
 
                 return PlaySelectionStrategy.Equals(strategy.PlaySelectionStrategy) 
                   && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
-                  && BuyingStrategy.Equals(strategy.BuyingStrategy)
+                  && BuySelectionStrategy.Equals(strategy.BuySelectionStrategy)
                   && DiscardingStrategy.Equals(strategy.DiscardingStrategy);
             }
 
             public override int GetHashCode() {
                 int code = PlaySelectionStrategy.GetHashCode() 
                   ^ TargetSelectionStrategy.GetHashCode() 
-                  ^ BuyingStrategy.GetHashCode()
+                  ^ BuySelectionStrategy.GetHashCode()
                   ^ DiscardingStrategy.GetHashCode();
 
                 return code;
@@ -115,7 +119,7 @@ namespace KingdomGame {
             // Todo - (MT): Strategy point #2 - select best (or at least random) target
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)
-            _strategy.BuyingStrategy = new RandomBuySelectionStrategy();
+            _strategy.BuySelectionStrategy = new RandomBuySelectionStrategy();
             // Todo - (MT): Strategy point #4 - select best discard option (not just random)
             _strategy.DiscardingStrategy = new RandomDiscardingStrategy();
         }
