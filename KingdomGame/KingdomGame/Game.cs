@@ -628,8 +628,7 @@ namespace KingdomGame {
                     AssertRemainingBuysAvailable(true);
 
                     // Refactor - (MT): Obtain these buys using a prompted strategy for human players.
-                    IList<IList<CardType>> buyingOptions = GetAllValidBuyOptions();
-                    CardType typeToBuy = _state.CurrentPlayer.Strategy.BuyingStrategy.SelectBuys(this, buyingOptions);
+                    CardType typeToBuy = _state.CurrentPlayer.Strategy.BuyingStrategy.SelectBuy(this);
 
                     Debug.Assert(
                       (typeToBuy == null || GetCardsByType(typeToBuy).Count > 0),

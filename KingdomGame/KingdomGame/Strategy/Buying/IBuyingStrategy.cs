@@ -8,7 +8,7 @@ namespace KingdomGame {
 
     public interface IBuyingStrategy : ICloneable {
 
-        CardType SelectBuys(Game game, IList<IList<CardType>> buyingOptions);
+        CardType SelectBuy(Game game);
 
     }
 }

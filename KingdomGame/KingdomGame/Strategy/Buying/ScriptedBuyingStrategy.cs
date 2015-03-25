@@ -14,7 +14,8 @@ namespace KingdomGame {
             _optionToSelect = optionToSelect;
         }
 
-        public CardType SelectBuys(Game game, IList<IList<CardType>> buyingOptions) {
+        public CardType SelectBuy(Game game) {
+            IList<IList<CardType>> buyingOptions = game.GetAllValidBuyOptions();
             foreach (IList<CardType> buyingOption in buyingOptions) {
                 if (buyingOption.Count != _optionToSelect.Count) {
                     continue;
