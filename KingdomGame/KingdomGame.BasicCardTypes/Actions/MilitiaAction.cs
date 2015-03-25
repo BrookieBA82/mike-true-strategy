@@ -22,6 +22,8 @@ namespace KingdomGame.BasicCardTypes {
           IList<Player> players, 
           Game game
         ) {
+            // Refactor - (MT): This is incorrect with the selector (shouldn't be the player since they can target someone else to discard).
+            // * The solution should be addressed by converting forced discard into an action set of choices to discard.
             foreach (Player player in players) {
                 IAction forcedDiscardAction = ActionRegistry.Instance.GetActionByType(typeof(MilitiaForcedDiscardAction)).Create(player);
                 game.State.AddPendingAction(forcedDiscardAction);
@@ -46,6 +48,7 @@ namespace KingdomGame.BasicCardTypes {
         }
     }
 
+    // Refactor - (MT): Make this a choice of actions which the selector (forced discarder) must fix:
     public class MilitiaForcedDiscardAction : BasePlayerTargetAction {
 
         private MilitiaForcedDiscardAction() : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
