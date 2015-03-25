@@ -359,8 +359,8 @@ namespace KingdomGame.Driver {
                     )];
                 }
 
-                IBuyingStrategy originalStrategy = game.State.CurrentPlayer.Strategy.BuyingStrategy;
-                game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(
+                IBuySelectionStrategy originalStrategy = game.State.CurrentPlayer.Strategy.BuyingStrategy;
+                game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuySelectionStrategy(
                   (selectedBuyOption != null)
                     ? new List<CardType>() {selectedBuyOption} 
                     : new List<CardType>());

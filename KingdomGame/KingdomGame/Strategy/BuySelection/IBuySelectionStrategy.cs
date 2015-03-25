@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public interface IBuyingStrategy : ICloneable {
+    public interface IBuySelectionStrategy : ICloneable {
 
         CardType SelectBuy(Game game);
 

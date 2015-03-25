@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public class RandomBuyingStrategy : IBuyingStrategy {
+    public class RandomBuySelectionStrategy : IBuySelectionStrategy {
 
         public CardType SelectBuy(Game game) {
             IList<IList<CardType>> buyingOptions = game.GetAllValidBuyOptions();
@@ -19,7 +19,7 @@ namespace KingdomGame {
         }
 
         public object Clone() {
-            return new RandomBuyingStrategy();
+            return new RandomBuySelectionStrategy();
         }
         
         public override bool Equals(object obj) {

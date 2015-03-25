@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace KingdomGame {
 
-    public class ScriptedBuyingStrategy : IBuyingStrategy {
+    public class ScriptedBuySelectionStrategy : IBuySelectionStrategy {
 
         private IList<CardType> _optionToSelect;
 
-        public ScriptedBuyingStrategy(IList<CardType> optionToSelect) {
+        public ScriptedBuySelectionStrategy(IList<CardType> optionToSelect) {
             _optionToSelect = optionToSelect;
         }
 
@@ -44,11 +44,11 @@ namespace KingdomGame {
         }
 
         public object Clone() {
-            return new ScriptedBuyingStrategy(new List<CardType>(_optionToSelect));
+            return new ScriptedBuySelectionStrategy(new List<CardType>(_optionToSelect));
         }
 
         public override bool Equals(object obj) {
-            ScriptedBuyingStrategy strategy = obj as ScriptedBuyingStrategy;
+            ScriptedBuySelectionStrategy strategy = obj as ScriptedBuySelectionStrategy;
             if (strategy == null) {
                 return false;
             }

@@ -245,17 +245,17 @@ namespace KingdomGame.Test
         [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
         public void TestBuyingStrategyChangeCloneIndependence() {
             Game game = TestSetup.GenerateSimpleGame(2);
-            game.State.CurrentPlayer.Strategy.BuyingStrategy = new RandomBuyingStrategy();
+            game.State.CurrentPlayer.Strategy.BuyingStrategy = new RandomBuySelectionStrategy();
             Game clone = game.Clone() as Game;
             List<CardType> gameOption = new List<CardType>();
             gameOption.Add(TestSetup.CardTypeCopper);
-            game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(gameOption);
+            game.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuySelectionStrategy(gameOption);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its buying strategy.");
 
             List<CardType> cloneOption = new List<CardType>();
             cloneOption.Add(TestSetup.CardTypeEstate);
-            clone.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuyingStrategy(cloneOption);
+            clone.State.CurrentPlayer.Strategy.BuyingStrategy = new ScriptedBuySelectionStrategy(cloneOption);
 
             Assert.AreNotEqual(game, clone, "Game should not match its clone after changing its buying strategy.");
         }

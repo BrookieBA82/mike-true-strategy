@@ -18,7 +18,7 @@ namespace KingdomGame {
 
             public ITargetSelectionStrategy TargetSelectionStrategy { get; set; }
 
-            public IBuyingStrategy BuyingStrategy { get; set; }
+            public IBuySelectionStrategy BuyingStrategy { get; set; }
 
             public IDiscardingStrategy DiscardingStrategy { get; set; }
 
@@ -31,7 +31,7 @@ namespace KingdomGame {
 
                 strategy.PlaySelectionStrategy = PlaySelectionStrategy.Clone() as IPlaySelectionStrategy;
                 strategy.TargetSelectionStrategy = TargetSelectionStrategy.Clone() as ITargetSelectionStrategy;
-                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuyingStrategy;
+                strategy.BuyingStrategy = BuyingStrategy.Clone() as IBuySelectionStrategy;
                 strategy.DiscardingStrategy = DiscardingStrategy.Clone() as IDiscardingStrategy;
                 
                 return strategy;
@@ -115,7 +115,7 @@ namespace KingdomGame {
             // Todo - (MT): Strategy point #2 - select best (or at least random) target
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)
-            _strategy.BuyingStrategy = new RandomBuyingStrategy();
+            _strategy.BuyingStrategy = new RandomBuySelectionStrategy();
             // Todo - (MT): Strategy point #4 - select best discard option (not just random)
             _strategy.DiscardingStrategy = new RandomDiscardingStrategy();
         }
