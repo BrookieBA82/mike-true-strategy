@@ -32,7 +32,7 @@ namespace KingdomGame {
         }
 
         public object Clone() {
-            return new PromptedPlaySelectionStrategy();
+            return new PromptedBuySelectionStrategy();
         }
 
         public override bool Equals(object obj) {
