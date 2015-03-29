@@ -90,23 +90,6 @@ namespace KingdomGame {
             }
         }
 
-        public void UpdateLastAction(Game game, IList<ITargetable> targets) {
-            if (_historyByGame.ContainsKey(game.Id)) {
-                GameHistory history = _historyByGame[game.Id];
-                if (history.TurnsByNumber.Count > 0) {
-                    int maxTurn = history.TurnsByNumber.Keys.Max();
-                    GameHistory.Turn lastTurn = history.TurnsByNumber[maxTurn];
-                    if (lastTurn.Plays.Count > 0) {
-                        GameHistory.Play lastPlay = lastTurn.Plays[lastTurn.Plays.Count - 1];
-                        if (lastPlay.Actions.Count > 0) {
-                            GameHistory.Action action = lastPlay.Actions[lastPlay.Actions.Count - 1];
-                            action.SetTargets((targets != null) ? new List<ITargetable>(targets) : new List<ITargetable>());
-                        }
-                    }
-                }
-            }
-        }
-
         public bool SaveHistory(Game game, string outputPath) {
             GameHistory history = GetHistory(game);
             if (history == null) {

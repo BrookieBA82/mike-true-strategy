@@ -20,8 +20,6 @@ namespace KingdomGame {
 
             public IBuySelectionStrategy BuySelectionStrategy { get; set; }
 
-            public IDiscardingStrategy DiscardingStrategy { get; set; }
-
             #endregion
 
             #region Public Methods
@@ -35,8 +33,6 @@ namespace KingdomGame {
                     (TargetSelectionStrategy != null) ? TargetSelectionStrategy.Clone() as ITargetSelectionStrategy : null;
                 strategy.BuySelectionStrategy = 
                     (BuySelectionStrategy != null) ? BuySelectionStrategy.Clone() as IBuySelectionStrategy : null;
-                strategy.DiscardingStrategy = 
-                    (DiscardingStrategy != null) ? DiscardingStrategy.Clone() as IDiscardingStrategy : null;
                 
                 return strategy;
             }
@@ -49,15 +45,13 @@ namespace KingdomGame {
 
                 return PlaySelectionStrategy.Equals(strategy.PlaySelectionStrategy) 
                   && TargetSelectionStrategy.Equals(strategy.TargetSelectionStrategy) 
-                  && BuySelectionStrategy.Equals(strategy.BuySelectionStrategy)
-                  && DiscardingStrategy.Equals(strategy.DiscardingStrategy);
+                  && BuySelectionStrategy.Equals(strategy.BuySelectionStrategy);
             }
 
             public override int GetHashCode() {
                 int code = PlaySelectionStrategy.GetHashCode() 
                   ^ TargetSelectionStrategy.GetHashCode() 
-                  ^ BuySelectionStrategy.GetHashCode()
-                  ^ DiscardingStrategy.GetHashCode();
+                  ^ BuySelectionStrategy.GetHashCode();
 
                 return code;
             }
@@ -120,8 +114,6 @@ namespace KingdomGame {
             _strategy.TargetSelectionStrategy = new RandomTargetSelectionStrategy();
             // Todo - (MT): Strategy point #3 - select best buy option (not just random)
             _strategy.BuySelectionStrategy = new RandomBuySelectionStrategy();
-            // Todo - (MT): Strategy point #4 - select best discard option (not just random)
-            _strategy.DiscardingStrategy = new RandomDiscardingStrategy();
         }
 
         public Player(string name) : this(Player.NextId++, name) {

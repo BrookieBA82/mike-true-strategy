@@ -69,11 +69,7 @@
     <Compile Include="Strategy\PlaySelection\PromptedPlaySelectionStrategy.cs" />
     <Compile Include="Strategy\PlaySelection\RandomPlaySelectionStrategy.cs" />
     <Compile Include="Strategy\PlaySelection\ScriptedPlaySelectionStrategy.cs" />
-    <Compile Include="Strategy\Discarding\IDiscardingStrategy.cs" />
-    <Compile Include="Strategy\Discarding\RandomDiscardingStrategy.cs" />
-    <Compile Include="Strategy\Discarding\ScriptedDiscardingStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\ITargetSelectionStrategy.cs" />
-    <Compile Include="Strategy\Discarding\PromptedDiscardingStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\PromptedTargetSelectionStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\RandomTargetSelectionStrategy.cs" />
     <Compile Include="Strategy\TargetSelection\ScriptedTargetSelectionStrategy.cs" />

@@ -72,7 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StrategyTests\BuyingTests.cs" />
     <Compile Include="StrategyTests\CardSelectionTests.cs" />
-    <Compile Include="StrategyTests\DiscardingTests.cs" />
     <Compile Include="StrategyTests\TargetSelectionTests.cs" />
   </ItemGroup>
   <ItemGroup>

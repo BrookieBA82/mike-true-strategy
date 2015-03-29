@@ -337,35 +337,6 @@ namespace KingdomGame.Test
             Assert.AreNotEqual(game, clone, "Game should not match its clone after selected card is changed.");
         }
 
-        [TestCategory("GameObjectTest"), TestCategory("CloneTest"), TestMethod]
-        public void TestStrategyDiscardingCardsChangedCloneIndependence() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeVillage.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeVillage.Id] = 1;
-
-            Game game = TestSetup.GenerateStartingGame(2, gameCardCountsByTypeId, playerCardCountsByTypeId);
-
-            Card villageCard = null;
-            foreach (Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeVillage)) {
-                    villageCard = card;
-                    break;
-                }
-            }
-
-            Game clone = game.Clone() as Game;
-
-            game.State.CurrentPlayer.Strategy.DiscardingStrategy = new ScriptedDiscardingStrategy(new List<Card>() {villageCard});
-
-            Assert.AreNotEqual(game, clone, "Game should not match its clone after cards to discard are changed.");
-        }
-
         #endregion
 
         #region State Clone Independence Tests

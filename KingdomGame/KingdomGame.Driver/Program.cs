@@ -82,10 +82,6 @@ namespace KingdomGame.Driver {
             PromptedBuySelectionStrategy buySelectionStrategy = new PromptedBuySelectionStrategy();
             buySelectionStrategy.BuySelectionPromptRequired += new BuySelectionPromptEventHandler(ExecuteHumanPlayerBuy);
             player.Strategy.BuySelectionStrategy = buySelectionStrategy;
-
-            PromptedDiscardingStrategy discardStrategy = new PromptedDiscardingStrategy();
-            discardStrategy.ForcedDiscardPromptRequired += new ForcedDiscardPromptEventHandler(ExecuteHumanPlayerDiscard);
-            player.Strategy.DiscardingStrategy = discardStrategy;
         }
 
         private static bool IsPlayerHuman(Player player) {
@@ -372,40 +368,6 @@ namespace KingdomGame.Driver {
             }
 
             args.SelectedBuy = selectedBuyOption;
-        }
-
-        private static void ExecuteHumanPlayerDiscard(object sender, ForcedDiscardPromptEventArgs args) {
-            if (!IsPlayerHuman(args.Player)) {
-                args.SelectedCards = new List<Card>();
-                return;
-            }
-
-            List<Card> selectedCards = new List<Card>();
-            List<Card> remainingCards = new List<Card>(args.Player.Hand);
-            for (int targetNumber = 1; targetNumber <= args.CardsToDiscard; targetNumber++) {
-                int optionCounter = 1;
-                IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>();
-                IDictionary<string, Card> optionsByIndex = new Dictionary<string, Card>();
-
-                foreach (Card card in remainingCards) {
-                    string optionPrompt = optionCounter.ToString();
-                    optionsByIndex[optionPrompt] = card;
-                    optionPromptsByIndex[optionPrompt] = card.ToString();
-                    optionCounter++;
-                }
-
-                Card selectedCard = optionsByIndex[PromptUserForOptionInput(
-                  args.Game,
-                  args.Player,
-                  string.Format("Please select card #{0} (of {1}) to discard:", targetNumber, args.CardsToDiscard),
-                  optionPromptsByIndex
-                )];
-
-                remainingCards.Remove(selectedCard);
-                selectedCards.Add(selectedCard);
-            }
-
-            args.SelectedCards = selectedCards;
         }
 
         #endregion
