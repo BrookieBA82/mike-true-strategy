@@ -121,13 +121,13 @@ namespace KingdomGame {
             ApplyInternal(typedTargetSet, game);
         }
 
-        public IList<ITargetable> GetAllValidTargets(
+        public IList<ITargetable> GetAllIndividuallyValidTargets(
           Card targetingCard, 
           Game game
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
-            foreach (ITargetable target in GetAllPossibleTargets(game)) {
-                if (IsTargetValid(new List<ITargetable>() { target }, targetingCard, game)) {
+            foreach (ITargetable target in GetAllIndividuallyPossibleTargets(game)) {
+                if (IsTargetIndividuallyValid(target as TTarget, targetingCard, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -135,7 +135,7 @@ namespace KingdomGame {
             return validTargets;
         }
 
-        public IList<ITargetable> GetAllPossibleTargets(Game game) {
+        public IList<ITargetable> GetAllIndividuallyPossibleTargets(Game game) {
             IList<TTarget> allPossibleTargets = GetAllPossibleTargetsBase(game);
             IList<ITargetable> allTypedTargets = new List<ITargetable>();
             foreach (TTarget target in allPossibleTargets) {
@@ -170,6 +170,8 @@ namespace KingdomGame {
 
             BaseAction<TTarget> action = this.MemberwiseClone() as BaseAction<TTarget>;
             action._targetSelectorId = targetSelector.Id;
+            action.CreateInternal(targetSelector);
+
             return action;
         }
 
@@ -218,6 +220,18 @@ namespace KingdomGame {
           Game game
         ) {
             return true;
+        }
+
+        protected virtual bool IsTargetIndividuallyValid(
+          TTarget target, 
+          Card targetingCard,
+          Game game
+        ) {
+            return this.IsTargetValid(new List<ITargetable>() { target }, targetingCard, game);
+        }
+
+        protected virtual void CreateInternal(Player targetSelector) {
+
         }
 
         private bool AreAllValidTargetsIncluded(

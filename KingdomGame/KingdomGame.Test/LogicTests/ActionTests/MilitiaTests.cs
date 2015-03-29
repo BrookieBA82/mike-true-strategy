@@ -835,7 +835,7 @@ namespace KingdomGame.Test
               new ScriptedPlaySelectionStrategy(militiaCard);
             game.PlayStep();
 
-            IList<Card> cardsToDiscard = new List<Card>();
+            IList<ITargetable> cardsToDiscard = new List<ITargetable>();
             foreach (Card card in game.Players[1].Hand) {
                 if (!card.Type.Equals(TestSetup.CardTypeCopper)) {
                     cardsToDiscard.Add(card);
@@ -843,7 +843,7 @@ namespace KingdomGame.Test
             }
 
             // Ensure the other player doesn't discard any copper:
-            game.Players[1].Strategy.DiscardingStrategy = new ScriptedDiscardingStrategy(cardsToDiscard);
+            game.Players[1].Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(cardsToDiscard);
 
             // Forcing the discard action:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = 

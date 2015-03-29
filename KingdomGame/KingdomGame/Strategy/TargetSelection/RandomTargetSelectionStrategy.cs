@@ -15,12 +15,7 @@ namespace KingdomGame {
           Card card, 
           IAction action
         ) {
-            List<ITargetable> validTargets = new List<ITargetable>();
-            foreach(ITargetable target in action.GetAllPossibleTargets(game)) {
-                if (action.IsTargetValid(new List<ITargetable>() { target }, card, game)) {
-                    validTargets.Add(target);
-                }
-            }
+            IList<ITargetable> validTargets = action.GetAllIndividuallyValidTargets(card, game);
 
             if (action.AllValidTargetsRequired) {
                 return validTargets;

@@ -22,8 +22,6 @@ namespace KingdomGame.BasicCardTypes {
           IList<Player> players, 
           Game game
         ) {
-            // Refactor - (MT): This is incorrect with the selector (shouldn't be the player since they can target someone else to discard).
-            // * The solution should be addressed by converting forced discard into an action set of choices to discard.
             foreach (Player player in players) {
                 IAction forcedDiscardAction = ActionRegistry.Instance.GetActionByType(typeof(MilitiaForcedDiscardAction)).Create(player);
                 game.State.AddPendingAction(forcedDiscardAction);
@@ -48,35 +46,65 @@ namespace KingdomGame.BasicCardTypes {
         }
     }
 
-    // Refactor - (MT): Make this a choice of actions which the selector (forced discarder) must fix:
-    public class MilitiaForcedDiscardAction : BasePlayerTargetAction {
+    public class MilitiaForcedDiscardAction : BaseCardTargetAction {
 
-        private MilitiaForcedDiscardAction() : base(BasePlayerTargetAction.PlayerTargetType.ANY, 1, 1) {
+        private MilitiaForcedDiscardAction() : base(BaseCardTargetAction.CardOwnerTargetType.SELF, 0, int.MaxValue) {
 
         }
 
         protected override void ApplyInternal(
-          IList<Player> players, 
+          IList<Card> cards, 
           Game game
         ) {
-            Player player = game.GetPlayerById(_targetSelectorId.Value);
-            IList<ITargetable> cardsToDiscard = new List<ITargetable>(player.Strategy.DiscardingStrategy.
-                SelectDiscards(game, player, (player.Hand.Count > 3) ? player.Hand.Count - 3 : 0));
-
-            foreach (Card card in cardsToDiscard) {
-                player.DiscardCard(card);
+            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            foreach (Card card in cards) {
+                targetSelector.DiscardCard(card);
             }
-
-            // Modify the history so the effective target for this action are the discarded cards:
-            Logger.Instance.UpdateLastAction(game, cardsToDiscard);
         }
 
         protected override bool IsTargetValidInternal(
-          IList<Player> players, 
+          IList<Card> cards, 
           Card targetingCard,
           Game game
         ) {
+            if(!TargetSelectorId.HasValue) {
+                return false;
+            }
+
+            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
+            if (cards.Count != cardsToDiscard) {
+                return false;
+            }
+
+            foreach (Card card in cards) {
+                if (!targetSelector.Hand.Contains(card)) {
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+        protected override bool IsTargetIndividuallyValid(
+          Card target, 
+          Card targetingCard,
+          Game game
+        ) {
+            if(!TargetSelectorId.HasValue) {
+                return false;
+            }
+
+            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            return targetSelector.Hand.Contains(target);
+        }
+
+        protected override void CreateInternal(Player targetSelector) {
+            if(TargetSelectorId.HasValue) {
+                int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
+                _minTargets = cardsToDiscard;
+                _maxTargets = cardsToDiscard;
+            }
         }
     }
 

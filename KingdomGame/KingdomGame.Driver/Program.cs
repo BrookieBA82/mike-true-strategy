@@ -230,7 +230,7 @@ namespace KingdomGame.Driver {
 
         private static void ExecuteHumanPlayerAction(Object sender, TargetSelectionPromptEventArgs args) {
 
-            IList<ITargetable> validTargets = args.CurrentAction.GetAllValidTargets(args.Game.State.SelectedPlay, args.Game);
+            IList<ITargetable> validTargets = args.CurrentAction.GetAllIndividuallyValidTargets(args.Game.State.SelectedPlay, args.Game);
 
             if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
