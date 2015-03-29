@@ -42,15 +42,13 @@ namespace KingdomGame {
           Card targetingCard,
           Game game
         ) {
-            Player targetSelector = (TargetSelectorId.HasValue) ? game.GetPlayerById(TargetSelectorId.Value) : null;
-            if((targetSelector != null 
-              && (_cardOwnerTargetType & CardOwnerTargetType.SELF) == CardOwnerTargetType.NONE) 
+            Player targetSelector = GetTargetSelector(game);
+            if(((_cardOwnerTargetType & CardOwnerTargetType.SELF) == CardOwnerTargetType.NONE) 
               && target.OwnerId.HasValue 
               && target.OwnerId.Value == targetSelector.Id) {
                 return false;
             }
-            else if((targetSelector != null 
-              && (_cardOwnerTargetType & CardOwnerTargetType.OTHER) == CardOwnerTargetType.NONE) 
+            else if(((_cardOwnerTargetType & CardOwnerTargetType.OTHER) == CardOwnerTargetType.NONE) 
               && target.OwnerId.HasValue 
               && target.OwnerId.Value != targetSelector.Id) {
                 return false;

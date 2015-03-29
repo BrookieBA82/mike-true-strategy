@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +57,7 @@ namespace KingdomGame.BasicCardTypes {
           IList<Card> cards, 
           Game game
         ) {
-            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            Player targetSelector = GetTargetSelector(game);
             foreach (Card card in cards) {
                 targetSelector.DiscardCard(card);
             }
@@ -67,11 +68,7 @@ namespace KingdomGame.BasicCardTypes {
           Card targetingCard,
           Game game
         ) {
-            if(!TargetSelectorId.HasValue) {
-                return false;
-            }
-
-            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            Player targetSelector = GetTargetSelector(game);
             int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
             if (cards.Count != cardsToDiscard) {
                 return false;
@@ -91,20 +88,15 @@ namespace KingdomGame.BasicCardTypes {
           Card targetingCard,
           Game game
         ) {
-            if(!TargetSelectorId.HasValue) {
-                return false;
-            }
-
-            Player targetSelector = game.GetPlayerById(TargetSelectorId.Value);
+            Player targetSelector = GetTargetSelector(game);
             return targetSelector.Hand.Contains(target);
         }
 
         protected override void CreateInternal(Player targetSelector) {
-            if(TargetSelectorId.HasValue) {
-                int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
-                _minTargets = cardsToDiscard;
-                _maxTargets = cardsToDiscard;
-            }
+            Debug.Assert(targetSelector != null, "Target selectors cannot be null.");
+            int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
+            _minTargets = cardsToDiscard;
+            _maxTargets = cardsToDiscard;
         }
     }
 

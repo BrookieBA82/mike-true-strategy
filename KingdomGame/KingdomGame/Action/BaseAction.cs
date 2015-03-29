@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -232,6 +233,13 @@ namespace KingdomGame {
 
         protected virtual void CreateInternal(Player targetSelector) {
 
+        }
+
+        protected Player GetTargetSelector(Game game) {
+            Debug.Assert(_targetSelectorId.HasValue, "Actions should always have a target selector specified.");
+            Player targetSelector = game.GetPlayerById(_targetSelectorId.Value);
+            Debug.Assert(targetSelector != null, "Target selectors should always be a valid player.");
+            return targetSelector;
         }
 
         private bool AreAllValidTargetsIncluded(

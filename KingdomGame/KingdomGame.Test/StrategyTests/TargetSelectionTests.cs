@@ -51,7 +51,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
-              village.Type.Actions[0]
+              village.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "It should be possible to opt out of targeting a player.");
@@ -83,7 +83,7 @@ namespace KingdomGame.Test
             TestUtilities.ForceGamePhase(game, Game.Phase.ACTION);            IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
-              village.Type.Actions[0]
+              village.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(1, targets.Count, "Villages can only target the current player.");
@@ -117,7 +117,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
-              village.Type.Actions[0]
+              village.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "Non-current player selection should fail for villages.");
@@ -149,7 +149,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = strategy.SelectTargets(
               game, 
               militiaCard, 
-              TestSetup.CardTypeMilitia.Actions[0]
+              TestSetup.CardTypeMilitia.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(2, targets.Count, "The two selected players should be the ones which end up targeted.");
@@ -183,7 +183,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = strategy.SelectTargets(
               game, 
               militiaCard, 
-              TestSetup.CardTypeMilitia.Actions[0]
+              TestSetup.CardTypeMilitia.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "No players should be targeted if any player in the scripted set is invalid.");
@@ -220,7 +220,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               village, 
-              village.Type.Actions[0]
+              village.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "Duplicate player selection should fail for villages.");
@@ -255,7 +255,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
-              workshop.Type.Actions[0]
+              workshop.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "It should be possible to opt out of targeting a card.");
@@ -298,7 +298,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellar, 
-              cellar.Type.Actions[0]
+              cellar.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(1, targets.Count, "The single selected card should be the one which ends up targeted.");
@@ -342,7 +342,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellar, 
-              cellar.Type.Actions[0]
+              cellar.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(1, targets.Count, "The single selected card should be the one which ends up targeted.");
@@ -378,7 +378,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
-              workshop.Type.Actions[0]
+              workshop.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(1, targets.Count, "The single selected card should be the one which ends up targeted.");
@@ -415,7 +415,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
-              workshop.Type.Actions[0]
+              workshop.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(1, targets.Count, "The single selected card should be the one which ends up targeted.");
@@ -452,7 +452,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               workshop, 
-              workshop.Type.Actions[0]
+              workshop.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "Too expensive card acquisition target should fail for workshops.");
@@ -501,7 +501,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
-              cellarCard.Type.Actions[0]
+              cellarCard.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(3, targets.Count, "All estates from the hand should be a valid targeting option.");
@@ -559,7 +559,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
-              cellarCard.Type.Actions[0]
+              cellarCard.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "Target card set should be empty if one or more cards are invalid.");
@@ -612,7 +612,7 @@ namespace KingdomGame.Test
             IList<ITargetable> targets = game.State.CurrentPlayer.Strategy.TargetSelectionStrategy.SelectTargets(
               game, 
               cellarCard, 
-              cellarCard.Type.Actions[0]
+              cellarCard.Type.Actions[0].Create(game.State.CurrentPlayer)
             );
 
             Assert.AreEqual(0, targets.Count, "Target card set should be empty if one or more cards are duplicates.");
