@@ -230,7 +230,7 @@ namespace KingdomGame.Driver {
 
             if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
-                Console.WriteLine("Valid target summary list:");
+                Console.WriteLine(string.Format("Valid target summary list for {0}:", args.CurrentAction.DisplayName));
                 foreach (ITargetable target in validTargets) {
                     Console.WriteLine(string.Format("\t{0}: {1}", optionCounter, target.ToString()));
                     optionCounter++;
@@ -288,9 +288,10 @@ namespace KingdomGame.Driver {
                               args.Game,
                               args.Game.State.CurrentPlayer,
                               string.Format(
-                                "Please select target #{0} (of {1}):", 
+                                "Please select target #{0} (of {1}) for {2}:", 
                                 targetNumber, 
-                                selectedTargetCount
+                                selectedTargetCount,
+                                args.CurrentAction.ActionDescription
                               ),
                               optionPromptsByIndex
                             )];
