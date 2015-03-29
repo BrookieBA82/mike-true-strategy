@@ -1,6 +1,7 @@
 ﻿using KingdomGame;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace KingdomGame.Driver {
 
         private static Set<int> _humanPlayerIds = new Set<int>();
 
-        private delegate void DisplayGameStatusOperation(Game game, Player player);
+        private delegate void DisplayGameStatusOperation(Game game);
 
         private static IDictionary<string, Pair<string, DisplayGameStatusOperation>> CommonMenuOptions 
           = new Dictionary<string, Pair<string, DisplayGameStatusOperation>>() {
@@ -33,15 +34,10 @@ namespace KingdomGame.Driver {
             SetupHumanPlayer(game, game.GetPlayerById(1));
 
             while (!game.IsFinished) {
-                if (!IsPlayerHuman(game.State.CurrentPlayer)) {
-                    ExecuteComputerPlayerTurn(game);
-                }
-                else {
-                    ExecuteHumanPlayerTurn(game);
-                }
+                ExecuteTurn(game);
             }
 
-            TerminateGame(game, game.State.CurrentPlayer);
+            TerminateGame(game);
         }
 
         #region Helper Methods
@@ -92,44 +88,32 @@ namespace KingdomGame.Driver {
 
         #region Game Execution Helpers
 
-        private static void ExecuteComputerPlayerTurn(Game game) {
-            game.PlayTurn();
-            GameHistory.Turn lastTurn = Logger.Instance.GetLastTurn(game);
+        private static void ExecuteTurn(Game game) {
 
-            Console.WriteLine(string.Format("Turn number {0} (Current Player is {1}):\n", lastTurn.Number, lastTurn.Player.Name));
-
-            Console.WriteLine("\tStarting hand:");
-            Program.PrintHand(lastTurn.InitialHand);
-            Console.WriteLine();
-
-            PrintPlays(lastTurn.Plays);
-
-            Console.WriteLine("\tFinal hand:");
-            Program.PrintHand(lastTurn.FinalHand);
-            Console.WriteLine();
-
-            PrintBuys(lastTurn.Buy);
-            Console.WriteLine();
-
-            Console.WriteLine(string.Format("\tEnd of turn {0} score:", lastTurn.Number));
-            PrintScore(lastTurn);
-            Console.WriteLine("\n");
-        }
-
-        private static void ExecuteHumanPlayerTurn(Game game) {
-
+            int currentPlayNumber = 1;
             int startingTurn = game.State.TurnNumber;
+            bool isCurrentPlayerHuman = IsPlayerHuman(game.State.CurrentPlayer);
             Console.WriteLine(string.Format("Turn number {0} (Current Player is {1}):\n", startingTurn, game.State.CurrentPlayer.Name));
 
-            Console.WriteLine("\tStarting hand:");
-            Program.PrintHand(game.State.CurrentPlayer.Hand);
-            Console.WriteLine();
+            if (isCurrentPlayerHuman) {
+                Console.WriteLine("\tStarting hand:");
+                Program.PrintHand(game.State.CurrentPlayer.Hand);
+                Console.WriteLine();
+            }
             
             do {
 
                 switch (game.State.Phase) {
                     case Game.Phase.PLAY:
                         game.PlayPhase();
+
+                        if (!isCurrentPlayerHuman) {
+                            PrintPlay(game.State.SelectedPlay, currentPlayNumber);
+                            Console.WriteLine();
+                        }
+
+                        currentPlayNumber++;
+
                         break;
 
                     case Game.Phase.ACTION:
@@ -138,11 +122,12 @@ namespace KingdomGame.Driver {
 
                             while(game.State.HasNextPendingAction) {
                                 IAction actionToPlay = game.State.NextPendingAction;
+                                Debug.Assert(
+                                  actionToPlay.TargetSelectorId.HasValue, 
+                                  "Actions should always have a target selector specified."
+                                );
 
-                                if (
-                                  actionToPlay.TargetSelectorId.HasValue 
-                                  && !IsPlayerHuman(game.GetPlayerById(actionToPlay.TargetSelectorId.Value))
-                                ) {
+                                if (!IsPlayerHuman(game.GetPlayerById(actionToPlay.TargetSelectorId.Value))) {
                                     game.PlayStep();
                                     GameHistory.Action target = Logger.Instance.GetLastAction(game);
                                     PrintAction(target);
@@ -157,9 +142,11 @@ namespace KingdomGame.Driver {
                         break;
 
                     case Game.Phase.BUY:
-                        Console.WriteLine("\tFinal hand:");
-                        Program.PrintHand(game.State.CurrentPlayer.Hand);
-                        Console.WriteLine();
+                        if (isCurrentPlayerHuman) {
+                            Console.WriteLine("\tFinal hand:");
+                            Program.PrintHand(game.State.CurrentPlayer.Hand);
+                            Console.WriteLine();
+                        }
 
                         while (game.State.Phase == Game.Phase.BUY) {
                             game.PlayStep();
@@ -181,9 +168,7 @@ namespace KingdomGame.Driver {
 
             } while (game.State.TurnNumber == startingTurn && game.State.Phase != Game.Phase.END);
 
-            GameHistory.Turn lastTurn = Logger.Instance.GetLastTurn(game);
-            Console.WriteLine(string.Format("\tEnd of turn {0} score:", lastTurn.Number));
-            PrintScore(lastTurn);
+            PrintCurrentScore(game, string.Format("End of turn {0} score:", startingTurn));
             Console.WriteLine("\n");
         }
 
@@ -208,14 +193,13 @@ namespace KingdomGame.Driver {
 
             Card selectedPlay;
             if (optionsByIndex.Count == 1) {
-                Console.WriteLine("Skipping action selection because no action cards are in the hand\n");
+                Console.WriteLine("\tSkipping action selection because no action cards are in the hand\n");
                 selectedPlay = null;
             }
             else {
                 string promptMessage = "Please select a card to play from the following menu:";
                 selectedPlay = optionsByIndex[PromptUserForOptionInput(
                   args.Game, 
-                  args.Game.State.CurrentPlayer, 
                   promptMessage, 
                   optionPromptsByIndex
                 )];
@@ -230,9 +214,9 @@ namespace KingdomGame.Driver {
 
             if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
-                Console.WriteLine(string.Format("Valid target summary list for {0}:", args.CurrentAction.DisplayName));
+                Console.WriteLine(string.Format("\tValid target summary list for {0}:", args.CurrentAction.DisplayName));
                 foreach (ITargetable target in validTargets) {
-                    Console.WriteLine(string.Format("\t{0}: {1}", optionCounter, target.ToString()));
+                    Console.WriteLine(string.Format("\t\t{0}: {1}", optionCounter, target.ToString()));
                     optionCounter++;
                 }
 
@@ -241,11 +225,11 @@ namespace KingdomGame.Driver {
                 List<ITargetable> selectedTargets;
                 if (args.CurrentAction.MinTargets == validTargets.Count) {
                     selectedTargets = new List<ITargetable>(validTargets);
-                    Console.WriteLine("Automatically selected targets because only one valid option was available\n");
+                    Console.WriteLine("\tAutomatically selected targets because only one valid option was available\n");
                 }
                 else if (args.CurrentAction.AllValidTargetsRequired) {
                     selectedTargets = new List<ITargetable>(validTargets);
-                    Console.WriteLine("Automatically selected targets because all valid options are required\n");
+                    Console.WriteLine("\tAutomatically selected targets because all valid options are required\n");
                 }
                 else {
 
@@ -257,7 +241,6 @@ namespace KingdomGame.Driver {
                         if (args.CurrentAction.MinTargets < maxValidTargets) {
                             selectedTargetCount = PromptUserForNumericInput(
                               args.Game,
-                              args.Game.State.CurrentPlayer,
                               string.Format(
                                 "Please enter the number of targets you wish to select for {0}:", 
                                 args.CurrentAction.ActionDescription
@@ -286,7 +269,6 @@ namespace KingdomGame.Driver {
 
                             ITargetable selectedTarget = optionsByIndex[PromptUserForOptionInput(
                               args.Game,
-                              args.Game.State.CurrentPlayer,
                               string.Format(
                                 "Please select target #{0} (of {1}) for {2}:", 
                                 targetNumber, 
@@ -320,7 +302,7 @@ namespace KingdomGame.Driver {
             }
             else {
                 Console.WriteLine(string.Format(
-                  "No valid targets available for {0}, skipping action...\n", 
+                  "\tNo valid targets available for {0}, skipping action...\n", 
                   args.CurrentAction.ActionDescription
                 ));
 
@@ -350,7 +332,7 @@ namespace KingdomGame.Driver {
 
             CardType selectedBuyOption;
             if (optionsByIndex.Count == 1) {
-                Console.WriteLine("Skipping buy selection because there are no valid options for buying\n");
+                Console.WriteLine("\tSkipping buy selection because there are no valid options for buying\n");
                 selectedBuyOption = null;
             }
             else {
@@ -362,7 +344,6 @@ namespace KingdomGame.Driver {
 
                 selectedBuyOption = optionsByIndex[PromptUserForOptionInput(
                     args.Game, 
-                    args.Game.State.CurrentPlayer, 
                     promptMessage, 
                     optionPromptsByIndex
                 )];
@@ -376,8 +357,7 @@ namespace KingdomGame.Driver {
         #region Game Input Helpers
 
         private static string PromptUserForOptionInput(
-          Game game, 
-          Player player, 
+          Game game,
           string promptMessage, 
           IDictionary<string, string> menuCommands
         ) {
@@ -402,7 +382,7 @@ namespace KingdomGame.Driver {
                 else if (Program.CommonMenuOptions.ContainsKey(response)) {
                     DisplayGameStatusOperation operation = CommonMenuOptions[response].Second;
                     if (operation != null) {
-                        operation.Invoke(game, player);
+                        operation.Invoke(game);
                     }
                 }
                 else {
@@ -417,7 +397,6 @@ namespace KingdomGame.Driver {
 
         private static int PromptUserForNumericInput(
           Game game,
-          Player player,
           string promptMessage,
           int minValue,
           int maxValue
@@ -447,7 +426,7 @@ namespace KingdomGame.Driver {
                 else if (Program.CommonMenuOptions.ContainsKey(response)) {
                     DisplayGameStatusOperation operation = CommonMenuOptions[response].Second;
                     if (operation != null) {
-                        operation.Invoke(game, player);
+                        operation.Invoke(game);
                     }
                 }
                 else {
@@ -464,65 +443,26 @@ namespace KingdomGame.Driver {
 
         #region Game Output Helpers
 
-        // Refactor - (MT): Make the base number of indents configurable.
-        private static void PrintHand(IList<GameHistory.CardInfo> hand) {
-            foreach (GameHistory.CardInfo cardInfo in hand) {
-                Console.WriteLine(string.Format("\t\t{0} ({1})", cardInfo.TypeName, cardInfo.Id));
-            }
-        } 
-
         private static void PrintHand(IList<Card> hand) {
             foreach (Card card in hand) {
                 Console.WriteLine(string.Format("\t\t{0} ({1})", card.Type.Name, card.Id));
             }
-        } 
-
-        private static void PrintPlays(IList<GameHistory.Play> plays) {
-            int playNumber = 1;
-            foreach (GameHistory.Play play in plays) {
-                PrintPlay(play, playNumber);
-                playNumber++;
-                Console.WriteLine();
-            }
         }
 
-        private static void PrintPlay(GameHistory.Play play, int playNumber) {
-            Console.WriteLine(string.Format("\tPlay #{0}: {1} ({2})", playNumber, play.Card.TypeName, play.Card.Id));
-
-            int targetNumber = 1;
-            foreach (GameHistory.Action target in play.Actions) {
-                PrintAction(target, targetNumber);
-                targetNumber++;
+        private static void PrintPlay(Card play, int playNumber) {
+            if (play != null) {
+                Console.WriteLine(string.Format("\tPlay #{0}: {1} ({2})", playNumber, play.Type.Name, play.Id));
+            }
+            else {
+                Console.WriteLine(string.Format("\tPlay #{0}: No further plays this turn", playNumber));
             }
         }
 
         private static void PrintAction(GameHistory.Action action) {
-            Console.WriteLine(string.Format("\tAction summary for {0}:", action.Command.DisplayName));
+            Console.WriteLine(string.Format("\tAction summary for {0} ({1}):", action.Command.DisplayName, action.Player.Name));
             foreach (ITargetable target in action.Targets) {
                 Console.WriteLine(string.Format("\t\t{0}", target.ToString(null)));
             }
-        }
-
-        private static void PrintAction(GameHistory.Action action, int targetNumber) {
-            Console.WriteLine(string.Format("\t\tAction #{0}: {1}", targetNumber, action.Command.DisplayName));
-            foreach (ITargetable target in action.Targets) {
-                Console.WriteLine(string.Format("\t\t\t{0}", target.ToString(null)));
-            }
-        }
-
-        private static void PrintActionTargets<T>(IAction action, IList<T> targets) {
-            if (targets.Count > 0) {
-                Console.WriteLine(string.Format("\tSelected target summary for {0}:", action.DisplayName));
-                int targetCounter = 1;
-                foreach (T target in targets) {
-                    Console.WriteLine(string.Format("\t\t{0}: ({1})", targetCounter, target.ToString()));
-                }
-            }
-            else {
-                Console.WriteLine(string.Format("\tSelected target summary for {0}: No targets", action.DisplayName));
-            }
-
-            Console.WriteLine();
         }
 
         private static void PrintBuys(GameHistory.Buy buy) {
@@ -543,21 +483,19 @@ namespace KingdomGame.Driver {
             }
         }
 
-        private static void PrintScore(GameHistory.Turn turn) {
-            foreach (GameHistory.ScoreInfo score in turn.Scores) {
-                Console.WriteLine(string.Format("\t\t{0}: {1}", score.PlayerName, score.Score));
-            }
+        private static void PrintCurrentScore(Game game) {
+            PrintCurrentScore(game, "Current score:");
         }
 
-        private static void PrintCurrentScore(Game game, Player player) {
-            Console.WriteLine("\tCurrent score:");
+        private static void PrintCurrentScore(Game game, string header) {
+            Console.WriteLine(string.Format("\t{0}", header));
             foreach (Player gamePlayer in game.Players) {
                 Console.WriteLine(string.Format("\t\t{0}: {1}", gamePlayer.Name, gamePlayer.Score));
             }
             Console.WriteLine();
         }
 
-        private static void PrintAvailableCardCounts(Game game, Player player) {
+        private static void PrintAvailableCardCounts(Game game) {
             Console.WriteLine("\tCards available:");
             foreach (CardType cardType in ActionRegistry.Instance.CardTypes) {
                 Console.WriteLine(string.Format("\t\t{0}: {1}", cardType.Name, game.GetCardsByType(cardType).Count));
@@ -565,13 +503,13 @@ namespace KingdomGame.Driver {
             Console.WriteLine();
         }
 
-        private static void PrintCurrentHand(Game game, Player player) {
+        private static void PrintCurrentHand(Game game) {
             Console.WriteLine("\tCurrent hand:");
-            PrintHand(player.Hand);
+            PrintHand(game.State.CurrentPlayer.Hand);
             Console.WriteLine();
         }
 
-        private static void PrintCardText(Game game, Player player) {
+        private static void PrintCardText(Game game) {
             CardType selectedType = null;
             int optionCounter = 1;
             IDictionary<string, string> optionPromptsByIndex = new Dictionary<string, string>();
@@ -589,7 +527,6 @@ namespace KingdomGame.Driver {
             string promptMessage = "Please select a card type to obtain text for from the following menu:";
             selectedType = optionsByIndex[PromptUserForOptionInput(
               game, 
-              game.State.CurrentPlayer, 
               promptMessage, 
               optionPromptsByIndex
             )];
@@ -609,7 +546,7 @@ namespace KingdomGame.Driver {
             }
         }
 
-        private static void PrintTurnDetails(Game game, Player player) {
+        private static void PrintTurnDetails(Game game) {
             Console.WriteLine(string.Format("\tTurn {0} summary:", game.State.TurnNumber));
             Console.WriteLine(string.Format("\t\tCurrent Player: {0} ({1})", game.State.CurrentPlayer.Name, game.State.CurrentPlayer.Id));
             Console.WriteLine(string.Format("\t\tRemaining Actions: {0}", game.State.CurrentPlayer.RemainingActions));
@@ -629,7 +566,7 @@ namespace KingdomGame.Driver {
             Logger.Instance.SaveHistory(game, outputPath);
         }
 
-        private static void TerminateGame(Game game, Player player) {
+        private static void TerminateGame(Game game) {
             // Todo - (MT): Make these path components configurable:
             SaveGameHistory(game, Environment.CurrentDirectory, "GameResults", "_yyyy-dd-MM_HHmmss");
 

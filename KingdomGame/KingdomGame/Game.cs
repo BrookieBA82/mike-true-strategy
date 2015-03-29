@@ -160,7 +160,6 @@ namespace KingdomGame {
                 }
             }
 
-
             public void AddPendingAction(IAction action) {
                 if(_phase != Phase.ACTION) {
                     throw new InvalidOperationException("Cannot add an action outside of the action phase.");
@@ -616,7 +615,7 @@ namespace KingdomGame {
 
                     action.Apply(targets, this);
 
-                    Logger.Instance.RecordAction(this, State.CurrentPlayer, State.SelectedPlay, action, targets);
+                    Logger.Instance.RecordAction(this, GetPlayerById(action.TargetSelectorId.Value), State.SelectedPlay, action, targets);
 
                     break;
 
