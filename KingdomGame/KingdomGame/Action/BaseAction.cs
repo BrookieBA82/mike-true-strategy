@@ -108,34 +108,23 @@ namespace KingdomGame {
                 return false;
             }
 
+            if (GetTypedTargetList(targetSet).Contains(null)) {
+                return false;
+            }
+
             if ((targetSet.Count < _minTargets) || (targetSet.Count > _maxTargets)) {
                 return false;
             }
 
-            if (!_duplicateTargetsAllowed) {
-                IList<ITargetable> uniqueTargets = new List<ITargetable>(targetSet.Distinct<ITargetable>());
-                if (uniqueTargets.Count < targetSet.Count) {
-                    return false;
-                }
-            }
-
-            List<TTarget> typedTargetSet = new List<ITargetable>(targetSet).ConvertAll<TTarget>(
-              delegate(ITargetable target) { return target as TTarget; });
-            if (typedTargetSet.Contains(null)) {
+            if (!_duplicateTargetsAllowed && (GetUniqueTargetList(targetSet).Count < targetSet.Count)) {
                 return false;
             }
 
-            List<TTarget> allTypedTargets = new List<TTarget>(GetAllPossibleIndividualTargetsTypedBase(game));
-            if(typedTargetSet.Exists(delegate(TTarget target) 
-              { return !IsIndividualTargetValidTypedBase(target, targetingCard, game); })) {
+            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(targetSet, targetingCard, game)) {
                 return false;
             }
 
-            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(typedTargetSet, targetingCard, game)) {
-                return false;
-            }
-
-            return IsTargetSetValidInternal(typedTargetSet, targetingCard, game);
+            return IsTargetSetValidSubclass(targetSet, targetingCard, game);
         }
 
         public IList<ITargetable> GetAllValidIndividualTargets(
@@ -143,9 +132,8 @@ namespace KingdomGame {
           Game game
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
-            foreach (ITargetable target in GetAllPossibleIndividualTargets(game)) {
-                if (IsIndividualTargetValidTypedBase(target as TTarget, targetingCard, game) 
-                  && IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
+            foreach (ITargetable target in GetAllPossibleIndividualTargetsTypedBase(game)) {
+                if (IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -154,21 +142,13 @@ namespace KingdomGame {
         }
 
         public void Apply(IList<ITargetable> targetSet, Game game) {
-            IList<TTarget> typedTargetSet = new List<TTarget>();
-            foreach (ITargetable target in targetSet) {
-                if(target is TTarget) {
-                    typedTargetSet.Add(target as TTarget);
-                }
-                else {
-                    throw new InvalidOperationException(string.Format(
-                    "Cannot apply this action to a target set containing {0} because it can only be applied to {1}.",
-                        target.GetType().ToString(),
-                        typeof(TTarget).ToString()
-                    ));
-                }
+            if (IsTargetSetValid(targetSet, game.State.SelectedPlay, game)) {
+                ApplyInternal(GetTypedTargetList(targetSet), game);
             }
-
-            ApplyInternal(typedTargetSet, game);
+            else {
+                // Todo - (MT): Consider throwing the following exception if it can be robustly handled by the Game class and tests:
+                // throw new InvalidOperationException("Cannot apply this action to an invalid target set.");
+            }
         }
 
         #endregion
@@ -209,7 +189,7 @@ namespace KingdomGame {
 
         protected abstract void ApplyInternal(IList<TTarget> targetSet, Game game);
 
-        protected abstract IList<TTarget> GetAllPossibleIndividualTargetsTypedBase(Game game);
+        protected abstract IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game);
 
         #endregion
 
@@ -228,7 +208,7 @@ namespace KingdomGame {
         }
 
         protected virtual bool IsIndividualTargetValid(TTarget target, Card targetingCard, Game game) {
-            return this.IsTargetSetValid(new List<ITargetable>() { target }, targetingCard, game);
+            return IsIndividualTargetValidSubclass(target, targetingCard, game);
         }
 
         #endregion
@@ -248,26 +228,43 @@ namespace KingdomGame {
 
         #region Utility Methods
 
-        private IList<ITargetable> GetAllPossibleIndividualTargets(Game game) {
-            IList<TTarget> allPossibleTargets = GetAllPossibleIndividualTargetsTypedBase(game);
-            IList<ITargetable> allTypedTargets = new List<ITargetable>();
-            foreach (TTarget target in allPossibleTargets) {
-                allTypedTargets.Add(target);
+        #region Target Validity Methods
+
+        private bool AreAllValidTargetsIncluded(IList<ITargetable> targetSet, Card targetingCard, Game game) {
+            List<ITargetable> eligibleTargets = new List<ITargetable>(GetAllValidIndividualTargets(targetingCard, game));
+            foreach (ITargetable eligibleTarget in eligibleTargets) {
+                if (!targetSet.Contains(eligibleTarget)) {
+                    return false;
+                }
             }
 
-            return allTypedTargets;
+            return true;
         }
 
-        private bool AreAllValidTargetsIncluded(IList<TTarget> typedTargetSet, Card targetingCard, Game game) {
-            List<TTarget> allTypedTargets = new List<TTarget>(GetAllPossibleIndividualTargetsTypedBase(game));
-            List<TTarget> eligibleTargets = allTypedTargets.FindAll(delegate(TTarget target) { 
-              return IsIndividualTargetValidTypedBase(target, targetingCard, game) 
-                && IsTargetSetValidInternal(new List<TTarget>() { target }, targetingCard, game); });
-
-            bool areSetsEqual = !allTypedTargets.Exists(delegate(TTarget target) { 
-              return (typedTargetSet.Contains(target) != eligibleTargets.Contains(target)); });
-            return areSetsEqual;
+        private bool IsIndividualTargetValidSubclass(ITargetable target, Card targetingCard, Game game) {
+            return IsTargetSetValidInternal(new List<TTarget>() { target as TTarget }, targetingCard, game)
+                && IsIndividualTargetValidTypedBase(target as TTarget, targetingCard, game);
         }
+
+        private bool IsTargetSetValidSubclass(IList<ITargetable> targetSet, Card targetingCard, Game game) {
+            List<TTarget> typedTargetSet = GetTypedTargetList(targetSet);
+            return IsTargetSetValidInternal(typedTargetSet, targetingCard, game)
+                && !typedTargetSet.Exists(delegate(TTarget target) { return !IsIndividualTargetValidTypedBase(target, targetingCard, game); });
+        }
+
+        #endregion
+
+        #region List Methods
+
+        private static List<TTarget> GetTypedTargetList(IList<ITargetable> untypedList) {
+            return new List<ITargetable>(untypedList).ConvertAll<TTarget>(delegate(ITargetable target) { return target as TTarget; });
+        }
+
+        private static List<TTarget> GetUniqueTargetList(IList<ITargetable> untypedList) {
+            return new List<TTarget>(GetTypedTargetList(untypedList).Distinct<TTarget>());
+        }
+
+        #endregion
 
         #endregion
     }

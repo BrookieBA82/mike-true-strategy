@@ -79,8 +79,8 @@ namespace KingdomGame {
             return true;
         }
 
-        protected override IList<Player> GetAllPossibleIndividualTargetsTypedBase(Game game) {
-            return game.Players;
+        protected override IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game) {
+            return new List<ITargetable>(game.Players);
         }
 
         #endregion

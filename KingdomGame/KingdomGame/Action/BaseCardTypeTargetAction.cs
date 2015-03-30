@@ -39,7 +39,7 @@ namespace KingdomGame {
             return !(game.GetCardsByType(target) == null || game.GetCardsByType(target).Count == 0);
         }
 
-        protected override IList<CardType> GetAllPossibleIndividualTargetsTypedBase(Game game) {
+        protected override IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game) {
             IList<CardType> types = new List<CardType>();
             foreach (CardType type in ActionRegistry.Instance.CardTypes) {
                 IList<Card> cardsByType = game.GetCardsByType(type);
@@ -48,7 +48,7 @@ namespace KingdomGame {
                 }
             }
 
-            return types;
+            return new List<ITargetable>(types);
         }
 
         #endregion
