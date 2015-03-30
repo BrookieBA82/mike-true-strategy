@@ -136,8 +136,7 @@ namespace KingdomGame {
                 }
             }
 
-            if(_allValidTargetsRequired 
-              && !AreAllValidTargetsIncluded(typedTargetSet, eligibleTargets, allTypedTargets, targetingCard, game)) {
+            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(typedTargetSet, targetingCard, game)) {
                 return false;
             }
 
@@ -266,21 +265,21 @@ namespace KingdomGame {
             return allTypedTargets;
         }
 
-        private bool AreAllValidTargetsIncluded(
-          IList<TTarget> targetSetToCheck,
-          IList<TTarget> eligibleTargets,
-          IList<TTarget> allTargets,
-          Card targetingCard,
-          Game game
-        ) {
-            foreach (TTarget target in allTargets) {
-                bool isValidTarget = IsTargetSetValidInternal(
-                  new List<TTarget>() { target }, 
-                  targetingCard, 
-                  game
-                );
+        private bool AreAllValidTargetsIncluded(IList<TTarget> typedTargetSet, Card targetingCard, Game game) {
+            IList<TTarget> eligibleTargets = new List<TTarget>();
+            IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
+            foreach(TTarget target in allTypedTargets) {
+                if (IsIndividualTargetValidTypedBase(target, targetingCard, game)) {
+                    eligibleTargets.Add(target);
+                }
+                else if (typedTargetSet.Contains(target)) {
+                    return false;
+                }
+            }
 
-                if (eligibleTargets.Contains(target) && (isValidTarget != targetSetToCheck.Contains(target))) {
+            foreach (TTarget target in allTypedTargets) {
+                bool isValidTarget = IsTargetSetValidInternal(new List<TTarget>() { target }, targetingCard, game);
+                if (eligibleTargets.Contains(target) && (isValidTarget != typedTargetSet.Contains(target))) {
                     return false;
                 }
             }
