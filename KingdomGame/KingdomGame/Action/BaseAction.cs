@@ -103,11 +103,7 @@ namespace KingdomGame {
             return action;
         }
 
-        public bool IsTargetSetValid(
-          IList<ITargetable> targetSet, 
-          Card targetingCard, 
-          Game game
-        ) {
+        public bool IsTargetSetValid(IList<ITargetable> targetSet, Card targetingCard, Game game) {
             if (targetSet == null) {
                 return false;
             }
@@ -139,27 +135,16 @@ namespace KingdomGame {
             IList<TTarget> eligibleTargets = new List<TTarget>();
             IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
             foreach(TTarget target in allTypedTargets) {
-                if (IsIndividualTargetValidTypedBase(
-                  target,
-                  targetingCard, 
-                  game
-                )) {
+                if (IsIndividualTargetValidTypedBase(target, targetingCard, game)) {
                     eligibleTargets.Add(target);
                 }
-                else {
-                    if (typedTargetSet.Contains(target)) {
-                        return false;
-                    }
+                else if (typedTargetSet.Contains(target)) {
+                    return false;
                 }
             }
 
-            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(
-              typedTargetSet, 
-              eligibleTargets, 
-              allTypedTargets, 
-              targetingCard, 
-              game
-            )) {
+            if(_allValidTargetsRequired 
+              && !AreAllValidTargetsIncluded(typedTargetSet, eligibleTargets, allTypedTargets, targetingCard, game)) {
                 return false;
             }
 
