@@ -24,11 +24,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<CardType> targets, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<CardType> targets, Game game) {
             if (targets.Count > 0) {
                 return targets[0].Cost <= 4;
             }

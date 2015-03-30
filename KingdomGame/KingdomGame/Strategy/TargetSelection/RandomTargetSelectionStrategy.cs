@@ -15,7 +15,7 @@ namespace KingdomGame {
           Card card, 
           IAction action
         ) {
-            IList<ITargetable> validTargets = action.GetAllValidIndividualTargets(card, game);
+            IList<ITargetable> validTargets = action.GetAllValidIndividualTargets(game);
 
             if (action.AllValidTargetsRequired) {
                 return validTargets;

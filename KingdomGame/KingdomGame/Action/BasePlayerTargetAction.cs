@@ -66,7 +66,7 @@ namespace KingdomGame {
 
         #region Protected Methods
 
-        protected override bool IsIndividualTargetValidTypedBase(Player target, Card targetingCard, Game game) {
+        protected override bool IsIndividualTargetValidTypedBase(Player target, Game game) {
             if(((_playerTargetType & PlayerTargetType.SELF) == PlayerTargetType.NONE) 
               && target.Id == GetTargetSelector(game).Id) {
                 return false;

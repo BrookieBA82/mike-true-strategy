@@ -20,11 +20,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<Card> targetCards, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<Card> targetCards, Game game) {
             if (targetCards.Count > 0) {
                 Player targetSelector = GetTargetSelector(game);
                 return targetSelector.Hand.Contains(targetCards[0]);
@@ -50,11 +46,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<CardType> targets, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<CardType> targets, Game game) {
             if (targets.Count > 0) {
 
                 IList<int> trashingTargetIds = game.State.GetTargetsFromLastExecutedAction(typeof(RemodelTrashingAction));

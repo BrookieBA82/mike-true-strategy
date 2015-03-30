@@ -29,11 +29,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<Player> players, 
-          Card targetingCard,
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<Player> players, Game game) {
             foreach (Player player in players) {
                 foreach (Card card in player.Hand) {
                     if (card.Type.Properties.Contains(
@@ -63,11 +59,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<Card> cards, 
-          Card targetingCard,
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<Card> cards, Game game) {
             Player targetSelector = GetTargetSelector(game);
             int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
             if (cards.Count != cardsToDiscard) {
@@ -83,11 +75,7 @@ namespace KingdomGame.BasicCardTypes {
             return true;
         }
 
-        protected override bool IsIndividualTargetValid(
-          Card target, 
-          Card targetingCard,
-          Game game
-        ) {
+        protected override bool IsIndividualTargetValid(Card target, Game game) {
             Player targetSelector = GetTargetSelector(game);
             return targetSelector.Hand.Contains(target);
         }

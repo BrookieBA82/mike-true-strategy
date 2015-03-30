@@ -28,7 +28,7 @@ namespace KingdomGame {
                 args.CurrentAction = action;
                 TargetSelectionPromptRequired(this, args);
                 IList<ITargetable> selectedTargets = args.SelectedTargets;
-                return (action.IsTargetSetValid(selectedTargets, card, game)) ? selectedTargets : new List<ITargetable>();
+                return (action.IsTargetSetValid(selectedTargets, game)) ? selectedTargets : new List<ITargetable>();
             }
             else {
                 return new RandomTargetSelectionStrategy().SelectTargets(game, card, action);

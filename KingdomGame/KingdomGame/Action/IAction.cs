@@ -13,9 +13,9 @@ namespace KingdomGame {
 
         IAction Create(Player targetSelector);
 
-        bool IsTargetSetValid(IList<ITargetable> targetSet, Card targetingCard, Game game);
+        bool IsTargetSetValid(IList<ITargetable> targetSet, Game game);
 
-        IList<ITargetable> GetAllValidIndividualTargets(Card targetingCard, Game game);
+        IList<ITargetable> GetAllValidIndividualTargets(Game game);
 
         void Apply(IList<ITargetable> targetSet, Game game);
 

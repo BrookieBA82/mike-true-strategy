@@ -613,7 +613,7 @@ namespace KingdomGame {
                       delegate (ITargetable target) { return target.Id;}
                     ));
 
-                    if (action.IsTargetSetValid(targets, State.SelectedPlay, this)) {
+                    if (action.IsTargetSetValid(targets, this)) {
                         action.Apply(targets, this);
                     }
 

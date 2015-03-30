@@ -21,11 +21,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<Card> targetCards, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<Card> targetCards, Game game) {
             Player targetSelector = GetTargetSelector(game);
             foreach (Card card in targetCards) {
                 if (!targetSelector.Hand.Contains(card)) {

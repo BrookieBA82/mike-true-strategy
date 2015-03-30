@@ -20,11 +20,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<Card> targetCards, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<Card> targetCards, Game game) {
             if (targetCards.Count > 0) {
                 Player targetSelector = GetTargetSelector(game);
                 return targetCards[0].Type.Class == CardType.CardClass.TREASURE && targetSelector.Hand.Contains(targetCards[0]);
@@ -50,11 +46,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetSetValidInternal(
-          IList<CardType> targetTypes, 
-          Card targetingCard, 
-          Game game
-        ) {
+        protected override bool IsTargetSetValidInternal(IList<CardType> targetTypes, Game game) {
             if (targetTypes.Count > 0) {
                 if (targetTypes[0].Class != CardType.CardClass.TREASURE) {
                     return false;

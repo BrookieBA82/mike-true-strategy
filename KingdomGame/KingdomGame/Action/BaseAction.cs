@@ -103,7 +103,7 @@ namespace KingdomGame {
             return action;
         }
 
-        public bool IsTargetSetValid(IList<ITargetable> targetSet, Card targetingCard, Game game) {
+        public bool IsTargetSetValid(IList<ITargetable> targetSet, Game game) {
             if (targetSet == null) {
                 return false;
             }
@@ -120,20 +120,17 @@ namespace KingdomGame {
                 return false;
             }
 
-            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(targetSet, targetingCard, game)) {
+            if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(targetSet, game)) {
                 return false;
             }
 
-            return IsTargetSetValidSubclass(targetSet, targetingCard, game);
+            return IsTargetSetValidSubclass(targetSet, game);
         }
 
-        public IList<ITargetable> GetAllValidIndividualTargets(
-          Card targetingCard, 
-          Game game
-        ) {
+        public IList<ITargetable> GetAllValidIndividualTargets(Game game) {
             IList<ITargetable> validTargets = new List<ITargetable>();
             foreach (ITargetable target in GetAllPossibleIndividualTargetsTypedBase(game)) {
-                if (IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
+                if (IsIndividualTargetValid(target as TTarget, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -142,7 +139,7 @@ namespace KingdomGame {
         }
 
         public void Apply(IList<ITargetable> targetSet, Game game) {
-            if (IsTargetSetValid(targetSet, game.State.SelectedPlay, game)) {
+            if (IsTargetSetValid(targetSet, game)) {
                 ApplyInternal(GetTypedTargetList(targetSet), game);
             }
             else {
@@ -198,16 +195,16 @@ namespace KingdomGame {
 
         }
 
-        protected virtual bool IsIndividualTargetValidTypedBase(TTarget targetSet, Card targetingCard, Game game) {
+        protected virtual bool IsIndividualTargetValidTypedBase(TTarget targetSet, Game game) {
             return true;
         }
 
-        protected virtual bool IsTargetSetValidInternal(IList<TTarget> targetSet, Card targetingCard, Game game) {
+        protected virtual bool IsTargetSetValidInternal(IList<TTarget> targetSet, Game game) {
             return true;
         }
 
-        protected virtual bool IsIndividualTargetValid(TTarget target, Card targetingCard, Game game) {
-            return IsIndividualTargetValidSubclass(target, targetingCard, game);
+        protected virtual bool IsIndividualTargetValid(TTarget target, Game game) {
+            return IsIndividualTargetValidSubclass(target, game);
         }
 
         #endregion
@@ -229,8 +226,8 @@ namespace KingdomGame {
 
         #region Target Validity Methods
 
-        private bool AreAllValidTargetsIncluded(IList<ITargetable> targetSet, Card targetingCard, Game game) {
-            List<ITargetable> eligibleTargets = new List<ITargetable>(GetAllValidIndividualTargets(targetingCard, game));
+        private bool AreAllValidTargetsIncluded(IList<ITargetable> targetSet, Game game) {
+            List<ITargetable> eligibleTargets = new List<ITargetable>(GetAllValidIndividualTargets(game));
             foreach (ITargetable eligibleTarget in eligibleTargets) {
                 if (!targetSet.Contains(eligibleTarget)) {
                     return false;
@@ -240,15 +237,15 @@ namespace KingdomGame {
             return true;
         }
 
-        private bool IsIndividualTargetValidSubclass(ITargetable target, Card targetingCard, Game game) {
-            return IsTargetSetValidInternal(new List<TTarget>() { target as TTarget }, targetingCard, game)
-                && IsIndividualTargetValidTypedBase(target as TTarget, targetingCard, game);
+        private bool IsIndividualTargetValidSubclass(ITargetable target, Game game) {
+            return IsTargetSetValidInternal(new List<TTarget>() { target as TTarget }, game)
+                && IsIndividualTargetValidTypedBase(target as TTarget, game);
         }
 
-        private bool IsTargetSetValidSubclass(IList<ITargetable> targetSet, Card targetingCard, Game game) {
+        private bool IsTargetSetValidSubclass(IList<ITargetable> targetSet, Game game) {
             List<TTarget> typedTargetSet = GetTypedTargetList(targetSet);
-            return IsTargetSetValidInternal(typedTargetSet, targetingCard, game)
-                && !typedTargetSet.Exists(delegate(TTarget target) { return !IsIndividualTargetValidTypedBase(target, targetingCard, game); });
+            return IsTargetSetValidInternal(typedTargetSet, game)
+                && !typedTargetSet.Exists(delegate(TTarget target) { return !IsIndividualTargetValidTypedBase(target, game); });
         }
 
         #endregion
