@@ -68,11 +68,11 @@ namespace KingdomGame {
 
         protected override bool IsIndividualTargetValidTypedBase(Player target, Card targetingCard, Game game) {
             if(((_playerTargetType & PlayerTargetType.SELF) == PlayerTargetType.NONE) 
-              && target.Id == targetingCard.OwnerId) {
+              && target.Id == GetTargetSelector(game).Id) {
                 return false;
             } 
             else if(((_playerTargetType & PlayerTargetType.OTHER) == PlayerTargetType.NONE) 
-              && target.Id != targetingCard.OwnerId) {
+              && target.Id != GetTargetSelector(game).Id) {
                 return false;
             }
 
