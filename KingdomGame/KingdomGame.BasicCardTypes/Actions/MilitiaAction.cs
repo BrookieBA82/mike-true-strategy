@@ -75,7 +75,7 @@ namespace KingdomGame.BasicCardTypes {
             return true;
         }
 
-        protected override bool IsIndividualTargetValid(Card target, Game game) {
+        protected override bool IsIndividualTargetValidInternal(Card target, Game game) {
             Player targetSelector = GetTargetSelector(game);
             return targetSelector.Hand.Contains(target);
         }

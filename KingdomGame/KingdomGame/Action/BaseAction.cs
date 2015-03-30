@@ -130,7 +130,7 @@ namespace KingdomGame {
         public IList<ITargetable> GetAllValidIndividualTargets(Game game) {
             IList<ITargetable> validTargets = new List<ITargetable>();
             foreach (ITargetable target in GetAllPossibleIndividualTargetsTypedBase(game)) {
-                if (IsIndividualTargetValid(target as TTarget, game)) {
+                if (IsIndividualTargetValidSubclass(target as TTarget, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -203,8 +203,8 @@ namespace KingdomGame {
             return true;
         }
 
-        protected virtual bool IsIndividualTargetValid(TTarget target, Game game) {
-            return IsIndividualTargetValidSubclass(target, game);
+        protected virtual bool IsIndividualTargetValidInternal(TTarget target, Game game) {
+            return IsTargetSetValidInternal(new List<TTarget>() { target }, game);
         }
 
         #endregion
@@ -237,9 +237,8 @@ namespace KingdomGame {
             return true;
         }
 
-        private bool IsIndividualTargetValidSubclass(ITargetable target, Game game) {
-            return IsTargetSetValidInternal(new List<TTarget>() { target as TTarget }, game)
-                && IsIndividualTargetValidTypedBase(target as TTarget, game);
+        private bool IsIndividualTargetValidSubclass(TTarget target, Game game) {
+            return IsIndividualTargetValidInternal(target, game) && IsIndividualTargetValidTypedBase(target as TTarget, game);
         }
 
         private bool IsTargetSetValidSubclass(IList<ITargetable> targetSet, Game game) {
