@@ -108,28 +108,21 @@ namespace KingdomGame {
                 return false;
             }
 
-            IList<TTarget> typedTargetSet = new List<TTarget>();
-            foreach(ITargetable target in targetSet) {
-                if(!(target is TTarget)) {
-                    return false;
-                }
-
-                typedTargetSet.Add(target as TTarget);
-            }
-
-            if ((typedTargetSet.Count < _minTargets) || (typedTargetSet.Count > _maxTargets)) {
+            if ((targetSet.Count < _minTargets) || (targetSet.Count > _maxTargets)) {
                 return false;
             }
 
             if (!_duplicateTargetsAllowed) {
-                Set<ITargetable> targets = new Set<ITargetable>();
-                foreach (ITargetable target in typedTargetSet) {
-                    if (targets.Contains(target)) {
-                        return false;
-                    }
-
-                    targets.Add(target);
+                IList<ITargetable> uniqueTargets = new List<ITargetable>(targetSet.Distinct<ITargetable>());
+                if (uniqueTargets.Count < targetSet.Count) {
+                    return false;
                 }
+            }
+
+            List<TTarget> typedTargetSet = new List<ITargetable>(targetSet).ConvertAll<TTarget>(
+              delegate(ITargetable target) { return target as TTarget; });
+            if (typedTargetSet.Contains(null)) {
+                return false;
             }
 
             IList<TTarget> eligibleTargets = new List<TTarget>();
