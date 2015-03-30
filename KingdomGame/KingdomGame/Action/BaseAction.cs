@@ -281,8 +281,8 @@ namespace KingdomGame {
           Game game
         ) {
             foreach (TTarget target in allTargets) {
-                bool isValidTarget = IsIndividualTargetValid(
-                  target, 
+                bool isValidTarget = IsTargetSetValidInternal(
+                  new List<TTarget>() { target }, 
                   targetingCard, 
                   game
                 );
