@@ -613,7 +613,9 @@ namespace KingdomGame {
                       delegate (ITargetable target) { return target.Id;}
                     ));
 
-                    action.Apply(targets, this);
+                    if (action.IsTargetSetValid(targets, State.SelectedPlay, this)) {
+                        action.Apply(targets, this);
+                    }
 
                     Logger.Instance.RecordAction(this, GetPlayerById(action.TargetSelectorId.Value), State.SelectedPlay, action, targets);
 

@@ -146,8 +146,7 @@ namespace KingdomGame {
                 ApplyInternal(GetTypedTargetList(targetSet), game);
             }
             else {
-                // Todo - (MT): Consider throwing the following exception if it can be robustly handled by the Game class and tests:
-                // throw new InvalidOperationException("Cannot apply this action to an invalid target set.");
+                throw new InvalidOperationException("Cannot apply this action to an invalid target set.");
             }
         }
 
