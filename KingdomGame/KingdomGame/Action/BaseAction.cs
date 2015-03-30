@@ -125,15 +125,10 @@ namespace KingdomGame {
                 return false;
             }
 
-            IList<TTarget> eligibleTargets = new List<TTarget>();
-            IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
-            foreach(TTarget target in allTypedTargets) {
-                if (IsIndividualTargetValidTypedBase(target, targetingCard, game)) {
-                    eligibleTargets.Add(target);
-                }
-                else if (typedTargetSet.Contains(target)) {
-                    return false;
-                }
+            List<TTarget> allTypedTargets = new List<TTarget>(GetAllPossibleIndividualTargetsTypedBase(game));
+            if(typedTargetSet.Exists(delegate(TTarget target) 
+              { return !IsIndividualTargetValidTypedBase(target, targetingCard, game); })) {
+                return false;
             }
 
             if(_allValidTargetsRequired && !AreAllValidTargetsIncluded(typedTargetSet, targetingCard, game)) {
@@ -157,10 +152,7 @@ namespace KingdomGame {
             return validTargets;
         }
 
-        public void Apply(
-          IList<ITargetable> targetSet,
-          Game game
-        ) {
+        public void Apply(IList<ITargetable> targetSet, Game game) {
             IList<TTarget> typedTargetSet = new List<TTarget>();
             foreach (ITargetable target in targetSet) {
                 if(target is TTarget) {
@@ -268,12 +260,10 @@ namespace KingdomGame {
         private bool AreAllValidTargetsIncluded(IList<TTarget> typedTargetSet, Card targetingCard, Game game) {
             IList<TTarget> eligibleTargets = new List<TTarget>();
             IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
+
             foreach(TTarget target in allTypedTargets) {
                 if (IsIndividualTargetValidTypedBase(target, targetingCard, game)) {
                     eligibleTargets.Add(target);
-                }
-                else if (typedTargetSet.Contains(target)) {
-                    return false;
                 }
             }
 
