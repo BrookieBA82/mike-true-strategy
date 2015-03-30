@@ -50,7 +50,7 @@ namespace KingdomGame {
           Card card, 
           IAction action
         ) {
-            return action.IsTargetValid(_targets, card, game)
+            return action.IsTargetSetValid(_targets, card, game)
               ? new List<ITargetable>(_targets)
               : new List<ITargetable>();
         }

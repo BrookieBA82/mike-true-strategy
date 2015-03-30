@@ -210,7 +210,7 @@ namespace KingdomGame.Driver {
 
         private static void ExecuteHumanPlayerAction(Object sender, TargetSelectionPromptEventArgs args) {
 
-            IList<ITargetable> validTargets = args.CurrentAction.GetAllIndividuallyValidTargets(args.Game.State.SelectedPlay, args.Game);
+            IList<ITargetable> validTargets = args.CurrentAction.GetAllValidIndividualTargets(args.Game.State.SelectedPlay, args.Game);
 
             if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
@@ -282,12 +282,7 @@ namespace KingdomGame.Driver {
                             selectedTargets.Add(selectedTarget);
                         }
 
-                        validTargetSpecified = args.CurrentAction.IsTargetValid(
-                          selectedTargets, 
-                          args.CurrentPlay, 
-                          args.Game
-                        );
-
+                        validTargetSpecified = args.CurrentAction.IsTargetSetValid(selectedTargets, args.CurrentPlay, args.Game);
                         if(!validTargetSpecified) {
                             Console.WriteLine(string.Format(
                               "Invalid target selection for {0}, please try again:\n", 

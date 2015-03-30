@@ -29,7 +29,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<Player> players, 
           Card targetingCard,
           Game game
@@ -63,7 +63,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<Card> cards, 
           Card targetingCard,
           Game game
@@ -83,7 +83,7 @@ namespace KingdomGame.BasicCardTypes {
             return true;
         }
 
-        protected override bool IsTargetIndividuallyValid(
+        protected override bool IsIndividualTargetValid(
           Card target, 
           Card targetingCard,
           Game game
@@ -92,11 +92,11 @@ namespace KingdomGame.BasicCardTypes {
             return targetSelector.Hand.Contains(target);
         }
 
-        protected override void CreateInternal(Player targetSelector) {
+        protected override void CreatePostProcess(Player targetSelector) {
             Debug.Assert(targetSelector != null, "Target selectors cannot be null.");
             int cardsToDiscard = (targetSelector.Hand.Count > 3) ? targetSelector.Hand.Count - 3 : 0;
-            _minTargets = cardsToDiscard;
-            _maxTargets = cardsToDiscard;
+            MinTargets = cardsToDiscard;
+            MaxTargets = cardsToDiscard;
         }
     }
 

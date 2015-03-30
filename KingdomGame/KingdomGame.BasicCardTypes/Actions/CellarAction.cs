@@ -21,7 +21,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<Card> targetCards, 
           Card targetingCard, 
           Game game

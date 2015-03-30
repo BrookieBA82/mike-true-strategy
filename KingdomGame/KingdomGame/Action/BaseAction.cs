@@ -12,22 +12,25 @@ namespace KingdomGame {
     // Refactor - (MT): Consider a base class for making a general choice (between actions).
     public abstract class BaseAction<TTarget> : IAction where TTarget : class, ITargetable {
 
-        protected int _minTargets;
-        protected int _maxTargets;
-        protected int? _targetSelectorId = null;
-        protected bool _allValidTargetsRequired;
+        #region Private Members
 
-        protected bool _duplicateTargetsAllowed;
+        private int? _targetSelectorId = null;
 
-        protected string _displayName;
-        protected string _actionDescription;
+        private int _minTargets;
+        private int _maxTargets;
+        private bool _duplicateTargetsAllowed;
+        private bool _allValidTargetsRequired;
 
-        public BaseAction (
-          int minTargets, 
-          int maxTargets,
-          bool duplicateTargetsAllowed,
-          bool allValidTargetsRequired
-        ) {
+        private bool _lockedForUpdates;
+
+        private string _displayName;
+        private string _actionDescription;
+
+        #endregion
+
+        #region Constructors
+
+        public BaseAction (int minTargets, int maxTargets, bool duplicateTargetsAllowed, bool allValidTargetsRequired) {
             if (minTargets > maxTargets) {
                 throw new ArgumentException("Cannot specify a minimum number of targets larger than the maximum.");
             }
@@ -36,9 +39,71 @@ namespace KingdomGame {
             _maxTargets = maxTargets;
             _duplicateTargetsAllowed = duplicateTargetsAllowed;
             _allValidTargetsRequired = allValidTargetsRequired;
+
+            _lockedForUpdates = false;
         }
 
-        public bool IsTargetValid(
+        #endregion
+
+        #region Properties
+
+        public int? TargetSelectorId { get { return _targetSelectorId; } }
+
+        public int MinTargets { 
+            get { return _minTargets; }
+            protected set { 
+                Debug.Assert(!_lockedForUpdates, "Action properties should not be altered once Create has been called.");
+                _minTargets = value; 
+            }
+        }
+
+        public int MaxTargets { 
+            get { return _maxTargets; }
+            protected set {
+                Debug.Assert(!_lockedForUpdates, "Action properties should not be altered once Create has been called.");
+                _maxTargets = value; 
+            }
+        }
+
+        public bool AllValidTargetsRequired { get { return _allValidTargetsRequired; } }
+
+        public string DisplayName { 
+            get {return (!string.IsNullOrEmpty(_displayName)) ? _displayName : GetType().Name; }
+            set { 
+                Debug.Assert(!_lockedForUpdates, "Action properties should not be altered once Create has been called.");
+                _displayName = value; 
+            }
+        }
+
+        public string ActionDescription { 
+            get {return (!string.IsNullOrEmpty(_actionDescription)) ? _actionDescription : GetType().Name; }
+            set { 
+                Debug.Assert(!_lockedForUpdates, "Action properties should not be altered once Create has been called.");
+                _actionDescription = value; 
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        #region Action Interface Methods
+
+        public IAction Create(Player targetSelector) {
+            if (targetSelector == null) {
+                throw new ArgumentNullException("A valid player must be specified as the target selector for an action.");
+            }
+
+            BaseAction<TTarget> action = this.MemberwiseClone() as BaseAction<TTarget>;
+            action._targetSelectorId = targetSelector.Id;
+            action.CreatePostProcess(targetSelector);
+
+            action._lockedForUpdates = true;
+
+            return action;
+        }
+
+        public bool IsTargetSetValid(
           IList<ITargetable> targetSet, 
           Card targetingCard, 
           Game game
@@ -72,9 +137,9 @@ namespace KingdomGame {
             }
 
             IList<TTarget> eligibleTargets = new List<TTarget>();
-            IList<TTarget> allTypedTargets = GetAllPossibleTargetsBase(game);
+            IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
             foreach(TTarget target in allTypedTargets) {
-                if (IsTargetValidBase(
+                if (IsIndividualTargetValidTypedBase(
                   target,
                   targetingCard, 
                   game
@@ -98,7 +163,21 @@ namespace KingdomGame {
                 return false;
             }
 
-            return IsTargetValidInternal(typedTargetSet, targetingCard, game);
+            return IsTargetSetValidInternal(typedTargetSet, targetingCard, game);
+        }
+
+        public IList<ITargetable> GetAllValidIndividualTargets(
+          Card targetingCard, 
+          Game game
+        ) {
+            IList<ITargetable> validTargets = new List<ITargetable>();
+            foreach (ITargetable target in GetAllPossibleIndividualTargets(game)) {
+                if (IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
+                    validTargets.Add(target);
+                }
+            }
+
+            return validTargets;
         }
 
         public void Apply(
@@ -122,59 +201,9 @@ namespace KingdomGame {
             ApplyInternal(typedTargetSet, game);
         }
 
-        public IList<ITargetable> GetAllIndividuallyValidTargets(
-          Card targetingCard, 
-          Game game
-        ) {
-            IList<ITargetable> validTargets = new List<ITargetable>();
-            foreach (ITargetable target in GetAllIndividuallyPossibleTargets(game)) {
-                if (IsTargetIndividuallyValid(target as TTarget, targetingCard, game)) {
-                    validTargets.Add(target);
-                }
-            }
+        #endregion
 
-            return validTargets;
-        }
-
-        public IList<ITargetable> GetAllIndividuallyPossibleTargets(Game game) {
-            IList<TTarget> allPossibleTargets = GetAllPossibleTargetsBase(game);
-            IList<ITargetable> allTypedTargets = new List<ITargetable>();
-            foreach (TTarget target in allPossibleTargets) {
-                allTypedTargets.Add(target);
-            }
-
-            return allTypedTargets;
-        }
-
-        public int MinTargets { get { return _minTargets; } }
-
-        public int MaxTargets { get { return _maxTargets; } }
-
-        public int? TargetSelectorId { get { return _targetSelectorId; } }
-
-        public bool AllValidTargetsRequired { get { return _allValidTargetsRequired; } }
-
-        public string DisplayName { 
-            get {return (!string.IsNullOrEmpty(_displayName)) ? _displayName : GetType().Name; }
-            set { _displayName = value; }
-        }
-
-        public string ActionDescription { 
-            get {return (!string.IsNullOrEmpty(_actionDescription)) ? _actionDescription : GetType().Name; }
-            set { _actionDescription = value; }
-        }
-
-        public IAction Create(Player targetSelector) {
-            if (targetSelector == null) {
-                throw new ArgumentNullException("A valid player must be specified as the target selector for an action.");
-            }
-
-            BaseAction<TTarget> action = this.MemberwiseClone() as BaseAction<TTarget>;
-            action._targetSelectorId = targetSelector.Id;
-            action.CreateInternal(targetSelector);
-
-            return action;
-        }
+        #region Equality Methods
 
         public override bool Equals(object obj) {
             BaseAction<TTarget> action = obj as BaseAction<TTarget>;
@@ -200,46 +229,63 @@ namespace KingdomGame {
               ^ ((_targetSelectorId.HasValue) ? _targetSelectorId.Value.GetHashCode() : false.GetHashCode());
         }
 
-        protected abstract void ApplyInternal(
-          IList<TTarget> target, 
-          Game game
-        );
+        #endregion
 
-        protected abstract IList<TTarget> GetAllPossibleTargetsBase(Game game);
+        #endregion
 
-        protected virtual bool IsTargetValidBase(
-          TTarget target,
-          Card targetingCard,
-          Game game
-        ) {
+        #region Protected Methods
+
+        #region Abstract Methods
+
+        protected abstract void ApplyInternal(IList<TTarget> target, Game game);
+
+        protected abstract IList<TTarget> GetAllPossibleIndividualTargetsTypedBase(Game game);
+
+        #endregion
+
+        #region Virtual Methods
+
+        protected virtual void CreatePostProcess(Player targetSelector) {
+
+        }
+
+        protected virtual bool IsIndividualTargetValidTypedBase(TTarget targetSet, Card targetingCard, Game game) {
             return true;
         }
 
-        protected virtual bool IsTargetValidInternal(
-          IList<TTarget> targets, 
-          Card targetingCard,
-          Game game
-        ) {
+        protected virtual bool IsTargetSetValidInternal(IList<TTarget> targetSet, Card targetingCard, Game game) {
             return true;
         }
 
-        protected virtual bool IsTargetIndividuallyValid(
-          TTarget target, 
-          Card targetingCard,
-          Game game
-        ) {
-            return this.IsTargetValid(new List<ITargetable>() { target }, targetingCard, game);
+        protected virtual bool IsIndividualTargetValid(TTarget target, Card targetingCard, Game game) {
+            return this.IsTargetSetValid(new List<ITargetable>() { target }, targetingCard, game);
         }
 
-        protected virtual void CreateInternal(Player targetSelector) {
+        #endregion
 
-        }
+        #region Utility Methods
 
         protected Player GetTargetSelector(Game game) {
             Debug.Assert(_targetSelectorId.HasValue, "Actions should always have a target selector specified.");
             Player targetSelector = game.GetPlayerById(_targetSelectorId.Value);
             Debug.Assert(targetSelector != null, "Target selectors should always be a valid player.");
             return targetSelector;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Utility Methods
+
+        private IList<ITargetable> GetAllPossibleIndividualTargets(Game game) {
+            IList<TTarget> allPossibleTargets = GetAllPossibleIndividualTargetsTypedBase(game);
+            IList<ITargetable> allTypedTargets = new List<ITargetable>();
+            foreach (TTarget target in allPossibleTargets) {
+                allTypedTargets.Add(target);
+            }
+
+            return allTypedTargets;
         }
 
         private bool AreAllValidTargetsIncluded(
@@ -250,7 +296,7 @@ namespace KingdomGame {
           Game game
         ) {
             foreach (TTarget target in allTargets) {
-                bool isValidTarget = IsTargetValidInternal(
+                bool isValidTarget = IsTargetSetValidInternal(
                   new List<TTarget>() { target }, 
                   targetingCard, 
                   game
@@ -263,5 +309,7 @@ namespace KingdomGame {
 
             return true;
         }
+
+        #endregion
     }
 }

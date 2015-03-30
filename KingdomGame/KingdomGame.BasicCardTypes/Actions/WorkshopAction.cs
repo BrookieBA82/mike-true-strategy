@@ -10,7 +10,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class WorkshopAction : BaseCardTypeTargetAction {
 
-        private WorkshopAction() : base(1, 1, true, true) {
+        private WorkshopAction() : base(1, 1, true) {
 
         }
 
@@ -24,7 +24,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<CardType> targets, 
           Card targetingCard, 
           Game game

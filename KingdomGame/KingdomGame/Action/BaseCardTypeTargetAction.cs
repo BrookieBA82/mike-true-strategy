@@ -9,34 +9,41 @@ namespace KingdomGame {
 
     public abstract class BaseCardTypeTargetAction : BaseAction<CardType> {
 
-        protected bool _requireTypesAvailableForAcquisition;
+        #region Constructors
 
         public BaseCardTypeTargetAction (
           int minTargets, 
           int maxTargets,
-          bool requireTypesAvailableForAcquisition
-        ) : this(minTargets, maxTargets, requireTypesAvailableForAcquisition, true) {
-        }
-
-        public BaseCardTypeTargetAction (
-          int minTargets, 
-          int maxTargets,
-          bool requireTypesAvailableForAcquisition,
           bool duplicateTargetsAllowed
         ) : base(minTargets, maxTargets, duplicateTargetsAllowed, false) {
-            _requireTypesAvailableForAcquisition = requireTypesAvailableForAcquisition;
+
         }
 
-        protected override bool IsTargetValidBase(
+        #endregion
+
+        #region Public Methods
+
+        public override bool Equals(object obj) {
+            return (obj is BaseCardTypeTargetAction) && base.Equals(obj);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode() ^ GetType().GetHashCode();
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        protected override bool IsIndividualTargetValidTypedBase(
           CardType target,
           Card targetingCard,
           Game game
         ) {
-            return !(_requireTypesAvailableForAcquisition 
-              && (game.GetCardsByType(target) == null || game.GetCardsByType(target).Count == 0));
+            return !(game.GetCardsByType(target) == null || game.GetCardsByType(target).Count == 0);
         }
 
-        protected override IList<CardType> GetAllPossibleTargetsBase(Game game) {
+        protected override IList<CardType> GetAllPossibleIndividualTargetsTypedBase(Game game) {
             IList<CardType> types = new List<CardType>();
             foreach (CardType type in ActionRegistry.Instance.CardTypes) {
                 IList<Card> cardsByType = game.GetCardsByType(type);
@@ -48,18 +55,7 @@ namespace KingdomGame {
             return types;
         }
 
-        public override bool Equals(object obj) {
-            BaseCardTypeTargetAction action = obj as BaseCardTypeTargetAction;
-            if (action == null) {
-                return false;
-            }
+        #endregion
 
-            return base.Equals(action) 
-              && _requireTypesAvailableForAcquisition == action._requireTypesAvailableForAcquisition;
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode() ^ _requireTypesAvailableForAcquisition.GetHashCode();
-        }
     }
 }

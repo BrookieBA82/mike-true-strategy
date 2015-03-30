@@ -9,6 +9,8 @@ namespace KingdomGame {
 
     public abstract class BaseCardTargetAction : BaseAction<Card> {
 
+        #region Enums
+
         public enum CardOwnerTargetType {
             NONE = 0,
             SELF = 1,
@@ -18,26 +20,47 @@ namespace KingdomGame {
             ANY = 15
         }
 
-        protected CardOwnerTargetType _cardOwnerTargetType;
+        #endregion
+
+        #region Private Members
+
+        private CardOwnerTargetType _cardOwnerTargetType;
+
+        #endregion
+
+        #region Constructors
 
         public BaseCardTargetAction (
           CardOwnerTargetType cardOwnerTargetType, 
           int minTargets, 
           int maxTargets
-        ) : this(cardOwnerTargetType, minTargets, maxTargets, false) {
-        }
-
-        public BaseCardTargetAction (
-          CardOwnerTargetType cardOwnerTargetType, 
-          int minTargets, 
-          int maxTargets,
-          bool allValidTargetsRequired
-        ) : base(minTargets, maxTargets, false, allValidTargetsRequired) {
+        ) : base(minTargets, maxTargets, false, false) {
             _cardOwnerTargetType = cardOwnerTargetType;
         }
 
+        #endregion
+
+        #region Public Methods
+
+        public override bool Equals(object obj) {
+            BaseCardTargetAction action = obj as BaseCardTargetAction;
+            if (action == null) {
+                return false;
+            }
+
+            return base.Equals(action) && _cardOwnerTargetType == action._cardOwnerTargetType;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode() ^ _cardOwnerTargetType.GetHashCode();
+        }
+
+        #endregion
+
+        #region Protected Methods
+
         // Todo - (MT): Support card property targeting as an AND relationship with card owner.
-        protected override bool IsTargetValidBase(
+        protected override bool IsIndividualTargetValidTypedBase(
           Card target,
           Card targetingCard,
           Game game
@@ -67,21 +90,11 @@ namespace KingdomGame {
             return true;
         }
 
-        protected override IList<Card> GetAllPossibleTargetsBase(Game game) {
+        protected override IList<Card> GetAllPossibleIndividualTargetsTypedBase(Game game) {
             return game.Cards;
         }
 
-        public override bool Equals(object obj) {
-            BaseCardTargetAction action = obj as BaseCardTargetAction;
-            if (action == null) {
-                return false;
-            }
+        #endregion
 
-            return base.Equals(action) && _cardOwnerTargetType == action._cardOwnerTargetType;
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode() ^ _cardOwnerTargetType.GetHashCode();
-        }
     }
 }

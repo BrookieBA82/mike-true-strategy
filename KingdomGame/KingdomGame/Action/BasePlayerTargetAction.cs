@@ -9,6 +9,8 @@ namespace KingdomGame {
 
     public abstract class BasePlayerTargetAction : BaseAction<Player> {
 
+        #region Enums
+
         public enum PlayerTargetType {
             NONE = 0,
             SELF = 1,
@@ -16,13 +18,22 @@ namespace KingdomGame {
             ANY = 3
         }
 
-        protected PlayerTargetType _playerTargetType;
+        #endregion
+
+        #region Private Members
+
+        private PlayerTargetType _playerTargetType;
+
+        #endregion
+
+        #region Constructors
 
         public BasePlayerTargetAction (
           PlayerTargetType playerTargetType, 
           int minTargets, 
           int maxTargets
         ) : this(playerTargetType, minTargets, maxTargets, false) {
+
         }
 
         public BasePlayerTargetAction (
@@ -34,7 +45,28 @@ namespace KingdomGame {
             _playerTargetType = playerTargetType;
         }
 
-        protected override bool IsTargetValidBase(
+        #endregion
+
+        #region Public Methods
+
+        public override bool Equals(object obj) {
+            BasePlayerTargetAction action = obj as BasePlayerTargetAction;
+            if (action == null) {
+                return false;
+            }
+
+            return base.Equals(action) && _playerTargetType == action._playerTargetType;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode() ^ _playerTargetType.GetHashCode();
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        protected override bool IsIndividualTargetValidTypedBase(
           Player target,
           Card targetingCard,
           Game game
@@ -51,21 +83,11 @@ namespace KingdomGame {
             return true;
         }
 
-        protected override IList<Player> GetAllPossibleTargetsBase(Game game) {
+        protected override IList<Player> GetAllPossibleIndividualTargetsTypedBase(Game game) {
             return game.Players;
         }
 
-        public override bool Equals(object obj) {
-            BasePlayerTargetAction action = obj as BasePlayerTargetAction;
-            if (action == null) {
-                return false;
-            }
+        #endregion
 
-            return base.Equals(action) && _playerTargetType == action._playerTargetType;
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode() ^ _playerTargetType.GetHashCode();
-        }
     }
 }

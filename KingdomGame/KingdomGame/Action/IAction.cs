@@ -11,22 +11,20 @@ namespace KingdomGame {
     // Refactor - (MT): Add a target selecting player action to determine whose strategy should get used.
     public interface IAction {
 
-        bool IsTargetValid(IList<ITargetable> targets, Card targetingCard, Game game);
+        IAction Create(Player targetSelector);
 
-        void Apply(IList<ITargetable> targets, Game game);
+        bool IsTargetSetValid(IList<ITargetable> targetSet, Card targetingCard, Game game);
 
         // Refactor - (MT): Revisit the entire action/target validity stack so that it is consistent.
-        IList<ITargetable> GetAllIndividuallyValidTargets(Card targetingCard, Game game);
+        IList<ITargetable> GetAllValidIndividualTargets(Card targetingCard, Game game);
 
-        IList<ITargetable> GetAllIndividuallyPossibleTargets(Game game);
-
-        IAction Create(Player targetSelector);
+        void Apply(IList<ITargetable> targetSet, Game game);
 
         // Refactor - (MT): Get the player from the game backreference.
         int? TargetSelectorId { get; }
 
         // Refactor - (MT): Add a method for getting a target object from the game via ID.
-        // IList<ITargetable> GetTargetObjectById(int id);
+        // ITargetable GetTargetObjectById(int id);
 
         int MinTargets { get; }
 

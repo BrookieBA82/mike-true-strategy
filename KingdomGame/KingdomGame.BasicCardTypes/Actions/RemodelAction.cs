@@ -20,7 +20,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<Card> targetCards, 
           Card targetingCard, 
           Game game
@@ -36,7 +36,7 @@ namespace KingdomGame.BasicCardTypes {
 
     public class RemodelGainingAction : BaseCardTypeTargetAction {
 
-        private RemodelGainingAction() : base(1, 1, true, true) {
+        private RemodelGainingAction() : base(1, 1, true) {
 
         }
 
@@ -50,7 +50,7 @@ namespace KingdomGame.BasicCardTypes {
             }
         }
 
-        protected override bool IsTargetValidInternal(
+        protected override bool IsTargetSetValidInternal(
           IList<CardType> targets, 
           Card targetingCard, 
           Game game
