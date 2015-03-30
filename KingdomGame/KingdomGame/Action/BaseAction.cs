@@ -144,7 +144,8 @@ namespace KingdomGame {
         ) {
             IList<ITargetable> validTargets = new List<ITargetable>();
             foreach (ITargetable target in GetAllPossibleIndividualTargets(game)) {
-                if (IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
+                if (IsIndividualTargetValidTypedBase(target as TTarget, targetingCard, game) 
+                  && IsIndividualTargetValid(target as TTarget, targetingCard, game)) {
                     validTargets.Add(target);
                 }
             }
@@ -258,23 +259,14 @@ namespace KingdomGame {
         }
 
         private bool AreAllValidTargetsIncluded(IList<TTarget> typedTargetSet, Card targetingCard, Game game) {
-            IList<TTarget> eligibleTargets = new List<TTarget>();
-            IList<TTarget> allTypedTargets = GetAllPossibleIndividualTargetsTypedBase(game);
+            List<TTarget> allTypedTargets = new List<TTarget>(GetAllPossibleIndividualTargetsTypedBase(game));
+            List<TTarget> eligibleTargets = allTypedTargets.FindAll(delegate(TTarget target) { 
+              return IsIndividualTargetValidTypedBase(target, targetingCard, game) 
+                && IsTargetSetValidInternal(new List<TTarget>() { target }, targetingCard, game); });
 
-            foreach(TTarget target in allTypedTargets) {
-                if (IsIndividualTargetValidTypedBase(target, targetingCard, game)) {
-                    eligibleTargets.Add(target);
-                }
-            }
-
-            foreach (TTarget target in allTypedTargets) {
-                bool isValidTarget = IsTargetSetValidInternal(new List<TTarget>() { target }, targetingCard, game);
-                if (eligibleTargets.Contains(target) && (isValidTarget != typedTargetSet.Contains(target))) {
-                    return false;
-                }
-            }
-
-            return true;
+            bool areSetsEqual = !allTypedTargets.Exists(delegate(TTarget target) { 
+              return (typedTargetSet.Contains(target) != eligibleTargets.Contains(target)); });
+            return areSetsEqual;
         }
 
         #endregion
