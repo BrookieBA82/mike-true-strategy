@@ -237,7 +237,7 @@ namespace KingdomGame {
 
         #region Abstract Methods
 
-        protected abstract void ApplyInternal(IList<TTarget> target, Game game);
+        protected abstract void ApplyInternal(IList<TTarget> targetSet, Game game);
 
         protected abstract IList<TTarget> GetAllPossibleIndividualTargetsTypedBase(Game game);
 
@@ -296,8 +296,8 @@ namespace KingdomGame {
           Game game
         ) {
             foreach (TTarget target in allTargets) {
-                bool isValidTarget = IsTargetSetValidInternal(
-                  new List<TTarget>() { target }, 
+                bool isValidTarget = IsIndividualTargetValid(
+                  target, 
                   targetingCard, 
                   game
                 );

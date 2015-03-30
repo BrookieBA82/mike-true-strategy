@@ -15,7 +15,6 @@ namespace KingdomGame {
 
         bool IsTargetSetValid(IList<ITargetable> targetSet, Card targetingCard, Game game);
 
-        // Refactor - (MT): Revisit the entire action/target validity stack so that it is consistent.
         IList<ITargetable> GetAllValidIndividualTargets(Card targetingCard, Game game);
 
         void Apply(IList<ITargetable> targetSet, Game game);

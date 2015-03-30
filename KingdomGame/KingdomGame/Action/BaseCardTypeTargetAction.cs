@@ -35,11 +35,7 @@ namespace KingdomGame {
 
         #region Protected Methods
 
-        protected override bool IsIndividualTargetValidTypedBase(
-          CardType target,
-          Card targetingCard,
-          Game game
-        ) {
+        protected override bool IsIndividualTargetValidTypedBase(CardType target, Card targetingCard, Game game) {
             return !(game.GetCardsByType(target) == null || game.GetCardsByType(target).Count == 0);
         }
 
