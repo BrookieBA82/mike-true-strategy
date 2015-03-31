@@ -104,6 +104,7 @@ namespace KingdomGame {
         }
 
         public bool IsTargetSetValid(IList<ITargetable> targetSet, Game game) {
+            // Check core parameter issues (nulls, type correctness, and targeting).
             if (targetSet == null) {
                 return false;
             }
@@ -116,6 +117,7 @@ namespace KingdomGame {
                 return false;
             }
 
+            // Check special cases such as duplicates and requiring all valid targets.
             if (!_duplicateTargetsAllowed && (GetUniqueTargetList(targetSet).Count < targetSet.Count)) {
                 return false;
             }
@@ -124,18 +126,18 @@ namespace KingdomGame {
                 return false;
             }
 
-            return IsTargetSetValidSubclass(targetSet, game);
+            // Check subclass specific logic.
+            return IsTargetSetValidInternal(GetTypedTargetList(targetSet), game)
+                && !GetTypedTargetList(targetSet).Exists(delegate(TTarget target) { return !IsIndividualTargetValidTypedBase(target, game); });
+
         }
 
         public IList<ITargetable> GetAllValidIndividualTargets(Game game) {
-            IList<ITargetable> validTargets = new List<ITargetable>();
-            foreach (ITargetable target in GetAllPossibleIndividualTargetsTypedBase(game)) {
-                if (IsIndividualTargetValidSubclass(target as TTarget, game)) {
-                    validTargets.Add(target);
-                }
-            }
+            List<TTarget> allPossibleTargets = GetTypedTargetList(GetAllPossibleIndividualTargets(game));
+            List<TTarget> allValidTargets = allPossibleTargets.FindAll(delegate(TTarget target) 
+              { return IsIndividualTargetValidInternal(target, game) && IsIndividualTargetValidTypedBase(target as TTarget, game); });
 
-            return validTargets;
+            return new List<ITargetable>(allValidTargets);
         }
 
         public void Apply(IList<ITargetable> targetSet, Game game) {
@@ -185,7 +187,7 @@ namespace KingdomGame {
 
         protected abstract void ApplyInternal(IList<TTarget> targetSet, Game game);
 
-        protected abstract IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game);
+        protected abstract IList<ITargetable> GetAllPossibleIndividualTargets(Game game);
 
         #endregion
 
@@ -227,24 +229,8 @@ namespace KingdomGame {
         #region Target Validity Methods
 
         private bool AreAllValidTargetsIncluded(IList<ITargetable> targetSet, Game game) {
-            List<ITargetable> eligibleTargets = new List<ITargetable>(GetAllValidIndividualTargets(game));
-            foreach (ITargetable eligibleTarget in eligibleTargets) {
-                if (!targetSet.Contains(eligibleTarget)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool IsIndividualTargetValidSubclass(TTarget target, Game game) {
-            return IsIndividualTargetValidInternal(target, game) && IsIndividualTargetValidTypedBase(target as TTarget, game);
-        }
-
-        private bool IsTargetSetValidSubclass(IList<ITargetable> targetSet, Game game) {
-            List<TTarget> typedTargetSet = GetTypedTargetList(targetSet);
-            return IsTargetSetValidInternal(typedTargetSet, game)
-                && !typedTargetSet.Exists(delegate(TTarget target) { return !IsIndividualTargetValidTypedBase(target, game); });
+            return !GetUntypedTargetList(GetAllValidIndividualTargets(game)).Exists(delegate(ITargetable target) 
+              { return !targetSet.Contains(target); });
         }
 
         #endregion
@@ -253,6 +239,14 @@ namespace KingdomGame {
 
         private static List<TTarget> GetTypedTargetList(IList<ITargetable> untypedList) {
             return new List<ITargetable>(untypedList).ConvertAll<TTarget>(delegate(ITargetable target) { return target as TTarget; });
+        }
+
+        private static List<TTarget> GetTypedTargetList(IList<TTarget> untypedList) {
+            return new List<TTarget>(untypedList);
+        }
+
+        private static List<ITargetable> GetUntypedTargetList(IList<ITargetable> untypedList) {
+            return new List<ITargetable>(untypedList);
         }
 
         private static List<TTarget> GetUniqueTargetList(IList<ITargetable> untypedList) {

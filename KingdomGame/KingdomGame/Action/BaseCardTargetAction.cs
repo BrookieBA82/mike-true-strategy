@@ -60,7 +60,7 @@ namespace KingdomGame {
         #region Protected Methods
 
         // Todo - (MT): Support card property targeting as an AND relationship with card owner.
-        protected override bool IsIndividualTargetValidTypedBase(Card target, Game game) {
+        protected sealed override bool IsIndividualTargetValidTypedBase(Card target, Game game) {
             Player targetSelector = GetTargetSelector(game);
             if(((_cardOwnerTargetType & CardOwnerTargetType.SELF) == CardOwnerTargetType.NONE) 
               && target.OwnerId.HasValue 
@@ -86,7 +86,7 @@ namespace KingdomGame {
             return true;
         }
 
-        protected override IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game) {
+        protected sealed override IList<ITargetable> GetAllPossibleIndividualTargets(Game game) {
             return new List<ITargetable>(game.Cards);
         }
 

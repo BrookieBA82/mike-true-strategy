@@ -66,7 +66,7 @@ namespace KingdomGame {
 
         #region Protected Methods
 
-        protected override bool IsIndividualTargetValidTypedBase(Player target, Game game) {
+        protected sealed override bool IsIndividualTargetValidTypedBase(Player target, Game game) {
             if(((_playerTargetType & PlayerTargetType.SELF) == PlayerTargetType.NONE) 
               && target.Id == GetTargetSelector(game).Id) {
                 return false;
@@ -79,7 +79,7 @@ namespace KingdomGame {
             return true;
         }
 
-        protected override IList<ITargetable> GetAllPossibleIndividualTargetsTypedBase(Game game) {
+        protected sealed override IList<ITargetable> GetAllPossibleIndividualTargets(Game game) {
             return new List<ITargetable>(game.Players);
         }
 
