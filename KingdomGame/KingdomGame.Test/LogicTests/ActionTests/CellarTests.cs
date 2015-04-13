@@ -19,33 +19,44 @@ namespace KingdomGame.Test
 
         #endregion
 
+        #region Base Specifications
+
+        private static ActionTestSpecification GetBaseSpecification() {
+            ActionTestSpecification baseSpec = new ActionTestSpecification();
+
+            baseSpec.GameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
+            baseSpec.GameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
+            baseSpec.GameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
+            baseSpec.GameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
+
+            baseSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
+            baseSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
+            baseSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            baseSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
+
+            baseSpec.HandCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
+            baseSpec.HandCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
+            baseSpec.HandCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+
+            baseSpec.Play = TestSetup.CardTypeCellar;
+
+            return baseSpec;
+        }
+
+        #endregion
+
         #region Tests
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
-        public void TestStandardCellarActionApplication() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+        public void TestSingleDiscardCellarAction() {
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
             Card cellarCard = null;
             foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
+                if (card.Type.Equals(testSpec.Play)) {
                     cellarCard = card;
                     break;
                 }
@@ -110,29 +121,23 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestMultipleDiscardCellarAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
+            ActionTestSpecification customSpec = new ActionTestSpecification();
 
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 3;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 3;
 
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            customSpec.HandCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
+            customSpec.HandCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
+
+            ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(), customSpec);
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
             Card cellarCard = null;
             foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
+                if (card.Type.Equals(testSpec.Play)) {
                     cellarCard = card;
                     break;
                 }

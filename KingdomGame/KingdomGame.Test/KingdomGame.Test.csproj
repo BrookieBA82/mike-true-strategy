@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Common\TestSetup.cs" />
     <Compile Include="Common\TestUtilities.cs" />
+    <Compile Include="LogicTests\ActionTests\ActionTestSpecification.cs" />
     <Compile Include="LogicTests\ActionTests\CellarTests.cs" />
     <Compile Include="LogicTests\ActionTests\MarketTests.cs" />
     <Compile Include="LogicTests\ActionTests\MilitiaTests.cs" />
