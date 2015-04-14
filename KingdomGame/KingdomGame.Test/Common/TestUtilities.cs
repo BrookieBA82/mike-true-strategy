@@ -67,5 +67,27 @@ namespace KingdomGame.Test
             FieldInfo phaseField = stateType.GetField("_phase", BindingFlags.NonPublic | BindingFlags.Instance);
             phaseField.SetValue(game.State, phase);
         }
+
+        public static Card FindCard(IList<Card> sourceCards, CardType cardType) {
+            return FindCards(sourceCards, cardType, 1)[0];
+        }
+
+        public static IList<Card> FindCards(IList<Card> sourceCards, CardType cardType, int count) {
+            IList<Card> cards = new List<Card>();
+            foreach(Card card in sourceCards) {
+                if (card.Type.Equals(cardType)) {
+                    cards.Add(card);
+                    if (cards.Count >= count) {
+                        break;
+                    }
+                }
+            }
+
+            if (cards.Count < count) {
+                throw new InvalidOperationException(string.Format("Could not find enough cards of type {0} in the deck.", cardType.Name));
+            }
+
+            return cards;
+        }
     }
 }

@@ -54,32 +54,20 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame
               (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(testSpec.Play)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
             game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
               new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            Card estateCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCard = card;
-                    break;
-                }
-            }
+            Card estateCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
 
             // Discarding the estate card:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
@@ -135,31 +123,20 @@ namespace KingdomGame.Test
             Game game = TestSetup.GenerateStartingGame
               (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(testSpec.Play)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
             game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
               new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCards.Add(card);
-                }
-            }
+            IList<Card> estateCards = TestUtilities.FindCards(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate, 3);
 
             // Discarding the estate cards:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
-            IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
+            IList<Card> mineCards = TestUtilities.FindCards(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine, 3);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
