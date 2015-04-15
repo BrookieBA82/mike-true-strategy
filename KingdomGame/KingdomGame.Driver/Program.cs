@@ -47,8 +47,8 @@ namespace KingdomGame.Driver {
         private static Game InitializeGame(string configFilePath) {
             // Todo - (MT): Make this block entirely read out of the config file path, including the type path:
             ActionRegistry.Instance.InitializeRegistry(configFilePath);
-            IList<Player> players = new List<Player>() { new Player("Player 1"), new Player("Player 2")};
-            Game game = new Game(players);
+            IList<string> playerNames = new List<string>() { "Player 1", "Player 2" };
+            Game game = new Game(playerNames);
             Logger.Instance.TrackGame(game);
 
             int copperTypeId = ActionRegistry.Instance.GetCardTypeByName("Copper").Id;

@@ -337,14 +337,15 @@ namespace KingdomGame {
 
         #region Constructors
 
-        public Game(IList<Player> orderedPlayerList) : this(orderedPlayerList, ActionRegistry.Instance.DefaultCardCountsByType) {
+        public Game(IList<string> playerNames) : this(playerNames, ActionRegistry.Instance.DefaultCardCountsByType) {
 
         }
 
-        public Game(IList<Player> orderedPlayerList, IDictionary<int, int> gameCardCountsByType) : this() {
+        public Game(IList<string> playerNames, IDictionary<int, int> gameCardCountsByType) : this() {
             _state = new GameState(this);
 
-            SetUpPlayerIndex(orderedPlayerList);
+            IList<Player> players = new List<string>(playerNames).ConvertAll<Player>(delegate(string name) { return new Player(name); });
+            SetUpPlayerIndex(players);
 
             _trash = new Deck();
             _cardsByTypeId = new Dictionary<int, Deck>();
@@ -359,6 +360,8 @@ namespace KingdomGame {
             }
 
             SetUpCardIndex();
+
+            // Refactor - (MT): Call function here to set up and lock all backref properties.
         }
 
         private Game(Game toClone) : this() {
@@ -377,6 +380,8 @@ namespace KingdomGame {
             }
 
             SetUpCardIndex();
+
+            // Refactor - (MT): Call function here to set up and lock all backref properties.
         }
 
         private Game() {

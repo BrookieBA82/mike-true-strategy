@@ -189,12 +189,12 @@ namespace KingdomGame.Test
                 throw new ArgumentException("Game must contain between 2 and 4 players.");
             }
 
-            IList<Player> players = new List<Player>();
+            IList<string> playerNames = new List<string>();
             for (int playerIndex = 1; playerIndex <= numPlayers; playerIndex++) {
-                players.Add(new Player("Player " + playerIndex));
+                playerNames.Add(string.Format("Player {0}", playerIndex));
             }
 
-            Game game = new Game(players, gameCardCountsByTypeId);
+            Game game = new Game(playerNames, gameCardCountsByTypeId);
             game.StartGame(playerCardCountsByTypeId, handCardCountsByTypeId, false);
             return game;
         }
