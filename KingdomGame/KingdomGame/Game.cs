@@ -175,7 +175,6 @@ namespace KingdomGame {
                 _pendingActionStack.Push(action);
             }
 
-            // Refactor - (MT): Make the targets a generically typed parameter.
             public void ExecuteNextPendingAction(IList<int> targetIds) {
                 if(_phase != Phase.ACTION) {
                     throw new InvalidOperationException("Cannot execute an action outside of the action phase.");
@@ -193,7 +192,6 @@ namespace KingdomGame {
 
             #region History Query Methods
 
-            // Refactor - (MT): Make the returned targets a generically typed parameter.
             public IList<int> GetTargetsFromLastExecutedAction(Type actionType) {
                 if (actionType == null) {
                     throw new ArgumentNullException("Cannot get the last executed action without a non-null type.");
