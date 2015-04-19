@@ -56,7 +56,6 @@ namespace KingdomGame {
 
             #region Properties
 
-            // Refactor - (MT): Handle backrefs more elegantly than this.
             internal Game Game { set { _game = value; } }
 
             public Phase Phase { get { return _phase; } }
@@ -360,12 +359,9 @@ namespace KingdomGame {
             }
 
             SetUpCardIndex();
-
-            // Refactor - (MT): Call function here to set up and lock all backref properties.
         }
 
         private Game(Game toClone) : this() {
-            // Refactor - (MT): Make an attribute-based clone factory to properly handle deep/shallow/backrefs
             _state = toClone._state.Clone() as GameState;
             _state.Game = this;
 
@@ -380,8 +376,6 @@ namespace KingdomGame {
             }
 
             SetUpCardIndex();
-
-            // Refactor - (MT): Call function here to set up and lock all backref properties.
         }
 
         private Game() {

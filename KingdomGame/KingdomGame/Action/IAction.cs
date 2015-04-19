@@ -18,11 +18,7 @@ namespace KingdomGame {
 
         void Apply(IList<ITargetable> targetSet, Game game);
 
-        // Refactor - (MT): Get the player from the game backreference.
         int? TargetSelectorId { get; }
-
-        // Refactor - (MT): Add a method for getting a target object from the game via ID.
-        // ITargetable GetTargetObjectById(int id);
 
         int MinTargets { get; }
 
