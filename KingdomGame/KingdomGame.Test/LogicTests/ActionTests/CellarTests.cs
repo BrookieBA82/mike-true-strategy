@@ -56,8 +56,7 @@ namespace KingdomGame.Test
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
             Card estateCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
@@ -182,51 +181,33 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestNotEnoughCardsToDrawOnCellarAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
+            ActionTestSpecification customSpec = new ActionTestSpecification();
 
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 2;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            customSpec.PlayerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 2;
 
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            customSpec.HandCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
+            customSpec.HandCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
+
+            ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(), customSpec);
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCards.Add(card);
-                }
-            }
-
             // Discarding the estate cards:
+            IList<Card> estateCards = TestUtilities.FindCards(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate, 3);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
             // Drawing the replacement cards (mines):
-            IList<Card> mineCards = new List<Card>(game.State.CurrentPlayer.Deck);
+            IList<Card> mineCards = TestUtilities.FindCards(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine, 1);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
@@ -281,33 +262,12 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestNoDiscardCellarAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 3;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
             game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
               new ScriptedPlaySelectionStrategy(cellarCard);
@@ -358,53 +318,26 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestCellarDuplicateDiscardTarget() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 2;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
             game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
               new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            IList<Card> estateCards = new List<Card>();
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCards.Add(card);
-                    estateCards.Add(card);
-                    break;
-                }
-            }
+            Card estateCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
+            IList<Card> estateCards = new List<Card>() { estateCard, estateCard };
 
             // Discarding the duplicate estate cards:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCards, null);
             game.PlayStep();
 
-            // Drawing the replacement cards (mines):
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            // Drawing the replacement card (mine):
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
@@ -445,52 +378,24 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestInvalidCellarTargetPlayerAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            Card estateCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCard = card;
-                    break;
-                }
-            }
+            Card estateCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
 
             // Discarding the estate card:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for the wrong player:
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
             game.PlayStep();
             
@@ -541,52 +446,24 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestMultipleCellarTargetPlayersAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            Card estateCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCard = card;
-                    break;
-                }
-            }
+            Card estateCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
 
             // Discarding the estate card:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Attempting to draw the replacement card (mine) for multiple players:
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
@@ -638,130 +515,25 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestCellarDiscardTargetDiscardedAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
             Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
 
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
             game.PlayStep();
 
-            Card estateCard = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
-            game.TrashCard(estateCard);
-
-            // Attempting to discard the trashed estate card:
-            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
-            game.PlayStep();
-
-            // Drawing the replacement card (mine):
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
-            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
-            game.PlayStep();
-            
-            Assert.AreEqual(
-              1, 
-              game.State.CurrentPlayer.RemainingActions, 
-              "An action should remain even though a cellar is played with an invalid discard target."
-            );
-            Assert.AreEqual(
-              4,
-              game.State.CurrentPlayer.Hand.Count,
-              "The hand should be missing a card after a cellar is played."
-            );
-            Assert.AreEqual(
-              1, 
-              game.State.CurrentPlayer.PlayArea.Count, 
-              "The play area should have one card after a cellar is played."
-            );
-            Assert.AreEqual(
-              TestSetup.CardTypeCellar, 
-              game.State.CurrentPlayer.PlayArea[0].Type, 
-              "The play area should have a cellar after it's been played."
-            );
-            Assert.IsFalse(
-              game.State.CurrentPlayer.Hand.Contains(mineCard),
-              "The hand should not contain the drawn card (a mine) after a cellar is played with an invalid discard target."
-            );
-            Assert.AreEqual(
-              0, 
-              game.State.CurrentPlayer.Discard.Count, 
-              "The discard pile should have no cards after a cellar is played with an invalid discard target."
-            );
-        }
-
-        [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
-        public void TestCellarDiscardTargetTrashedAction() {
-            Dictionary<int, int> gameCardCountsByTypeId = new Dictionary<int,int>();
-            gameCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 30;
-            gameCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 12;
-            gameCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 10;
-            gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
-
-            Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
-            playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            playerCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-            playerCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 1;
-
-            Dictionary<int, int> handCardCountsByTypeId = new Dictionary<int,int>();
-            handCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 3;
-            handCardCountsByTypeId[TestSetup.CardTypeEstate.Id] = 1;
-            handCardCountsByTypeId[TestSetup.CardTypeCellar.Id] = 1;
-
-            Game game = TestSetup.GenerateStartingGame
-              (2, gameCardCountsByTypeId, playerCardCountsByTypeId, handCardCountsByTypeId);
-
-            Card cellarCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeCellar)) {
-                    cellarCard = card;
-                    break;
-                }
-            }
-
-            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = 
-              new ScriptedPlaySelectionStrategy(cellarCard);
-            game.PlayStep();
-
-            Card estateCard = null;
-            foreach(Card card in game.State.CurrentPlayer.Hand) {
-                if (card.Type.Equals(TestSetup.CardTypeEstate)) {
-                    estateCard = card;
-                    break;
-                }
-            }
+            Card estateCard  = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, TestSetup.CardTypeEstate);
             game.State.CurrentPlayer.DiscardCard(estateCard);
 
-            // Attempting to discard an already discarded estate card:
+            // Attempting to discard the discarded estate card:
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
             game.PlayStep();
 
             // Drawing the replacement card (mine):
-            Card mineCard = game.State.CurrentPlayer.Deck[0];
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
@@ -798,6 +570,61 @@ namespace KingdomGame.Test
               TestSetup.CardTypeEstate, 
               game.State.CurrentPlayer.Discard[0].Type, 
               "The discard pile should have the previously discarded card (an estate) after a cellar is played."
+            );
+        }
+
+        [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
+        public void TestCellarDiscardTargetTrashedAction() {
+            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
+
+            Game game = TestSetup.GenerateStartingGame
+              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+
+            Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
+
+            game.State.CurrentPlayer.Strategy.PlaySelectionStrategy = new ScriptedPlaySelectionStrategy(cellarCard);
+            game.PlayStep();
+
+            Card estateCard  = game.GetCardsByType(TestSetup.CardTypeEstate)[0];
+            game.TrashCard(estateCard);
+
+            // Attempting to discard the trashed estate card:
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(estateCard, null);
+            game.PlayStep();
+
+            // Drawing the replacement card (mine):
+            Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
+            game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
+            game.PlayStep();
+            
+            Assert.AreEqual(
+              1, 
+              game.State.CurrentPlayer.RemainingActions, 
+              "An action should remain even though a cellar is played with an invalid discard target."
+            );
+            Assert.AreEqual(
+              4,
+              game.State.CurrentPlayer.Hand.Count,
+              "The hand should be missing a card after a cellar is played."
+            );
+            Assert.AreEqual(
+              1, 
+              game.State.CurrentPlayer.PlayArea.Count, 
+              "The play area should have one card after a cellar is played."
+            );
+            Assert.AreEqual(
+              TestSetup.CardTypeCellar, 
+              game.State.CurrentPlayer.PlayArea[0].Type, 
+              "The play area should have a cellar after it's been played."
+            );
+            Assert.IsFalse(
+              game.State.CurrentPlayer.Hand.Contains(mineCard),
+              "The hand should not contain the drawn card (a mine) after a cellar is played with an invalid discard target."
+            );
+            Assert.AreEqual(
+              0, 
+              game.State.CurrentPlayer.Discard.Count, 
+              "The discard pile should have no cards after a cellar is played with an invalid discard target."
             );
         }
 
