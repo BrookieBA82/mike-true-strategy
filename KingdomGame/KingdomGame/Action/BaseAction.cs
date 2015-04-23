@@ -8,11 +8,18 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
-    // Refactor - (MT): Make actions themselves ITargetable (with IDs) via a base class for making a general choice (between actions).
+    // Todo - (MT): Add a new base class for making a general choice (between actions).
     public abstract class BaseAction<TTarget> : IAction where TTarget : class, ITargetable {
+
+        #region Static Members
+
+        private static int NextId = 1;
+
+        #endregion
 
         #region Private Members
 
+        private int _id;
         private int? _targetSelectorId = null;
 
         private int _minTargets;
@@ -34,6 +41,8 @@ namespace KingdomGame {
                 throw new ArgumentException("Cannot specify a minimum number of targets larger than the maximum.");
             }
 
+            _id = BaseAction<TTarget>.NextId++;
+
             _minTargets = minTargets;
             _maxTargets = maxTargets;
             _duplicateTargetsAllowed = duplicateTargetsAllowed;
@@ -45,6 +54,8 @@ namespace KingdomGame {
         #endregion
 
         #region Properties
+
+        public int Id { get { return _id; } }
 
         public int? TargetSelectorId { get { return _targetSelectorId; } }
 
@@ -80,6 +91,10 @@ namespace KingdomGame {
                 Debug.Assert(!_lockedForUpdates, "Action properties should not be altered once Create has been called.");
                 _actionDescription = value; 
             }
+        }
+
+        public GameHistory.TargetInfo TargetInfo {
+            get { return new GameHistory.ActionInfo(this); }
         }
 
         #endregion
@@ -146,6 +161,10 @@ namespace KingdomGame {
             else {
                 throw new InvalidOperationException("Cannot apply this action to an invalid target set.");
             }
+        }
+
+        public string ToString(string format) {
+            return string.Format("{0} ({1})", DisplayName, Id);
         }
 
         #endregion

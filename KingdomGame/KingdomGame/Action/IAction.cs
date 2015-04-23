@@ -7,8 +7,7 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
-    // Refactor - (MT): Make actions themselves ITargetable (with IDs).
-    public interface IAction {
+    public interface IAction : ITargetable {
 
         IAction Create(Player targetSelector);
 

@@ -326,6 +326,30 @@ namespace KingdomGame {
             }
         }
 
+        [XmlType("action")]
+        public class ActionInfo : TargetInfo {
+
+            [XmlAttribute("name")]
+            public string Name { get; set; }
+
+            public ActionInfo() {
+
+            }
+
+            public ActionInfo(ActionInfo toClone) : this(toClone.Id, toClone.Name) {
+
+            }
+
+            public ActionInfo(IAction action) : this(action.Id, action.DisplayName) {
+
+            }
+
+            private ActionInfo(int id, string name) {
+                Id = id;
+                Name = name;
+            }
+        }
+
         [XmlType("score")]
         public class ScoreInfo {
 
