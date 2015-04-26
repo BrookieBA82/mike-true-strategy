@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action\BaseAction.cs" />
+    <Compile Include="Action\BaseActionTargetAction.cs" />
     <Compile Include="Action\BaseCardTargetAction.cs" />
     <Compile Include="Action\BaseCardTypeTargetAction.cs" />
     <Compile Include="Action\BasePlayerTargetAction.cs" />
