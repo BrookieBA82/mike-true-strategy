@@ -93,6 +93,8 @@ namespace KingdomGame {
                 }
             }
 
+            public IList<IAction> PendingActions { get { return new List<IAction>(_pendingActionStack); } }
+
             #endregion
 
             #region Public Methods

@@ -8,7 +8,6 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
-    // Todo - (MT): Add a new base class for making a general choice (between actions).
     public abstract class BaseAction<TTarget> : IAction where TTarget : class, ITargetable {
 
         #region Static Members
@@ -178,6 +177,7 @@ namespace KingdomGame {
             }
 
             return GetType() == action.GetType()
+              && _id == action._id
               && _minTargets == action._minTargets 
               && _maxTargets == action._maxTargets
               && _duplicateTargetsAllowed == action._duplicateTargetsAllowed
@@ -188,6 +188,7 @@ namespace KingdomGame {
 
         public override int GetHashCode() {
             return GetType().GetHashCode() 
+              ^ _id.GetHashCode()
               ^ _minTargets.GetHashCode()
               ^ _maxTargets.GetHashCode()
               ^ _duplicateTargetsAllowed.GetHashCode()
