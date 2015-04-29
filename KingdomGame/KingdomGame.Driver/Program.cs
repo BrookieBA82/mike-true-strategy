@@ -215,6 +215,7 @@ namespace KingdomGame.Driver {
             if (args.CurrentAction.MinTargets <= validTargets.Count) {
                 int optionCounter = 1;
                 Console.WriteLine(string.Format("\tValid target summary list for {0}:", args.CurrentAction.DisplayName));
+                // Todo - (MT): Make sure action selections get a meaningful string printed so players know what to do with them.
                 foreach (ITargetable target in validTargets) {
                     Console.WriteLine(string.Format("\t\t{0}: {1}", optionCounter, target.ToString()));
                     optionCounter++;

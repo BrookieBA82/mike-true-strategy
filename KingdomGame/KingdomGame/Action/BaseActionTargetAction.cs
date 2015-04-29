@@ -7,11 +7,11 @@ using Wintellect.PowerCollections;
 
 namespace KingdomGame {
 
-    public abstract class BaseActionTypeTargetAction : BaseAction<IAction> {
+    public abstract class BaseActionTargetAction : BaseAction<IAction> {
 
         #region Constructors
 
-        public BaseActionTypeTargetAction (
+        public BaseActionTargetAction (
           int minTargets, 
           int maxTargets
         ) : base(minTargets, maxTargets, false, false) {
@@ -23,12 +23,14 @@ namespace KingdomGame {
         #region Public Methods
 
         public override bool Equals(object obj) {
-            return (obj is BaseActionTypeTargetAction) && base.Equals(obj);
+            return (obj is BaseActionTargetAction) && base.Equals(obj);
         }
 
         public override int GetHashCode() {
             return base.GetHashCode() ^ GetType().GetHashCode();
         }
+
+        // Todo - (MT): Override toString such that it can provide a user-friendy description of what this choice represents.
 
         #endregion
 

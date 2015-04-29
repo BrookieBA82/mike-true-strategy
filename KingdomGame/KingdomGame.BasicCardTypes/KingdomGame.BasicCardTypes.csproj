@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\CellarAction.cs" />
+    <Compile Include="Actions\LibraryAction.cs" />
     <Compile Include="Actions\MarketAction.cs" />
     <Compile Include="Actions\MilitiaAction.cs" />
     <Compile Include="Actions\MineAction.cs" />

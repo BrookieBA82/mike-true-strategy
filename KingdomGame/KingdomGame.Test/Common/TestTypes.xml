@@ -293,6 +293,25 @@
         </action>
       </actions>
     </type>
+    <type key="Library">
+      <class>ACTION</class>
+      <cost>5</cost>
+      <victoryValue>0</victoryValue>
+      <monetaryValue>0</monetaryValue>
+      <endOfGameWeight>3</endOfGameWeight>
+      <defaultQuantity>10</defaultQuantity>
+      <cardText>Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way, as you draw them; discard the set aside cards once you finish drawing.</cardText>
+      <properties>
+      </properties>
+      <actions>
+        <action>
+          <assemblyKey>types</assemblyKey>
+          <className>KingdomGame.BasicCardTypes.LibraryDrawingAction</className>
+          <displayName>Library Draw Phase</displayName>
+          <actionDescription>drawing from Library</actionDescription>
+        </action>
+      </actions>
+    </type>
   </types>
   <actions>
     <action>
@@ -301,5 +320,17 @@
       <displayName>Militia Forced Discard Phase</displayName>
       <actionDescription>discarding cards for Militia</actionDescription>
     </action>
+    <action>
+      <assemblyKey>types</assemblyKey>
+      <className>KingdomGame.BasicCardTypes.LibraryDiscardChoiceAction</className>
+      <displayName>Library Discard Choice Phase</displayName>
+      <actionDescription>choosing whether to discard for Library</actionDescription>
+    </action>
+    <action>
+      <assemblyKey>types</assemblyKey>
+      <className>KingdomGame.BasicCardTypes.LibraryDiscardingAction</className>
+      <displayName>Library Discarding Phase</displayName>
+      <actionDescription>discarding cards for Library</actionDescription>
+    </action>    
   </actions>
 </config>

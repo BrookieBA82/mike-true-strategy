@@ -129,6 +129,13 @@ namespace KingdomGame.Test
             }
         }
 
+        public static CardType CardTypeLibrary {
+            get {
+                TestSetup.InitializeTypes();
+                return ActionRegistry.Instance.GetCardTypeByName("Library");
+            }
+        }
+
         #endregion
 
         #region Static Setup Methods
@@ -163,6 +170,7 @@ namespace KingdomGame.Test
             gameCardCountsByTypeId[TestSetup.CardTypeSmithy.Id] = 10;
             gameCardCountsByTypeId[TestSetup.CardTypeMine.Id] = 10;
             gameCardCountsByTypeId[TestSetup.CardTypeMarket.Id] = 10;
+            gameCardCountsByTypeId[TestSetup.CardTypeLibrary.Id] = 10;
 
             Dictionary<int, int> playerCardCountsByTypeId = new Dictionary<int,int>();
             playerCardCountsByTypeId[TestSetup.CardTypeCopper.Id] = 7;
