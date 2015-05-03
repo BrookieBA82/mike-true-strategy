@@ -15,6 +15,8 @@ namespace KingdomGame.Test {
         private CardType _play = null;
         private IList<ITargetable> _targets = null;
 
+        private string _actionDescription;
+
         public ActionTestSpecification() {
 
         }
@@ -26,6 +28,8 @@ namespace KingdomGame.Test {
 
             _play = (toClone._play != null) ? toClone._play : null;
             _targets = (toClone._targets != null) ? new List<ITargetable>(toClone._targets) : null;
+
+            _actionDescription = toClone._actionDescription;
         }
 
         public IDictionary<int, int> GameCardCountsByTypeId { get { return _gameCardCountsByTypeId; } }
@@ -42,6 +46,11 @@ namespace KingdomGame.Test {
         public IList<ITargetable> Targets { 
             get { return _targets; }
             set { _targets = value; }
+        }
+
+        public string ActionDescription { 
+            get { return _actionDescription; }
+            set { _actionDescription = value; }
         }
 
         public static ActionTestSpecification ApplyOverrides(ActionTestSpecification baseTest, ActionTestSpecification overrides) {
@@ -69,6 +78,10 @@ namespace KingdomGame.Test {
 
             if (overrides.Targets != null) {
                 mergedTest.Targets = new List<ITargetable>(overrides.Targets);
+            }
+
+            if (overrides.ActionDescription != null) {
+                mergedTest.ActionDescription = overrides.ActionDescription;
             }
 
             return mergedTest;

@@ -19,35 +19,146 @@ namespace KingdomGame.Test
             }
 
             return null;
-        } 
+        }
+
+        #region Assertion Helpers
+
+        public static readonly string CARD_LOCATION_HAND = "hand";
+        public static readonly string CARD_LOCATION_DISCARD = "discard pile";
+        public static readonly string CARD_LOCATION_PLAY_AREA = "play area";
+        public static readonly string CARD_LOCATION_DECK = "deck";
+
+        public static void ConfirmCardTypeCount(IList<Card> cards, CardType targetType, int count) {
+            ConfirmCardTypeCount(cards, targetType, count, string.Empty);
+        }
+
+        public static void ConfirmCardTypeCount(IList<Card> cards, CardType targetType, int count, string location) {
+            ConfirmCardTypeCount(cards, targetType, count, location, string.Empty);
+        }
+
+        public static void ConfirmCardTypeCount(IList<Card> cards, CardType targetType, int count, string location, string description) {
+            int matches = 0;
+            foreach (Card card in cards) {
+                if (card.Type.Equals(targetType)) {
+                    matches++;
+                }
+            }
+
+            Assert.AreEqual(
+              count, 
+              matches, 
+              string.Format("The {0} should contain {1} {2}{3}.", 
+                (!string.IsNullOrEmpty(location)) ? location : "card set", 
+                count, 
+                (count != 1) ? string.Format("{0}(s)", targetType.Name) : targetType.Name, 
+                (!string.IsNullOrEmpty(description)) ? string.Format(" {0}", description) : string.Empty
+              )
+            );
+        }
+
+        public static void ConfirmCardCount(IList<Card> cards, int count) {
+            ConfirmCardCount(cards, count, string.Empty);
+        }
+
+        public static void ConfirmCardCount(IList<Card> cards, int count, string location) {
+            ConfirmCardCount(cards, count, location, string.Empty);
+        }
+
+        public static void ConfirmCardCount(IList<Card> cards, int count, string location, string description) {
+            Assert.AreEqual(
+              count, 
+              cards.Count, 
+              string.Format("The {0} should contain {1} {2}{3}.", 
+                (!string.IsNullOrEmpty(location)) ? location : "card set", 
+                count, 
+                (count != 1) ? "cards" : "card", 
+                (!string.IsNullOrEmpty(description)) ? string.Format(" {0}", description) : string.Empty
+              )
+            );
+        }
 
         public static void ConfirmCardPlayed(Game game, Card card) {
             ConfirmCardPlayed(game, card, 0);
         }
 
         public static void ConfirmCardPlayed(Game game, Card card, int expectedActionsRemaining) {
+            string description = string.Format("after a {0} is played", card.Type.Name);
+            ConfirmCardPlayed(game, card, expectedActionsRemaining, new Dictionary<CardType, int>(), description);
+        }
+
+        public static void ConfirmCardPlayed(Game game, Card card, string description) {
+            ConfirmCardPlayed(game, card, 0, description);
+        }
+
+        public static void ConfirmCardPlayed(Game game, Card card, int expectedActionsRemaining, string description) {
+            ConfirmCardPlayed(game, card, expectedActionsRemaining, new Dictionary<CardType, int>(), description);
+        }
+
+        public static void ConfirmCardPlayed(
+          Game game, 
+          Card card, 
+          int expectedActionsRemaining, 
+          IDictionary<CardType, int> additionalCardsByType, 
+          string description
+        ) {
+            // Todo - (MT): Make this its own series of asserts, permitting flexibility based on type of remaining (Action, Buys, etc.)
             Assert.AreEqual(
               expectedActionsRemaining, 
               game.State.CurrentPlayer.RemainingActions, 
               string.Format(
-                "There should be {0} action(s) remaining after a {1} is played.", 
+                "There should be {0} {1} remaining{2}.", 
                 expectedActionsRemaining, 
-                card.Type.Name
+                (expectedActionsRemaining != 1) ? "actions" : "action",
+                (!string.IsNullOrEmpty(description)) ? string.Format(" {0}", description) : string.Empty
               )
             );
 
-            Assert.AreEqual(
-              1, 
-              game.State.CurrentPlayer.PlayArea.Count, 
-              string.Format("The play area should have one card after a {0} is played.", card.Type.Name)
+
+            int totalExpectedCardsPlayed = 0;
+            foreach (CardType type in additionalCardsByType.Keys) {
+                int expectedCardsPlayed = (type.Equals(card.Type)) ? additionalCardsByType[type] + 1 : additionalCardsByType[type];
+
+                TestUtilities.ConfirmCardTypeCount(
+                    game.State.CurrentPlayer.PlayArea,
+                    type,
+                    expectedCardsPlayed, 
+                    TestUtilities.CARD_LOCATION_PLAY_AREA, 
+                    description
+                );
+
+                totalExpectedCardsPlayed += expectedCardsPlayed;
+            }
+
+            if (!additionalCardsByType.ContainsKey(card.Type)) {
+                totalExpectedCardsPlayed++;
+
+                TestUtilities.ConfirmCardTypeCount(
+                    game.State.CurrentPlayer.PlayArea, 
+                    card.Type,
+                    1, 
+                    TestUtilities.CARD_LOCATION_PLAY_AREA, 
+                    description
+                );
+            }
+
+            TestUtilities.ConfirmCardCount(
+                game.State.CurrentPlayer.PlayArea,
+                totalExpectedCardsPlayed, 
+                TestUtilities.CARD_LOCATION_PLAY_AREA, 
+                description
             );
 
-            Assert.AreEqual(
-              card, 
-              game.State.CurrentPlayer.PlayArea[0], 
-              string.Format("The play area should have a {0} after one is played.", card.Type.Name)
+            Assert.IsTrue(
+              game.State.CurrentPlayer.PlayArea.Contains(card), 
+              string.Format(
+                "The play area should contain the selected {0}{1}.", 
+                card.Type.Name, 
+                (!string.IsNullOrEmpty(description)) ? string.Format(" {0}", description) : string.Empty
+              )
             );
         }
+
+        #endregion
 
         public static void ForceGamePhase(Game game, Game.Phase phase) {
             if (phase == Game.Phase.BUY && game.State.CurrentPlayer.RemainingBuys == 0) {
@@ -67,6 +178,8 @@ namespace KingdomGame.Test
             FieldInfo phaseField = stateType.GetField("_phase", BindingFlags.NonPublic | BindingFlags.Instance);
             phaseField.SetValue(game.State, phase);
         }
+
+        #region Search Helpers
 
         public static Card FindCard(IList<Card> sourceCards, CardType cardType) {
             return FindCards(sourceCards, cardType, 1)[0];
@@ -89,5 +202,7 @@ namespace KingdomGame.Test
 
             return cards;
         }
+
+        #endregion
     }
 }
