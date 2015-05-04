@@ -21,6 +21,8 @@ namespace KingdomGame.Test
 
         #region Base Specifications
 
+        private static readonly string ASSERTION_KEY_CARD_PLAYED = "LibraryPlayed";
+
         private static ActionTestSpecification GetBaseSpecification() {
             ActionTestSpecification baseSpec = new ActionTestSpecification();
 
@@ -40,6 +42,15 @@ namespace KingdomGame.Test
 
             baseSpec.Play = TestSetup.CardTypeCellar;
             baseSpec.ActionDescription = "after a cellar is played";
+
+            // Todo - (MT): Find way to pass in custom assert description.
+            ITestAssertion playedAssertion = new CardPlayedAssertion(
+              CellarTests.ASSERTION_KEY_CARD_PLAYED,
+              game => TestUtilities.FindCard(game.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              expectedActionsRemaining: 1
+            );
+
+            baseSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
 
             return baseSpec;
         }
@@ -70,13 +81,8 @@ namespace KingdomGame.Test
             Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
-            
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 
@@ -138,12 +144,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 
@@ -204,12 +205,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 
@@ -276,12 +272,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 
@@ -335,12 +326,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 
@@ -371,7 +357,18 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestInvalidCellarTargetPlayerAction() {
-            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
+            ActionTestSpecification baseSpec = CellarTests.GetBaseSpecification();
+            ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion playedAssertion = new CardPlayedAssertion(
+              CellarTests.ASSERTION_KEY_CARD_PLAYED,
+              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              expectedActionsRemaining: 0
+            );
+
+            customSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
+
+            ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
             Game game = TestSetup.GenerateStartingGame
               (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
@@ -391,13 +388,8 @@ namespace KingdomGame.Test
             Card mineCard = TestUtilities.FindCard(game.State.CurrentPlayer.Deck, TestSetup.CardTypeMine);
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.Players[1]);
             game.PlayStep();
-            
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                0,
-                testSpec.ActionDescription
-            );
+
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 3, 
@@ -444,7 +436,18 @@ namespace KingdomGame.Test
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestMultipleCellarTargetPlayersAction() {
-            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
+            ActionTestSpecification baseSpec = CellarTests.GetBaseSpecification();
+            ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion playedAssertion = new CardPlayedAssertion(
+              CellarTests.ASSERTION_KEY_CARD_PLAYED,
+              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              expectedActionsRemaining: 0
+            );
+
+            customSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
+
+            ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
             Game game = TestSetup.GenerateStartingGame
               (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
@@ -465,13 +468,8 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy 
               = new ScriptedTargetSelectionStrategy(null, new List<Player>(game.Players));
             game.PlayStep();
-            
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                0,
-                testSpec.ActionDescription
-            );
+
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 3, 
@@ -540,12 +538,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 3, 
@@ -605,12 +598,7 @@ namespace KingdomGame.Test
             game.State.CurrentPlayer.Strategy.TargetSelectionStrategy = new ScriptedTargetSelectionStrategy(null, game.State.CurrentPlayer);
             game.PlayStep();
             
-            TestUtilities.ConfirmCardPlayed(
-                game,
-                cellarCard,
-                1,
-                testSpec.ActionDescription
-            );
+            testSpec.AssertAll(game);
             TestUtilities.ConfirmCardCount(
                 game.State.CurrentPlayer.Hand, 
                 4, 

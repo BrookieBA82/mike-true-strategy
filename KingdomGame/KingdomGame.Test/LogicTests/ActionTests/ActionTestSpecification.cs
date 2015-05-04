@@ -15,6 +15,8 @@ namespace KingdomGame.Test {
         private CardType _play = null;
         private IList<ITargetable> _targets = null;
 
+        private IDictionary<string, ITestAssertion> _assertionsByKey = new Dictionary<string, ITestAssertion>();
+
         private string _actionDescription;
 
         public ActionTestSpecification() {
@@ -28,6 +30,8 @@ namespace KingdomGame.Test {
 
             _play = (toClone._play != null) ? toClone._play : null;
             _targets = (toClone._targets != null) ? new List<ITargetable>(toClone._targets) : null;
+
+            _assertionsByKey = new Dictionary<string, ITestAssertion>(toClone._assertionsByKey);
 
             _actionDescription = toClone._actionDescription;
         }
@@ -46,6 +50,14 @@ namespace KingdomGame.Test {
         public IList<ITargetable> Targets { 
             get { return _targets; }
             set { _targets = value; }
+        }
+
+        public IDictionary<string, ITestAssertion> AssertionsByKey{ get { return _assertionsByKey; } }
+
+        public void AssertAll(Game game) {
+            foreach (ITestAssertion assertion in _assertionsByKey.Values) {
+                assertion.Assert(game);
+            }
         }
 
         public string ActionDescription { 
@@ -82,6 +94,15 @@ namespace KingdomGame.Test {
 
             if (overrides.ActionDescription != null) {
                 mergedTest.ActionDescription = overrides.ActionDescription;
+            }
+
+            foreach (string assertionKey in overrides.AssertionsByKey.Keys) {
+                if (overrides.AssertionsByKey[assertionKey] != null) { 
+                    mergedTest.AssertionsByKey[assertionKey] = overrides.AssertionsByKey[assertionKey];
+                }
+                else if (mergedTest.AssertionsByKey.ContainsKey(assertionKey)) {
+                    mergedTest.AssertionsByKey.Remove(assertionKey);
+                }
             }
 
             return mergedTest;
