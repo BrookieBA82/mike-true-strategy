@@ -12,6 +12,8 @@ namespace KingdomGame.Test {
 
         string Description { get; set; }
 
+        void Bind(Game game);
+
         void Assert(Game game);
 
     }

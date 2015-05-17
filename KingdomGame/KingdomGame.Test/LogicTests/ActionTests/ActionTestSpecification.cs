@@ -54,6 +54,16 @@ namespace KingdomGame.Test {
 
         public IDictionary<string, ITestAssertion> AssertionsByKey{ get { return _assertionsByKey; } }
 
+        public Game CreateAndBindGame() {
+            Game game = TestSetup.GenerateStartingGame(2, GameCardCountsByTypeId, PlayerCardCountsByTypeId, HandCardCountsByTypeId);
+
+            foreach (ITestAssertion assertion in AssertionsByKey.Values) {
+                assertion.Bind(game);
+            }
+
+            return game;
+        }
+
         public void AssertAll(Game game) {
             foreach (ITestAssertion assertion in _assertionsByKey.Values) {
                 assertion.Assert(game);

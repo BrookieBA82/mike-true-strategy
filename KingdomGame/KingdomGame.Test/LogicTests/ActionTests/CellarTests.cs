@@ -46,7 +46,7 @@ namespace KingdomGame.Test
             // Todo - (MT): Find way to pass in custom assert description.
             ITestAssertion playedAssertion = new CardPlayedAssertion(
               CellarTests.ASSERTION_KEY_CARD_PLAYED,
-              game => TestUtilities.FindCard(game.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              game => TestUtilities.FindCard(game.State.CurrentPlayer.Hand, baseSpec.Play),
               expectedActionsRemaining: 1
             );
 
@@ -63,8 +63,7 @@ namespace KingdomGame.Test
         public void TestSingleDiscardCellarAction() {
             ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -124,8 +123,7 @@ namespace KingdomGame.Test
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(), customSpec);
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -187,8 +185,7 @@ namespace KingdomGame.Test
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(), customSpec);
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -253,8 +250,7 @@ namespace KingdomGame.Test
 
             // Todo - (MT): Add a better test description here.
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -305,8 +301,7 @@ namespace KingdomGame.Test
         public void TestCellarDuplicateDiscardTarget() {
             ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -362,7 +357,7 @@ namespace KingdomGame.Test
 
             ITestAssertion playedAssertion = new CardPlayedAssertion(
               CellarTests.ASSERTION_KEY_CARD_PLAYED,
-              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.Hand, baseSpec.Play),
               expectedActionsRemaining: 0
             );
 
@@ -370,8 +365,7 @@ namespace KingdomGame.Test
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -441,7 +435,7 @@ namespace KingdomGame.Test
 
             ITestAssertion playedAssertion = new CardPlayedAssertion(
               CellarTests.ASSERTION_KEY_CARD_PLAYED,
-              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.PlayArea, baseSpec.Play),
+              targetGame => TestUtilities.FindCard(targetGame.State.CurrentPlayer.Hand, baseSpec.Play),
               expectedActionsRemaining: 0
             );
 
@@ -449,8 +443,7 @@ namespace KingdomGame.Test
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -518,8 +511,7 @@ namespace KingdomGame.Test
         public void TestCellarDiscardTargetDiscardedAction() {
             ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 
@@ -578,8 +570,7 @@ namespace KingdomGame.Test
         public void TestCellarDiscardTargetTrashedAction() {
             ActionTestSpecification testSpec = CellarTests.GetBaseSpecification();
 
-            Game game = TestSetup.GenerateStartingGame
-              (2, testSpec.GameCardCountsByTypeId, testSpec.PlayerCardCountsByTypeId, testSpec.HandCardCountsByTypeId);
+            Game game = testSpec.CreateAndBindGame();
 
             Card cellarCard = TestUtilities.FindCard(game.State.CurrentPlayer.Hand, testSpec.Play);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace KingdomGame.Test {
     public class CardPlayedAssertion : ITestAssertion {
 
         public delegate Card SelectCardDelegate(Game game);
+
+        private Card _card = null;
 
         private string _key;
         private int _expectedActionsRemaining;
@@ -31,8 +34,14 @@ namespace KingdomGame.Test {
 
         public string Description { get; set; }
 
+        public void Bind(Game game) {
+            Debug.Assert(_card == null, "An assertion shouldn't be bound to a game more than once.");
+            _card = _cardLocator(game);
+        }
+
         public void Assert(Game game) {
-            TestUtilities.ConfirmCardPlayed(game, _cardLocator(game), _expectedActionsRemaining, _additionalCardsPlayed, Description);
+            Debug.Assert(_card != null, "An assertion shouldn't checked until it is bound.");
+            TestUtilities.ConfirmCardPlayed(game, _card, _expectedActionsRemaining, _additionalCardsPlayed, Description);
         }
     }
 }
