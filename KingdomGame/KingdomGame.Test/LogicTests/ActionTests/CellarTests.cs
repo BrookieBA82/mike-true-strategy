@@ -25,6 +25,10 @@ namespace KingdomGame.Test
         private static readonly string ASSERTION_KEY_HAND_SIZE = "HandSize";
         private static readonly string ASSERTION_KEY_DISCARD_SIZE = "DiscardSize";
         private static readonly string ASSERTION_KEY_DECK_SIZE = "DeckSize";
+        private static readonly string ASSERTION_KEY_HAND_MINE_COUNT = "HandMineCount";
+        private static readonly string ASSERTION_KEY_HAND_ESTATE_COUNT = "HandEstateCount";
+        private static readonly string ASSERTION_KEY_DECK_ESTATE_COUNT = "DeckEstateCount";
+        private static readonly string ASSERTION_KEY_DISCARD_ESTATE_COUNT = "DiscardEstateCount";
 
         private static ActionTestSpecification GetBaseSpecification(int expectedHandSize = 4, int expectedDiscardSize = 1) {
             ActionTestSpecification baseSpec = new ActionTestSpecification();
@@ -67,9 +71,27 @@ namespace KingdomGame.Test
               expectedDiscardSize
             );
 
+            ITestAssertion handMineCountAssertion = new CardTypeCountAssertion(
+                CellarTests.ASSERTION_KEY_HAND_MINE_COUNT,
+                game => game.State.CurrentPlayer.Hand, 
+                TestUtilities.CARD_LOCATION_HAND,
+                TestSetup.CardTypeMine, 
+                expectedDiscardSize
+            );
+
+            ITestAssertion discardEstateCountAssertion = new CardTypeCountAssertion(
+                CellarTests.ASSERTION_KEY_DISCARD_ESTATE_COUNT,
+                game => game.State.CurrentPlayer.Discard, 
+                TestUtilities.CARD_LOCATION_DISCARD,
+                TestSetup.CardTypeEstate, 
+                expectedDiscardSize
+            );
+
             baseSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
             baseSpec.AssertionsByKey[handSizeAssertion.Key] = handSizeAssertion;
             baseSpec.AssertionsByKey[discardSizeAssertion.Key] = discardSizeAssertion;
+            baseSpec.AssertionsByKey[handMineCountAssertion.Key] = handMineCountAssertion;
+            baseSpec.AssertionsByKey[discardEstateCountAssertion.Key] = discardEstateCountAssertion;
 
             return baseSpec;
         }
@@ -101,20 +123,6 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                1, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Discard, 
-                TestSetup.CardTypeEstate, 
-                1, 
-                TestUtilities.CARD_LOCATION_DISCARD, 
-                testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
@@ -151,20 +159,6 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                3, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Discard, 
-                TestSetup.CardTypeEstate, 
-                3, 
-                TestUtilities.CARD_LOCATION_DISCARD, 
-                testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
@@ -185,6 +179,44 @@ namespace KingdomGame.Test
               TestUtilities.CARD_LOCATION_DECK,
               2
             );
+
+            ITestAssertion discardEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_DISCARD_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Discard,
+              TestUtilities.CARD_LOCATION_DISCARD,
+              TestSetup.CardTypeEstate,
+              0
+            );
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              1
+            );
+
+            ITestAssertion deckEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_DECK_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Deck,
+              TestUtilities.CARD_LOCATION_DECK,
+              TestSetup.CardTypeEstate,
+              2
+            );
+
+            ITestAssertion handMineCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_MINE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeMine,
+              2
+            );
+
+            customSpec.AssertionsByKey[deckSizeAssertion.Key] = deckSizeAssertion;
+            customSpec.AssertionsByKey[deckEstateCountAssertion.Key] = deckEstateCountAssertion;
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
+            customSpec.AssertionsByKey[discardEstateCountAssertion.Key] = discardEstateCountAssertion;
+            customSpec.AssertionsByKey[handMineCountAssertion.Key] = handMineCountAssertion;
 
             ActionTestSpecification testSpec 
               = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(expectedDiscardSize: 0), customSpec);
@@ -207,32 +239,24 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                2, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeEstate, 
-                1, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Deck, 
-                TestSetup.CardTypeEstate, 
-                2, 
-                TestUtilities.CARD_LOCATION_DECK, 
-                testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestNoDiscardCellarAction() {
-            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification(expectedDiscardSize: 0);
+            ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              1
+            );
+
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
+
+            ActionTestSpecification testSpec 
+              = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(expectedDiscardSize: 0), customSpec);
 
             // Todo - (MT): Add a better test description here.
 
@@ -255,25 +279,24 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                0, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeEstate, 
-                1, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestCellarDuplicateDiscardTarget() {
-            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification(expectedDiscardSize: 0);
+            ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              1
+            );
+
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
+
+            ActionTestSpecification testSpec 
+              = ActionTestSpecification.ApplyOverrides(CellarTests.GetBaseSpecification(expectedDiscardSize: 0), customSpec);
 
             Game game = testSpec.CreateAndBindGame();
 
@@ -296,20 +319,6 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                0, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeEstate, 
-                1, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
@@ -323,7 +332,25 @@ namespace KingdomGame.Test
               expectedActionsRemaining: 0
             );
 
+            ITestAssertion handMineCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_MINE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeMine,
+              0
+            );
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              0
+            );
+
             customSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
+            customSpec.AssertionsByKey[handMineCountAssertion.Key] = handMineCountAssertion;
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
@@ -346,27 +373,6 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeMine, 
-                0, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Hand, 
-                TestSetup.CardTypeEstate, 
-                0, 
-                TestUtilities.CARD_LOCATION_HAND, 
-                testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-                game.State.CurrentPlayer.Discard, 
-                TestSetup.CardTypeEstate, 
-                1, 
-                TestUtilities.CARD_LOCATION_DISCARD, 
-                testSpec.ActionDescription
-            );
             Assert.AreEqual(
               5,
               game.Players[1].Hand.Count,
@@ -389,7 +395,25 @@ namespace KingdomGame.Test
               expectedActionsRemaining: 0
             );
 
+            ITestAssertion handMineCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_MINE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeMine,
+              0
+            );
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              0
+            );
+
             customSpec.AssertionsByKey[playedAssertion.Key] = playedAssertion;
+            customSpec.AssertionsByKey[handMineCountAssertion.Key] = handMineCountAssertion;
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
 
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
@@ -413,27 +437,6 @@ namespace KingdomGame.Test
             game.PlayStep();
 
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeMine, 
-              0, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeEstate, 
-              0, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Discard, 
-              TestSetup.CardTypeEstate, 
-              1, 
-              TestUtilities.CARD_LOCATION_DISCARD, 
-              testSpec.ActionDescription
-            );
             Assert.AreEqual(
               5,
               game.Players[1].Hand.Count,
@@ -449,6 +452,26 @@ namespace KingdomGame.Test
         public void TestCellarDiscardTargetDiscardedAction() {
             ActionTestSpecification baseSpec = CellarTests.GetBaseSpecification(expectedHandSize: 3);
             ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion handMineCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_MINE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeMine,
+              0
+            );
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              0
+            );
+
+            customSpec.AssertionsByKey[handMineCountAssertion.Key] = handMineCountAssertion;
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
+
             ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
             Game game = testSpec.CreateAndBindGame();
@@ -471,32 +494,24 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeMine, 
-              0, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeEstate, 
-              0, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Discard,   
-              TestSetup.CardTypeEstate,
-              1, 
-              TestUtilities.CARD_LOCATION_DISCARD, 
-              testSpec.ActionDescription
-            );
         }
 
         [TestCategory("CellarActionTest"), TestCategory("ActionLogicTest"), TestMethod]
         public void TestCellarDiscardTargetTrashedAction() {
-            ActionTestSpecification testSpec = CellarTests.GetBaseSpecification(expectedDiscardSize: 0);
+            ActionTestSpecification baseSpec = CellarTests.GetBaseSpecification(expectedDiscardSize: 0);
+            ActionTestSpecification customSpec = new ActionTestSpecification();
+
+            ITestAssertion handEstateCountAssertion = new CardTypeCountAssertion(
+              CellarTests.ASSERTION_KEY_HAND_ESTATE_COUNT,
+              targetGame => targetGame.State.CurrentPlayer.Hand,
+              TestUtilities.CARD_LOCATION_HAND,
+              TestSetup.CardTypeEstate,
+              1
+            );
+
+            customSpec.AssertionsByKey[handEstateCountAssertion.Key] = handEstateCountAssertion;
+
+            ActionTestSpecification testSpec = ActionTestSpecification.ApplyOverrides(baseSpec, customSpec);
 
             Game game = testSpec.CreateAndBindGame();
 
@@ -518,20 +533,6 @@ namespace KingdomGame.Test
             game.PlayStep();
             
             testSpec.AssertAll(game);
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeMine, 
-              0, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
-            TestUtilities.ConfirmCardTypeCount(
-              game.State.CurrentPlayer.Hand, 
-              TestSetup.CardTypeEstate, 
-              1, 
-              TestUtilities.CARD_LOCATION_HAND, 
-              testSpec.ActionDescription
-            );
         }
 
         #endregion

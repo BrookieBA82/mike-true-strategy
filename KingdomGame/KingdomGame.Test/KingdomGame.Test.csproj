@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Common\Assert\CardCountAssertion.cs" />
     <Compile Include="Common\Assert\CardPlayedAssertion.cs" />
+    <Compile Include="Common\Assert\CardTypeCountAssertion.cs" />
     <Compile Include="Common\Assert\ITestAssertion.cs" />
     <Compile Include="Common\TestSetup.cs" />
     <Compile Include="Common\TestUtilities.cs" />
